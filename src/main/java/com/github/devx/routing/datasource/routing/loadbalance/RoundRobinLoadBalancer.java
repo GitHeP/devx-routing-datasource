@@ -3,6 +3,8 @@ package com.github.devx.routing.datasource.routing.loadbalance;
 import java.util.List;
 
 /**
+ * Round-robin load balancing.
+ *
  * @author he peng
  * @since 1.0
  */

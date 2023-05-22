@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * Random load balancing.
+ *
  * @author he peng
  * @since 1.0
  */
