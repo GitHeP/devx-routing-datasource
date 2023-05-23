@@ -14,7 +14,7 @@ import java.util.Set;
  * @author he peng
  * @since 1.0
  */
-public abstract class AbstractRoutingRule implements StatementRoutingRule , PriorityRoutingRule {
+public abstract class AbstractRoutingRule implements StatementRoutingRule {
 
     protected final SqlParser sqlParser;
 

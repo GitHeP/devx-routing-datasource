@@ -5,10 +5,17 @@ import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.sql.parser.SqlParser;
 import com.github.devx.routing.datasource.sql.parser.SqlStatement;
 
-import java.util.Objects;
 import java.util.Set;
 
 /**
+ * When transactions exist, the routing rules are as follows:
+ * If a read-only transaction exists and the current SQL being
+ * executed is a read statement, it will be routed to the read
+ * data source. If the transaction is not read-only and there
+ * are write statements in the transaction, all SQL statements
+ * in the transaction will be routed to the write data source
+ * for execution.
+ *
  * @author he peng
  * @since 1.0
  */
@@ -33,7 +40,6 @@ public class TxRoutingRule extends AbstractRoutingRule {
         }
 
         // read only tx
-        boolean txReadOnly = RoutingContext.getTxReadOnly() && Objects.nonNull(statement) && statement.isRead();
-        return txReadOnly ? loadBalancer.choose() : writeDataSourceName;
+        return RoutingContext.getTxReadOnly() ? loadBalancer.choose() : writeDataSourceName;
     }
 }

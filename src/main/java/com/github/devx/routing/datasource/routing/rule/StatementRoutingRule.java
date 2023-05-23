@@ -8,7 +8,7 @@ import com.github.devx.routing.datasource.sql.parser.SqlStatement;
  * @author he peng
  * @since 1.0
  */
-public interface StatementRoutingRule {
+public interface StatementRoutingRule extends PriorityRoutingRule {
 
     /**
      * routing with sql statement

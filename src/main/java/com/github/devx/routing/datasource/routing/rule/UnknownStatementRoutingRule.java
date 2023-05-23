@@ -8,8 +8,14 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * When the SQL cannot be parsed by the SqlParser,
+ * data source routing based on the SQL cannot be performed.
+ * It will be routed to the write data source by default.
+ *
  * @author he peng
  * @since 1.0
+ *
+ * @see SqlParser
  */
 public class UnknownStatementRoutingRule extends AbstractRoutingRule {
 

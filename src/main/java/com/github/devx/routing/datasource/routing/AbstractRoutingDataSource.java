@@ -39,7 +39,6 @@ public abstract class AbstractRoutingDataSource implements RoutingDataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        //return getDataSource().getConnection();
         return new RoutingConnection(this);
     }
 

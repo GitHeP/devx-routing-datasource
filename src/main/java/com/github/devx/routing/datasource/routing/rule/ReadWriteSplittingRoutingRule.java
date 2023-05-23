@@ -7,6 +7,10 @@ import com.github.devx.routing.datasource.sql.parser.SqlStatement;
 import java.util.Set;
 
 /**
+ * Write statements will be routed to the write data source,
+ * and read statements will be routed to the read data source,
+ * except when in a transaction.
+ *
  * @author he peng
  * @since 1.0
  */
@@ -24,13 +28,6 @@ public class ReadWriteSplittingRoutingRule extends AbstractRoutingRule {
 
     @Override
     public String routing(SqlStatement statement) {
-
-        String choose = null;
-        if (statement.isWrite()) {
-            choose = writeDataSourceName;
-        } else if (statement.isRead()) {
-            choose = loadBalancer.choose();
-        }
-        return choose;
+        return statement.isWrite() ? writeDataSourceName : loadBalancer.choose();
     }
 }

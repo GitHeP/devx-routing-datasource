@@ -21,6 +21,12 @@ import java.util.Set;
  *
  * @author he peng
  * @since 1.0
+ *
+ * @see UnknownStatementRoutingRule
+ * @see ForceWriteRoutingRule
+ * @see TxRoutingRule
+ * @see ReadWriteSplittingRoutingRule
+ * @see TableRoutingRule
  */
 public class CompositeRoutingRule extends AbstractRoutingRule {
 

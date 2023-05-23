@@ -11,7 +11,7 @@ import com.github.devx.routing.datasource.routing.RoutingKey;
 public interface RoutingRule {
 
     /**
-     * Return the name of the target data source that the SQL execution is routed to.
+     * routing with RoutingKey
      * @param key {@link RoutingKey}
      * @return datasource name
      */

@@ -8,6 +8,8 @@ import com.github.devx.routing.datasource.sql.parser.SqlStatement;
 import java.util.Set;
 
 /**
+ * Force routing to the write data source.
+ *
  * @author he peng
  * @since 1.0
  */
