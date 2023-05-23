@@ -19,7 +19,7 @@ public class UnknownStatementRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    protected String internalRouting(SqlStatement statement) {
+    public String routing(SqlStatement statement) {
         return Objects.isNull(statement) ? writeDataSourceName : null;
     }
 

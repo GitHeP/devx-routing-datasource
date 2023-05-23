@@ -26,7 +26,7 @@ public class TableRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    protected String internalRouting(SqlStatement statement) {
+    public String routing(SqlStatement statement) {
 
         if (Objects.isNull(statement.getTables())) {
             return null;

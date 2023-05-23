@@ -2,11 +2,11 @@ package com.github.devx.routing.datasource.routing;
 
 import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.datasource.routing.rule.AbstractRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
+import com.github.devx.routing.datasource.routing.rule.StatementRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.TxRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.UnknownStatementRoutingRule;
 import com.github.devx.routing.datasource.sql.parser.JSqlParser;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 
 
@@ -81,7 +82,7 @@ class DefaultRoutingDataSourceTest {
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
 
-        List<AbstractRoutingRule> routingRules = new ArrayList<>();
+        List<StatementRoutingRule> routingRules = new ArrayList<>();
         routingRules.add(unknownStatementRoutingRule);
         routingRules.add(txRoutingRule);
         routingRules.add(readWriteSplittingRoutingRule);

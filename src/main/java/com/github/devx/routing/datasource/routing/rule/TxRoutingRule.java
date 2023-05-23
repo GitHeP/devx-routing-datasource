@@ -25,7 +25,7 @@ public class TxRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    protected String internalRouting(SqlStatement statement) {
+    public String routing(SqlStatement statement) {
 
         boolean inTx = RoutingContext.inTx();
         if (!inTx) {

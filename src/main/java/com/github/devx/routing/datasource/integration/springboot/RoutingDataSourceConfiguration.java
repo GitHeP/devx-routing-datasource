@@ -11,11 +11,11 @@ import com.github.devx.routing.datasource.routing.RoutingContextRoutingKeyProvid
 import com.github.devx.routing.datasource.routing.RoutingKeyProvider;
 import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.datasource.routing.rule.AbstractRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
+import com.github.devx.routing.datasource.routing.rule.StatementRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.TableRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.TxRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.UnknownStatementRoutingRule;
@@ -76,7 +76,7 @@ public class RoutingDataSourceConfiguration {
 
     @SuppressWarnings("unchecked")
     @Bean
-    public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<AbstractRoutingRule> routingRules) {
+    public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<StatementRoutingRule> routingRules) {
 
         Set<String> readDataSources = new HashSet<>();
         if (Objects.nonNull(properties.getReadDataSources())) {

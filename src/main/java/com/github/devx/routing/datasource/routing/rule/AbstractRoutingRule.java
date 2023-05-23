@@ -14,7 +14,7 @@ import java.util.Set;
  * @author he peng
  * @since 1.0
  */
-public abstract class AbstractRoutingRule implements PriorityRoutingRule {
+public abstract class AbstractRoutingRule implements StatementRoutingRule , PriorityRoutingRule {
 
     protected final SqlParser sqlParser;
 
@@ -40,9 +40,7 @@ public abstract class AbstractRoutingRule implements PriorityRoutingRule {
         if (Objects.nonNull(key) && Objects.nonNull(key.getSql())) {
             statement = sqlParser.parse(key.getSql());
         }
-        return internalRouting(statement);
+        return routing(statement);
     }
-
-    protected abstract String internalRouting(SqlStatement statement);
 
 }

@@ -23,7 +23,7 @@ public class ReadWriteSplittingRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    protected String internalRouting(SqlStatement statement) {
+    public String routing(SqlStatement statement) {
 
         String choose = null;
         if (statement.isWrite()) {

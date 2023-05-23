@@ -18,7 +18,7 @@ public class ForceWriteRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    protected String internalRouting(SqlStatement statement) {
+    public String routing(SqlStatement statement) {
         return RoutingContext.getForceWriteDataSource() ? writeDataSourceName : null;
     }
 
