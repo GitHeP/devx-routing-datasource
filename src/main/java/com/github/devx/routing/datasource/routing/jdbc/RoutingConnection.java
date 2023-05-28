@@ -1,8 +1,11 @@
 package com.github.devx.routing.datasource.routing.jdbc;
 
+import com.github.devx.routing.datasource.routing.DataSourceMode;
+import com.github.devx.routing.datasource.routing.DataSourceWrapper;
 import com.github.devx.routing.datasource.routing.RoutingContext;
 import com.github.devx.routing.datasource.routing.RoutingContextClearable;
 import com.github.devx.routing.datasource.routing.RoutingDataSource;
+import lombok.Getter;
 
 import javax.sql.DataSource;
 import java.sql.Array;
@@ -31,6 +34,9 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     private volatile Connection connection;
 
+    @Getter
+    private volatile DataSourceMode dataSourceMode;
+
     private volatile Boolean autoCommit;
 
     private volatile boolean closed = false;
@@ -49,6 +55,10 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     public RoutingConnection(RoutingDataSource routingDataSource) {
         this.routingDataSource = routingDataSource;
+    }
+
+    public Connection getDelegateConnection() {
+        return this.connection;
     }
 
     @Override
@@ -297,6 +307,9 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
             this.connection.close();
         }
         this.connection = dataSource.getConnection();
+        if (dataSource instanceof DataSourceWrapper) {
+            this.dataSourceMode = ((DataSourceWrapper) dataSource).getMode();
+        }
         if (this.autoCommit != null) {
             this.connection.setAutoCommit(this.autoCommit);
         }

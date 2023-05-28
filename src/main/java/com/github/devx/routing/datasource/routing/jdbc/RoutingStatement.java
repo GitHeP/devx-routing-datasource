@@ -3,6 +3,7 @@ package com.github.devx.routing.datasource.routing.jdbc;
 import com.github.devx.routing.datasource.routing.RoutingContext;
 import com.github.devx.routing.datasource.routing.RoutingContextClearable;
 import com.github.devx.routing.datasource.routing.RoutingDataSource;
+import lombok.Getter;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -246,6 +247,10 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
     @Override
     public boolean isClosed() throws SQLException {
         return this.closed;
+    }
+
+    public Connection getDelegateConnection() {
+        return this.connection;
     }
 
     private synchronized Statement acquireStatement(String sql) throws SQLException {

@@ -211,6 +211,7 @@ class DefaultRoutingDataSourceTest {
         String sql1 = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
         Connection conn1 = dataSource.getConnection();
         PreparedStatement stmt1 = conn1.prepareStatement(sql1);
+        assertThat(RoutingUtils.isRoutingWrite(conn1)).isTrue();
 
         int row1 = stmt1.executeUpdate();
         close(null , stmt1 , conn1);
@@ -219,6 +220,7 @@ class DefaultRoutingDataSourceTest {
         String sql2 = "SELECT * FROM employee WHERE id = ?";
         Connection conn2 = dataSource.getConnection();
         PreparedStatement stmt2 = conn2.prepareStatement(sql2);
+        assertThat(RoutingUtils.isRoutingRead(conn2)).isTrue();
         stmt2.setInt(1 , 1);
         ResultSet rs = stmt2.executeQuery();
         List<Map<String, Object>> resultList = new ArrayList<>();
