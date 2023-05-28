@@ -51,7 +51,7 @@ class DefaultRoutingDataSourceTest {
 
 
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:~/test");
+        config.setJdbcUrl("jdbc:h2:~/test1");
         config.setUsername("sa");
         config.setPassword("");
         config.setMinimumIdle(5);
@@ -95,8 +95,14 @@ class DefaultRoutingDataSourceTest {
         dataSource = new DefaultRoutingDataSource(dataSources , rule , routingKeyProvider);
 
 
-        Flyway flyway = Flyway.configure().dataSource(writeDataSource).load();
-        flyway.migrate();
+        Flyway flyway1 = Flyway.configure().dataSource(writeDataSource).load();
+        flyway1.migrate();
+
+        Flyway flyway2 = Flyway.configure().dataSource(readDataSource0).load();
+        flyway2.migrate();
+
+        Flyway flyway3 = Flyway.configure().dataSource(readDataSource1).load();
+        flyway3.migrate();
 
     }
 
@@ -198,6 +204,8 @@ class DefaultRoutingDataSourceTest {
 
         close(rs , stmt4 , conn);
     }
+
+
 
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
