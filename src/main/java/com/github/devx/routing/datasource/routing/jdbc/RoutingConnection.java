@@ -286,6 +286,9 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
     }
 
     private Connection preparedConnection(String sql) throws SQLException {
+        if (Objects.nonNull(connection) && RoutingContext.inTx()) {
+            return this.connection;
+        }
         return acquireConnection(routingDataSource.getDataSourceWithSql(sql));
     }
 

@@ -14,6 +14,7 @@ import com.github.devx.routing.datasource.sql.parser.SqlParser;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,6 +100,15 @@ class DefaultRoutingDataSourceTest {
 
     }
 
+    @AfterAll
+    static void clearDataBase() throws Exception {
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("DROP ALL OBJECTS");
+        statement.close();
+        connection.close();
+    }
+
     @Test
     void testGetEmployeeNamesAndDepartmentNamesByArea() throws Exception {
 
@@ -129,6 +140,65 @@ class DefaultRoutingDataSourceTest {
         // close
         close(rs , stmt , conn);
     }
+
+    @Test
+    void testTxInsert() throws Exception {
+
+        String sql1 = "INSERT INTO area (id, name) VALUES (5, 'New York')";
+
+        Connection conn = dataSource.getConnection();
+        conn.setAutoCommit(false);
+        conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+        PreparedStatement stmt1 = conn.prepareStatement(sql1);
+
+        int row1 = stmt1.executeUpdate();
+        stmt1.close();
+        assertThat(row1).isEqualTo(1);
+
+
+        String sql2 = "INSERT INTO department (id, name, area_id) VALUES  (5, 'Research', 5)";
+        PreparedStatement stmt2 = conn.prepareStatement(sql2);
+
+        int row2 = stmt2.executeUpdate();
+        stmt2.close();
+        assertThat(row2).isEqualTo(1);
+
+        String sql3 = "INSERT INTO employee (id, name, department_id) VALUES (6, 'Doge Lee', 5) ";
+        PreparedStatement stmt3 = conn.prepareStatement(sql3);
+
+        int row3 = stmt3.executeUpdate();
+        stmt3.close();
+        assertThat(row3).isEqualTo(1);
+
+        String sql4 = "SELECT e.name AS employee_name, d.name AS department_name , a.name AS area_name " +
+                "FROM employee e " +
+                "INNER JOIN department d ON e.department_id = d.id " +
+                "INNER JOIN area a ON d.area_id = a.id " +
+                "WHERE e.id = ?";
+
+        PreparedStatement stmt4 = conn.prepareStatement(sql4);
+        stmt4.setInt(1 , 6);
+        ResultSet rs = stmt4.executeQuery();
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("employee_name", rs.getString("employee_name"));
+            resultMap.put("department_name", rs.getString("department_name"));
+            resultMap.put("area_name", rs.getString("area_name"));
+            resultList.add(resultMap);
+        }
+
+        assertThat(resultList)
+                .extracting("employee_name", "department_name" , "area_name")
+                .containsExactlyInAnyOrder(
+                        tuple("Doge Lee", "Research" , "New York")
+                );
+
+        close(rs , stmt4 , conn);
+    }
+
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
         rs.close();

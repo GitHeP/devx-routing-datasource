@@ -1,6 +1,6 @@
 package com.github.devx.routing.datasource.sql.parser;
 
-import com.github.devx.routing.datasource.exception.UnsupportedSqlException;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
@@ -47,6 +47,8 @@ import java.util.Set;
  * @author he peng
  * @since 1.0
  */
+
+@Slf4j
 public class JSqlParser implements SqlParser {
 
 
@@ -99,7 +101,8 @@ public class JSqlParser implements SqlParser {
             SqlStatementVisitor visitor = new SqlStatementVisitor();
             sqlStatement = visitor.build(statement).setSql(sql);
         } catch (JSQLParserException e) {
-            throw new UnsupportedSqlException(String.format("Cannot be parsed SQL statement [%s]", sql), e);
+            log.warn("Cannot be parsed SQL statement [{}]", sql);
+            sqlStatement = null;
         }
         return sqlStatement;
     }
