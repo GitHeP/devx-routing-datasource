@@ -1,5 +1,6 @@
 package com.github.devx.routing.datasource.routing.jdbc;
 
+import com.github.devx.routing.datasource.routing.RoutingContext;
 import com.github.devx.routing.datasource.routing.RoutingContextClearable;
 import com.github.devx.routing.datasource.routing.RoutingDataSource;
 
@@ -268,6 +269,9 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
     }
 
     private Connection acquireConnection(String sql) throws SQLException {
+        if (Objects.nonNull(connection) && RoutingContext.inTx()) {
+            return this.connection;
+        }
         DataSource dataSource = routingDataSource.getDataSourceWithSql(sql);
         this.connection = dataSource.getConnection();
         return this.connection;
