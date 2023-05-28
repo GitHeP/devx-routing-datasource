@@ -6,6 +6,8 @@ import com.github.devx.routing.datasource.integration.datasource.CompositeDataSo
 import com.github.devx.routing.datasource.integration.datasource.DataSourceInitializer;
 import com.github.devx.routing.datasource.integration.datasource.GenericDataSourceInitializer;
 import com.github.devx.routing.datasource.integration.mybatis.ExecutingSqlInterceptor;
+import com.github.devx.routing.datasource.routing.DataSourceMode;
+import com.github.devx.routing.datasource.routing.DataSourceWrapper;
 import com.github.devx.routing.datasource.routing.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.routing.RoutingContextRoutingKeyProvider;
 import com.github.devx.routing.datasource.routing.RoutingKeyProvider;
@@ -131,7 +133,11 @@ public class RoutingDataSourceConfiguration {
                 throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingDataSourceProperties.DATA_SOURCE_CLASS_NAME_KEY));
             }
             DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , property);
-            dataSources.put(name , dataSource);
+            DataSourceMode mode = DataSourceMode.READ;
+            if (properties.getWriteDataSource().equals(name)) {
+                mode = DataSourceMode.READ_WRITE;
+            }
+            dataSources.put(name , new DataSourceWrapper(dataSource , mode , name));
         }
 
         return new DefaultRoutingDataSource(dataSources , routingRule , routingKeyProvider);
