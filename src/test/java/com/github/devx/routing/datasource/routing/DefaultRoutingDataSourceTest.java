@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -205,12 +206,47 @@ class DefaultRoutingDataSourceTest {
         close(rs , stmt4 , conn);
     }
 
+    @Test
+    void testNoTxWriteAndRead() throws Exception {
+        String sql1 = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
+        Connection conn1 = dataSource.getConnection();
+        PreparedStatement stmt1 = conn1.prepareStatement(sql1);
 
+        int row1 = stmt1.executeUpdate();
+        close(null , stmt1 , conn1);
+        assertThat(row1).isEqualTo(1);
+
+        String sql2 = "SELECT * FROM employee WHERE id = ?";
+        Connection conn2 = dataSource.getConnection();
+        PreparedStatement stmt2 = conn2.prepareStatement(sql2);
+        stmt2.setInt(1 , 1);
+        ResultSet rs = stmt2.executeQuery();
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("employee_name", rs.getString("name"));
+            resultMap.put("employee_id", rs.getString("id"));
+            resultList.add(resultMap);
+        }
+
+        assertThat(resultList)
+                .extracting("employee_id" , "employee_name")
+                .containsExactlyInAnyOrder(
+                        tuple("1" , "John Doe")
+                );
+
+    }
 
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
-        rs.close();
-        stmt.close();
-        conn.close();
+        if (Objects.nonNull(rs)) {
+            rs.close();
+        }
+        if (Objects.nonNull(stmt)) {
+            stmt.close();
+        }
+        if (Objects.nonNull(conn)) {
+            conn.close();
+        }
     }
 }
