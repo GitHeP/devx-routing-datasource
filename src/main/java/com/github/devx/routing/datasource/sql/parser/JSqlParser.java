@@ -4,24 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Commit;
-import net.sf.jsqlparser.statement.CreateFunctionalStatement;
 import net.sf.jsqlparser.statement.ExplainStatement;
-import net.sf.jsqlparser.statement.RollbackStatement;
-import net.sf.jsqlparser.statement.ShowColumnsStatement;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.alter.Alter;
-import net.sf.jsqlparser.statement.alter.AlterSession;
-import net.sf.jsqlparser.statement.alter.AlterSystemStatement;
-import net.sf.jsqlparser.statement.alter.RenameTableStatement;
-import net.sf.jsqlparser.statement.alter.sequence.AlterSequence;
-import net.sf.jsqlparser.statement.create.function.CreateFunction;
-import net.sf.jsqlparser.statement.create.index.CreateIndex;
-import net.sf.jsqlparser.statement.create.schema.CreateSchema;
-import net.sf.jsqlparser.statement.create.table.CreateTable;
-import net.sf.jsqlparser.statement.create.view.AlterView;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -29,9 +13,6 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.show.ShowTablesStatement;
-import net.sf.jsqlparser.statement.truncate.Truncate;
-import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.Collections;
@@ -51,42 +32,13 @@ import java.util.Set;
 @Slf4j
 public class JSqlParser implements SqlParser {
 
-
-    private static final Set<Class<? extends Statement>> WRITE_STATEMENTS = Collections.synchronizedSet(new HashSet<>());
-
     private static final Set<Class<? extends Statement>> READ_STATEMENTS = Collections.synchronizedSet(new HashSet<>());
 
     static {
-
-        // register write statement
-        registerWriteStatement(Delete.class);
-        registerWriteStatement(Insert.class);
-        registerWriteStatement(Update.class);
-        registerWriteStatement(Truncate.class);
-        registerWriteStatement(CreateSchema.class);
-        registerWriteStatement(CreateTable.class);
-        registerWriteStatement(CreateIndex.class);
-        registerWriteStatement(CreateFunction.class);
-        registerWriteStatement(CreateFunctionalStatement.class);
-        registerWriteStatement(RenameTableStatement.class);
-        registerWriteStatement(Commit.class);
-        registerWriteStatement(RollbackStatement.class);
-        registerWriteStatement(Alter.class);
-        registerWriteStatement(AlterSession.class);
-        registerWriteStatement(AlterSystemStatement.class);
-        registerWriteStatement(AlterView.class);
-        registerWriteStatement(AlterSequence.class);
-
         // register read statement
         registerReadStatement(Select.class);
         registerReadStatement(ExplainStatement.class);
-        registerReadStatement(ShowColumnsStatement.class);
-        registerReadStatement(ShowTablesStatement.class);
 
-    }
-
-    private static void registerWriteStatement(Class<? extends Statement> type) {
-        WRITE_STATEMENTS.add(type);
     }
 
     private static void registerReadStatement(Class<? extends Statement> type) {
@@ -192,7 +144,7 @@ public class JSqlParser implements SqlParser {
         }
 
         private boolean isWrite(Statement statement) {
-            return WRITE_STATEMENTS.contains(statement.getClass());
+            return !isRead(statement);
         }
     }
 }
