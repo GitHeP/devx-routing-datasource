@@ -3,9 +3,12 @@ package com.github.devx.routing.datasource.routing;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author he peng
@@ -22,6 +25,8 @@ public class RoutingContext {
     private static final String FORCE_WRITE_DATA_SOURCE_KEY = "FORCE_WRITE_DATA_SOURCE";
 
     private static final String FORCE_READ_DATA_SOURCE_KEY = "FORCE_READ_DATA_SOURCE";
+
+    private static final String FORCE_DATA_SOURCE_KEY = "FORCE_DATA_SOURCE";
 
     private static final String ROUTED_DATA_SOURCE_NAME_KEY = "ROUTED_DATA_SOURCE_NAME";
 
@@ -51,6 +56,12 @@ public class RoutingContext {
         map.put(key , val);
     }
 
+    public static void removeResource(Object key) {
+        Map<Object, Object> map = RESOURCES.get();
+        if (Objects.nonNull(map)) {
+            map.remove(key);
+        }
+    }
 
     public static Object getResource(Object key) {
         return RESOURCES.get().get(key);
@@ -83,8 +94,17 @@ public class RoutingContext {
         return Objects.nonNull(value) && (boolean) value;
     }
 
+    /**
+     * forceWrite, forceRead, and force are mutually exclusive,
+     * setting one will clear the others.
+     *
+     * @see #forceRead()
+     * @see #force(String...)
+     */
     public static void forceWrite() {
         addResource(FORCE_WRITE_DATA_SOURCE_KEY, true);
+        removeResource(FORCE_DATA_SOURCE_KEY);
+        removeResource(FORCE_READ_DATA_SOURCE_KEY);
     }
 
     public static boolean isForceWriteDataSource() {
@@ -92,13 +112,45 @@ public class RoutingContext {
         return Objects.nonNull(value) && (boolean) value;
     }
 
+    /**
+     * forceWrite, forceRead, and force are mutually exclusive,
+     * setting one will clear the others.
+     *
+     * @see #forceWrite()
+     * @see #force(String...)
+     */
     public static void forceRead() {
         addResource(FORCE_READ_DATA_SOURCE_KEY, true);
+        removeResource(FORCE_DATA_SOURCE_KEY);
+        removeResource(FORCE_WRITE_DATA_SOURCE_KEY);
     }
 
     public static boolean isForceReadDataSource() {
         Object value = getResource(FORCE_READ_DATA_SOURCE_KEY);
         return Objects.nonNull(value) && (boolean) value;
+    }
+
+    /**
+     * forceWrite, forceRead, and force are mutually exclusive,
+     * setting one will clear the others.
+     *
+     * @see #forceWrite()
+     * @see #forceRead()
+     */
+    public static void force(String ... dataSourceNames) {
+        if (Objects.isNull(dataSourceNames) || dataSourceNames.length == 0) {
+            return;
+        }
+        Set<String> dataSources = new HashSet<>(Arrays.asList(dataSourceNames));
+        addResource(FORCE_DATA_SOURCE_KEY, dataSources);
+        removeResource(FORCE_READ_DATA_SOURCE_KEY);
+        removeResource(FORCE_WRITE_DATA_SOURCE_KEY);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static Set<String> getForceDataSources() {
+        Object value = getResource(FORCE_DATA_SOURCE_KEY);
+        return Objects.nonNull(value) ? (Set<String>) value : null;
     }
 
     public static void setRoutedDataSourceName(String name) {
