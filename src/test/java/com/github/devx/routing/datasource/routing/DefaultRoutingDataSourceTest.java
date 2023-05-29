@@ -268,6 +268,22 @@ class DefaultRoutingDataSourceTest {
                 );
     }
 
+    @Test
+    void testTxReadonlyNegative() throws Exception {
+        Connection conn = dataSource.getConnection();
+        conn.setAutoCommit(false);
+        conn.setReadOnly(true);
+
+        String sql1 = "INSERT INTO area (id, name) VALUES (6, 'Manchester')";
+        PreparedStatement stmt1 = conn.prepareStatement(sql1);
+
+        assertThat(RoutingUtils.isRoutingRead(conn)).isTrue();
+
+        int rows = stmt1.executeUpdate();
+        assertThat(rows).isEqualTo(1);
+        close(null , stmt1 , conn);
+    }
+
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
         if (Objects.nonNull(rs)) {
