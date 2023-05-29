@@ -26,7 +26,7 @@ import java.util.Set;
  * @see ForceWriteRoutingRule
  * @see TxRoutingRule
  * @see ReadWriteSplittingRoutingRule
- * @see TableRoutingRule
+ * @see FromTableRoutingRule
  */
 public class CompositeRoutingRule extends AbstractRoutingRule {
 

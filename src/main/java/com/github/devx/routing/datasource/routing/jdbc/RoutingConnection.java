@@ -32,7 +32,7 @@ import java.util.Properties;
  */
 public class RoutingConnection extends AbstractConnectionAdapter implements RoutingContextClearable {
 
-    private volatile Connection connection;
+    private Connection connection;
 
     @Getter
     private volatile DataSourceMode dataSourceMode;
@@ -55,10 +55,6 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     public RoutingConnection(RoutingDataSource routingDataSource) {
         this.routingDataSource = routingDataSource;
-    }
-
-    public Connection getDelegateConnection() {
-        return this.connection;
     }
 
     @Override

@@ -18,7 +18,7 @@ import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
 import com.github.devx.routing.datasource.routing.rule.StatementRoutingRule;
-import com.github.devx.routing.datasource.routing.rule.TableRoutingRule;
+import com.github.devx.routing.datasource.routing.rule.FromTableRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.TxRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.UnknownStatementRoutingRule;
 import com.github.devx.routing.datasource.sql.parser.JSqlParser;
@@ -99,19 +99,10 @@ public class RoutingDataSourceConfiguration {
         routingRules.add(readWriteSplittingRoutingRule);
         routingRules.add(forceWriteRoutingRule);
 
-        if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
-            List<Map<String, TableRuleConfiguration>> tableRules = properties.getRules().getTables();
-            List<TableRuleConfiguration> tableRuleConfigurations = new ArrayList<>();
-            for (Map<String, TableRuleConfiguration> tableRule : tableRules) {
-                for (Map.Entry<String, TableRuleConfiguration> entry : tableRule.entrySet()) {
-                    Set<String> tables = new HashSet<>();
-                    tables.add(entry.getKey());
-                    entry.getValue().setTables(tables);
-                    tableRuleConfigurations.add(entry.getValue());
-                }
-            }
-            TableRoutingRule tableRoutingRule = new TableRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources, tableRuleConfigurations);
-            routingRules.add(tableRoutingRule);
+        if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTableRule())) {
+            TableRuleConfiguration tableRule = properties.getRules().getTableRule();
+            FromTableRoutingRule fromTableRoutingRule = new FromTableRoutingRule(tableRule);
+            routingRules.add(fromTableRoutingRule);
         }
 
         return new CompositeRoutingRule(sqlParser , loadBalancer , properties.getWriteDataSource(), readDataSources , routingRules);

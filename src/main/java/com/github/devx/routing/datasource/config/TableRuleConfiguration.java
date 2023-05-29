@@ -2,6 +2,7 @@ package com.github.devx.routing.datasource.config;
 
 import lombok.Data;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,11 +13,9 @@ import java.util.Set;
 @Data
 public class TableRuleConfiguration {
 
-    private Set<String> tables;
-
-    private boolean forceWriteDataSource;
-
-    private String writeDataSource;
-
-    private Set<String> readDataSources;
+    /**
+     * key - table name
+     * value - datasource names
+     */
+    private Map<String , Set<String>> tables;
 }
