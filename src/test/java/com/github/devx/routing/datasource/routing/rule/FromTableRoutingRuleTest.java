@@ -34,10 +34,17 @@ class FromTableRoutingRuleTest {
         tables.put("employee" , employeeDatasourceNames);
         tableRule.setTables(tables);
         FromTableRoutingRule routingRule = new FromTableRoutingRule(tableRule);
-        String sql = "select * from employee where name = 'DevX'";
-        String result = routingRule.routing(sqlParser.parse(sql));
+        String sql1 = "select * from employee where name = 'DevX'";
+        String result1 = routingRule.routing(sqlParser.parse(sql1));
 
         setAllowComparingPrivateFields(true);
-        assertThat(employeeDatasourceNames).contains(result);
+        assertThat(employeeDatasourceNames).contains(result1);
+
+        String sql2 = "SELECT e.* , u.* \n" +
+                "FROM employee e , users u\n" +
+                "WHERE e.user_id = u.id;";
+        String result2 = routingRule.routing(sqlParser.parse(sql2));
+
+        assertThat(employeeDatasourceNames).contains(result2);
     }
 }
