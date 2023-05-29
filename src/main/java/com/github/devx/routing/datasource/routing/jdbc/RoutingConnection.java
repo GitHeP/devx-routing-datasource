@@ -47,6 +47,8 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     private volatile String schema;
 
+    private volatile Integer holdability;
+
     private final Map<String , String> clientInfoMap = new HashMap<>();
 
     private Properties clientInfo;
@@ -291,6 +293,20 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         return Objects.nonNull(connection) ? connection.getSchema() : this.schema;
     }
 
+    @Override
+    public synchronized void setHoldability(int holdability) throws SQLException {
+        super.setHoldability(holdability);
+        if (Objects.nonNull(connection)) {
+            connection.setHoldability(holdability);
+        }
+        this.holdability = holdability;
+    }
+
+    @Override
+    public int getHoldability() throws SQLException {
+        return this.holdability;
+    }
+
     public Connection preparedConnection(String sql) throws SQLException {
         if (Objects.nonNull(connection) && RoutingContext.inTx()) {
             return this.connection;
@@ -317,6 +333,9 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         }
         if (this.schema != null) {
             this.connection.setSchema(this.schema);
+        }
+        if (this.holdability != null) {
+            this.connection.setHoldability(holdability);
         }
         if (this.clientInfo != null) {
             this.connection.setClientInfo(clientInfo);
