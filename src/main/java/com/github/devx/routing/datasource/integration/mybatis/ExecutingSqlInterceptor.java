@@ -47,7 +47,7 @@ public class ExecutingSqlInterceptor implements Interceptor {
             RoutingContext.addCurrentlyExecutingSql(sql);
             return invocation.proceed();
         } finally {
-            if (!RoutingContext.inTx() && !RoutingContext.getForceWriteDataSource()) {
+            if (!RoutingContext.inTx() && !RoutingContext.isForceWriteDataSource()) {
                 RoutingContext.clear();
             }
         }

@@ -14,11 +14,12 @@ import com.github.devx.routing.datasource.routing.RoutingKeyProvider;
 import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.datasource.routing.rule.CompositeRoutingRule;
+import com.github.devx.routing.datasource.routing.rule.ForceReadRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
+import com.github.devx.routing.datasource.routing.rule.FromTableRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
 import com.github.devx.routing.datasource.routing.rule.StatementRoutingRule;
-import com.github.devx.routing.datasource.routing.rule.FromTableRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.TxRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.UnknownStatementRoutingRule;
 import com.github.devx.routing.datasource.sql.parser.JSqlParser;
@@ -91,6 +92,7 @@ public class RoutingDataSourceConfiguration {
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
+        ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         if (Objects.isNull(routingRules)) {
             routingRules = new ArrayList<>();
         }
@@ -98,6 +100,7 @@ public class RoutingDataSourceConfiguration {
         routingRules.add(txRoutingRule);
         routingRules.add(readWriteSplittingRoutingRule);
         routingRules.add(forceWriteRoutingRule);
+        routingRules.add(forceReadRoutingRule);
 
         if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTableRule())) {
             TableRuleConfiguration tableRule = properties.getRules().getTableRule();

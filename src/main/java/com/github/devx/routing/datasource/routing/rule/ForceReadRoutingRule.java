@@ -8,22 +8,22 @@ import com.github.devx.routing.datasource.sql.parser.SqlStatement;
 import java.util.Set;
 
 /**
- * Force routing to the write data source.
+ * Force routing to the read data source.
  *
  * @author he peng
  * @since 1.0
  *
- * @see RoutingContext#forceWrite()
+ * @see RoutingContext#forceRead()
  */
-public class ForceWriteRoutingRule extends AbstractRoutingRule {
+public class ForceReadRoutingRule extends AbstractRoutingRule {
 
-    public ForceWriteRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
+    public ForceReadRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
         super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
     }
 
     @Override
     public String routing(SqlStatement statement) {
-        return RoutingContext.isForceWriteDataSource() ? writeDataSourceName : null;
+        return RoutingContext.isForceReadDataSource() ? loadBalancer.choose() : null;
     }
 
     @Override

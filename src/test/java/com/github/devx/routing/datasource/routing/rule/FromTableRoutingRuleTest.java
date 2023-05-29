@@ -14,9 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.setAllowComparingPrivateFields;
 
 /**
- * @author: he peng
- * @create: 2023/5/29 15:50
- * @description:
+ * @author he peng
+ * @since 1.0
  */
 class FromTableRoutingRuleTest {
 

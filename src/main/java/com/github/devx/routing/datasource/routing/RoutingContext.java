@@ -19,7 +19,9 @@ public class RoutingContext {
 
     private static final String TX_READ_ONLY_KEY = "TX_READ_ONLY";
 
-    private static final String FORCE_DATA_SOURCE_KEY = "FORCE_DATA_SOURCE";
+    private static final String FORCE_WRITE_DATA_SOURCE_KEY = "FORCE_WRITE_DATA_SOURCE";
+
+    private static final String FORCE_READ_DATA_SOURCE_KEY = "FORCE_READ_DATA_SOURCE";
 
     private static final String ROUTED_DATA_SOURCE_NAME_KEY = "ROUTED_DATA_SOURCE_NAME";
 
@@ -82,11 +84,20 @@ public class RoutingContext {
     }
 
     public static void forceWrite() {
-        addResource(FORCE_DATA_SOURCE_KEY , true);
+        addResource(FORCE_WRITE_DATA_SOURCE_KEY, true);
     }
 
-    public static boolean getForceWriteDataSource() {
-        Object value = getResource(FORCE_DATA_SOURCE_KEY);
+    public static boolean isForceWriteDataSource() {
+        Object value = getResource(FORCE_WRITE_DATA_SOURCE_KEY);
+        return Objects.nonNull(value) && (boolean) value;
+    }
+
+    public static void forceRead() {
+        addResource(FORCE_READ_DATA_SOURCE_KEY, true);
+    }
+
+    public static boolean isForceReadDataSource() {
+        Object value = getResource(FORCE_READ_DATA_SOURCE_KEY);
         return Objects.nonNull(value) && (boolean) value;
     }
 

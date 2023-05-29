@@ -3,6 +3,7 @@ package com.github.devx.routing.datasource.routing;
 import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.datasource.routing.rule.CompositeRoutingRule;
+import com.github.devx.routing.datasource.routing.rule.ForceReadRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
@@ -84,12 +85,14 @@ class DefaultRoutingDataSourceTest {
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, writeDataSourceName , readDataSourceNames);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+        ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
 
         List<StatementRoutingRule> routingRules = new ArrayList<>();
         routingRules.add(unknownStatementRoutingRule);
         routingRules.add(txRoutingRule);
         routingRules.add(readWriteSplittingRoutingRule);
         routingRules.add(forceWriteRoutingRule);
+        routingRules.add(forceReadRoutingRule);
 
         RoutingRule rule = new CompositeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames , routingRules);
         RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
