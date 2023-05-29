@@ -239,6 +239,35 @@ class DefaultRoutingDataSourceTest {
 
     }
 
+    @Test
+    void testTxReadonly() throws Exception {
+
+        Connection conn = dataSource.getConnection();
+        conn.setAutoCommit(false);
+        conn.setReadOnly(true);
+
+        String sql1 = "SELECT * FROM employee WHERE id = ?";
+        PreparedStatement stmt1 = conn.prepareStatement(sql1);
+        stmt1.setInt(1 , 1);
+
+        assertThat(RoutingUtils.isRoutingRead(conn)).isTrue();
+
+        ResultSet rs = stmt1.executeQuery();
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("employee_name", rs.getString("name"));
+            resultMap.put("employee_id", rs.getString("id"));
+            resultList.add(resultMap);
+        }
+
+        assertThat(resultList)
+                .extracting("employee_id" , "employee_name")
+                .containsExactlyInAnyOrder(
+                        tuple("1" , "John Doe")
+                );
+    }
+
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
         if (Objects.nonNull(rs)) {

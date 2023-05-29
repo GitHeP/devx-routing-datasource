@@ -1,11 +1,7 @@
 package com.github.devx.routing.datasource.routing.jdbc;
 
-import com.github.devx.routing.datasource.routing.RoutingContext;
 import com.github.devx.routing.datasource.routing.RoutingContextClearable;
-import com.github.devx.routing.datasource.routing.RoutingDataSource;
-import lombok.Getter;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,11 +14,9 @@ import java.util.Objects;
  */
 public class RoutingStatement extends AbstractStatementAdapter implements RoutingContextClearable {
 
-    private final RoutingDataSource routingDataSource;
+    private final RoutingConnection connection;
 
-    private Connection connection;
-
-    private volatile Statement statement;
+    private Statement statement;
 
     private boolean closed = false;
 
@@ -43,15 +37,14 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
     private Integer resultSetHoldability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
 
 
-    public RoutingStatement(RoutingDataSource routingDataSource, Connection connection ,Integer resultSetType, Integer resultSetConcurrency , Integer resultSetHoldability) {
-        this(routingDataSource , connection);
+    public RoutingStatement(RoutingConnection connection ,Integer resultSetType, Integer resultSetConcurrency , Integer resultSetHoldability) {
+        this(connection);
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
         this.resultSetHoldability = resultSetHoldability;
     }
 
-    public RoutingStatement(RoutingDataSource routingDataSource, Connection connection) {
-        this.routingDataSource = routingDataSource;
+    public RoutingStatement(RoutingConnection connection) {
         this.connection = connection;
     }
 
@@ -249,12 +242,8 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
         return this.closed;
     }
 
-    public Connection getDelegateConnection() {
-        return this.connection;
-    }
-
     private synchronized Statement acquireStatement(String sql) throws SQLException {
-        this.statement = acquireConnection(sql).createStatement();
+        this.statement = connection.preparedConnection(sql).createStatement();
         if (this.fetchSize != null) {
             this.statement.setFetchSize(this.fetchSize);
         }
@@ -271,14 +260,5 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
             this.statement.setQueryTimeout(this.queryTimeout);
         }
         return this.statement;
-    }
-
-    private Connection acquireConnection(String sql) throws SQLException {
-        if (Objects.nonNull(connection) && RoutingContext.inTx()) {
-            return this.connection;
-        }
-        DataSource dataSource = routingDataSource.getDataSourceWithSql(sql);
-        this.connection = dataSource.getConnection();
-        return this.connection;
     }
 }

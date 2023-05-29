@@ -63,17 +63,17 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     @Override
     public Statement createStatement() throws SQLException {
-        return new RoutingStatement(routingDataSource , this);
+        return new RoutingStatement(this);
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return new RoutingStatement(routingDataSource, this , null , resultSetConcurrency , null);
+        return new RoutingStatement(this , null , resultSetConcurrency , null);
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return new RoutingStatement(routingDataSource, this , resultSetType , resultSetConcurrency , resultSetHoldability);
+        return new RoutingStatement(this , resultSetType , resultSetConcurrency , resultSetHoldability);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         return Objects.nonNull(connection) ? connection.getSchema() : this.schema;
     }
 
-    private Connection preparedConnection(String sql) throws SQLException {
+    public Connection preparedConnection(String sql) throws SQLException {
         if (Objects.nonNull(connection) && RoutingContext.inTx()) {
             return this.connection;
         }
