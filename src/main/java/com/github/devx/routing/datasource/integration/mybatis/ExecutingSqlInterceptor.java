@@ -15,8 +15,12 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author he peng
  * @since 1.0
+ *
+ * @deprecated Perform SQL routing based on the JDBC API,
+ * without relying on any third-party libraries to route SQL.
  */
 
+@Deprecated
 @Intercepts({@Signature(
         type = Executor.class,
         method = "update",
