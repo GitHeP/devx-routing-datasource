@@ -22,9 +22,10 @@ public abstract class AbstractRoutingDataSource implements RoutingDataSource {
     protected final Map<String , DataSource> dataSources = new ConcurrentHashMap<>();
 
     protected AbstractRoutingDataSource(Map<String , DataSource> dataSources) {
-        if (Objects.nonNull(dataSources)) {
-            this.dataSources.putAll(dataSources);
+        if (Objects.isNull(dataSources) || dataSources.isEmpty()) {
+            throw new NoSuchDataSourceException("Data sources cannot be empty.");
         }
+        this.dataSources.putAll(dataSources);
     }
 
     @Override
@@ -44,43 +45,47 @@ public abstract class AbstractRoutingDataSource implements RoutingDataSource {
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return getDataSource().getConnection(username , password);
+        return Objects.requireNonNull(getDataSource()).getConnection(username , password);
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return getDataSource().unwrap(iface);
+        return Objects.requireNonNull(getDataSource()).unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return getDataSource().isWrapperFor(iface);
+        return Objects.requireNonNull(getDataSource()).isWrapperFor(iface);
     }
 
     @Override
     public PrintWriter getLogWriter() throws SQLException {
-        return getDataSource().getLogWriter();
+        return Objects.requireNonNull(getDataSource()).getLogWriter();
     }
 
     @Override
     public void setLogWriter(PrintWriter out) throws SQLException {
-        getDataSource().setLogWriter(out);
+        Objects.requireNonNull(getDataSource()).setLogWriter(out);
     }
 
     @Override
     public void setLoginTimeout(int seconds) throws SQLException {
-        getDataSource().setLoginTimeout(seconds);
+        Objects.requireNonNull(getDataSource()).setLoginTimeout(seconds);
     }
 
     @Override
     public int getLoginTimeout() throws SQLException {
-        return getDataSource().getLoginTimeout();
+        return Objects.requireNonNull(getDataSource()).getLoginTimeout();
     }
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return getDataSource().getParentLogger();
+        return Objects.requireNonNull(getDataSource()).getParentLogger();
     }
 
+    /**
+     * get an internal DataSource instance
+     * @return DataSource
+     */
     protected abstract DataSource getDataSource();
 }
