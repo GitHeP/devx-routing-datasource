@@ -98,12 +98,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>9.18.0</version>
-        </dependency>
-
 
         <dependency>
             <groupId>com.h2database</groupId>

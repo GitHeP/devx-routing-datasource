@@ -1,6 +1,6 @@
 
 -- Create area table
-CREATE TABLE area (
+CREATE TABLE IF NOT EXISTS area (
   id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
@@ -11,7 +11,7 @@ INSERT INTO area (id, name) VALUES
   (2, 'South');
 
 -- Create department table
-CREATE TABLE department (
+CREATE TABLE IF NOT EXISTS department (
   id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   area_id INT NOT NULL
@@ -23,7 +23,7 @@ INSERT INTO department (id, name, area_id) VALUES
   (2, 'Sales', 2);
 
 -- Create employee table
-CREATE TABLE employee (
+CREATE TABLE IF NOT EXISTS employee (
   id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   department_id INT NOT NULL

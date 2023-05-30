@@ -15,7 +15,7 @@ import com.github.devx.routing.datasource.sql.parser.SqlParser;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.flywaydb.core.Flyway;
+import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,6 +37,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.VerboseMode;
 
 import javax.sql.DataSource;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -82,10 +83,12 @@ public class DefaultRoutingDataSourceTest {
 
     @BeforeAll
     @Setup(Level.Trial)
-    public static void initDataSource() {
+    public static void initDataSource() throws Exception {
+
+        FileReader initSqlReader = new FileReader("src/test/resources/init.sql");
 
         HikariConfig config1 = new HikariConfig();
-        config1.setJdbcUrl("jdbc:h2:~/test1;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;");
         config1.setDriverClassName("org.h2.Driver");
         config1.setUsername("sa");
         config1.setPassword("");
@@ -96,8 +99,13 @@ public class DefaultRoutingDataSourceTest {
 
         HikariDataSource writeDataSource = new HikariDataSource(config1);
 
+        RoutingContext.force(writeDataSourceName);
+        Connection conn1 = writeDataSource.getConnection();
+        ResultSet rs1 = RunScript.execute(conn1 , initSqlReader);
+        close(rs1 , null , conn1);
+
         HikariConfig config2 = new HikariConfig();
-        config2.setJdbcUrl("jdbc:h2:~/test2;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config2.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;");
         config2.setDriverClassName("org.h2.Driver");
         config2.setUsername("sa");
         config2.setPassword("");
@@ -108,8 +116,13 @@ public class DefaultRoutingDataSourceTest {
 
         HikariDataSource readDataSource0 = new HikariDataSource(config2);
 
+        RoutingContext.force(readDataSource0Name);
+        Connection conn2 = readDataSource0.getConnection();
+        ResultSet rs2 = RunScript.execute(conn2, initSqlReader);
+        close(rs2 , null , conn2);
+
         HikariConfig config3 = new HikariConfig();
-        config3.setJdbcUrl("jdbc:h2:~/test2;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config3.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;INIT=runscript from 'src/test/resources/init.sql'");
         config3.setDriverClassName("org.h2.Driver");
         config3.setUsername("sa");
         config3.setPassword("");
@@ -119,6 +132,11 @@ public class DefaultRoutingDataSourceTest {
         config3.setAutoCommit(false);
 
         HikariDataSource readDataSource1 = new HikariDataSource(config3);
+
+        RoutingContext.force(readDataSource1Name);
+        Connection conn3 = readDataSource0.getConnection();
+        ResultSet rs3 = RunScript.execute(conn3, initSqlReader);
+        close(rs3 , null , conn3);
 
         Set<String> readDataSourceNames = new HashSet<>();
         readDataSourceNames.add(readDataSource0Name);
@@ -148,17 +166,6 @@ public class DefaultRoutingDataSourceTest {
         RoutingRule rule = new CompositeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames , routingRules);
         RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
         dataSource = new DefaultRoutingDataSource(dataSources , rule , routingKeyProvider);
-
-
-        Flyway flyway1 = Flyway.configure().dataSource(writeDataSource).load();
-        flyway1.migrate();
-
-        Flyway flyway2 = Flyway.configure().dataSource(readDataSource0).load();
-        flyway2.migrate();
-
-        Flyway flyway3 = Flyway.configure().dataSource(readDataSource1).load();
-        flyway3.migrate();
-
     }
 
     @TearDown
