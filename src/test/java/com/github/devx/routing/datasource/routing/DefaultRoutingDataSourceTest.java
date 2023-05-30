@@ -88,7 +88,7 @@ public class DefaultRoutingDataSourceTest {
         String initSqlPath = "src/test/resources/init.sql";
 
         HikariConfig config1 = new HikariConfig();
-        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;TRACE_LEVEL_SYSTEM_OUT=3;");
+        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;TRACE_LEVEL_SYSTEM_OUT=3;");
         config1.setDriverClassName("org.h2.Driver");
         config1.setUsername("sa");
         config1.setPassword("");
@@ -105,7 +105,7 @@ public class DefaultRoutingDataSourceTest {
         close(rs1 , null , conn1);
 
         HikariConfig config2 = new HikariConfig();
-        config2.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;");
+        config2.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;");
         config2.setDriverClassName("org.h2.Driver");
         config2.setUsername("sa");
         config2.setPassword("");
@@ -122,7 +122,7 @@ public class DefaultRoutingDataSourceTest {
         close(rs2 , null , conn2);
 
         HikariConfig config3 = new HikariConfig();
-        config3.setJdbcUrl("jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;");
+        config3.setJdbcUrl("jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;");
         config3.setDriverClassName("org.h2.Driver");
         config3.setUsername("sa");
         config3.setPassword("");
