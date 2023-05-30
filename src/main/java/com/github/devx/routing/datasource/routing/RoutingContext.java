@@ -34,7 +34,7 @@ public class RoutingContext {
     private static final TransmittableThreadLocal<Map<Object, Object>> RESOURCES = new TransmittableThreadLocal<Map<Object, Object>>() {
         @Override
         protected Map<Object, Object> initialValue() {
-            return new HashMap<>();
+            return new HashMap<>(2 << 3);
         }
     };
 
@@ -48,9 +48,15 @@ public class RoutingContext {
     }
 
     public static void addResource(Object key , Object val) {
+        if (key == null) {
+            throw new IllegalArgumentException("Invalid key parameter cannot be null");
+        }
+        if (val == null) {
+            throw new IllegalArgumentException("Invalid Value parameter cannot be null");
+        }
         Map<Object, Object> map = RESOURCES.get();
         if (Objects.isNull(map)) {
-            map = new HashMap<>();
+            map = new HashMap<>(2 << 3);
             RESOURCES.set(map);
         }
         map.put(key , val);

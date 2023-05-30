@@ -31,6 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -48,6 +54,10 @@ class DefaultRoutingDataSourceTest {
 
     static DataSource dataSource;
 
+    static String writeDataSourceName = "write";
+    static String readDataSource0Name = "read0";
+    static String readDataSource1Name = "read1";
+
     @BeforeAll
     static void initDataSource() {
 
@@ -64,10 +74,6 @@ class DefaultRoutingDataSourceTest {
         HikariDataSource writeDataSource = new HikariDataSource(config);
         HikariDataSource readDataSource0 = new HikariDataSource(config);
         HikariDataSource readDataSource1 = new HikariDataSource(config);
-
-        String writeDataSourceName = "write";
-        String readDataSource0Name = "read0";
-        String readDataSource1Name = "read1";
 
         Set<String> readDataSourceNames = new HashSet<>();
         readDataSourceNames.add(readDataSource0Name);
@@ -312,6 +318,60 @@ class DefaultRoutingDataSourceTest {
                 .containsExactlyInAnyOrder(
                         tuple("1" , "John Doe")
                 );
+    }
+
+    @Test
+    void testConcurrentBehavior() throws Exception {
+        int threads = 20;
+        CyclicBarrier startBarrier = new CyclicBarrier(threads);
+        List<Callable<List<Integer>>> tasks = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(10);
+        for (int i = 0; i < threads; i++) {
+            tasks.add(() -> {
+                List<Integer> ids = new ArrayList<>();
+                for (int j = 0; j < 10; j++) {
+                    Connection conn = dataSource.getConnection();
+                    conn.setAutoCommit(true);
+                    conn.setReadOnly(false);
+
+                    String sql1 = "INSERT INTO area (id, name) VALUES (? , 'Manchester')";
+                    PreparedStatement stmt1 = conn.prepareStatement(sql1);
+                    int id = count.incrementAndGet();
+                    stmt1.setInt(1 , id);
+                    assertThat(RoutingUtils.isRoutingWrite(conn)).isTrue();
+                    int rows = stmt1.executeUpdate();
+                    assertThat(rows).isEqualTo(1);
+                    close(null , stmt1 , conn);
+                    ids.add(id);
+                }
+                startBarrier.await();
+                return ids;
+            });
+        }
+
+        ExecutorService executorService = Executors.newFixedThreadPool(threads);
+        List<Future<List<Integer>>> futures = executorService.invokeAll(tasks);
+        List<Integer> idList = new ArrayList<>();
+        for (Future<List<Integer>> future : futures) {
+            idList.addAll(future.get());
+        }
+
+        executorService.shutdown();
+
+        RoutingContext.force(writeDataSourceName);
+        Connection conn = dataSource.getConnection();
+        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM area");
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("id", Integer.parseInt(rs.getString("id")));
+            resultMap.put("name", rs.getString("name"));
+            resultList.add(resultMap);
+        }
+
+        assertThat(resultList)
+                .extracting("id")
+                .containsAll(idList);
     }
 
     private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
