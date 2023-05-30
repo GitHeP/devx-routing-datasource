@@ -1,12 +1,5 @@
-package com.github.devx.routing.routing;
+package com.github.devx.routing.datasource;
 
-import com.github.devx.routing.datasource.DataSourceMode;
-import com.github.devx.routing.datasource.DataSourceWrapper;
-import com.github.devx.routing.datasource.DefaultRoutingDataSource;
-import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
-import com.github.devx.routing.datasource.RoutingKeyProvider;
-import com.github.devx.routing.datasource.RoutingUtils;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.rule.CompositeRoutingRule;

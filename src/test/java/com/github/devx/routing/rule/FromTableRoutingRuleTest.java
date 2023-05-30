@@ -1,4 +1,4 @@
-package com.github.devx.routing.routing.rule;
+package com.github.devx.routing.rule;
 
 import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.rule.FromTableRoutingRule;

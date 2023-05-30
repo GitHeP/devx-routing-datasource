@@ -1,4 +1,4 @@
-package com.github.devx.routing.routing.rule;
+package com.github.devx.routing.rule;
 
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.rule.ForceTargetRoutingRule;
