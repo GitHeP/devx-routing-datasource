@@ -22,11 +22,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.CompilerControl;
-import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.annotations.Warmup;
@@ -82,13 +80,13 @@ public class DefaultRoutingDataSourceTest {
     static Random random = new Random();
 
     @BeforeAll
-    @Setup(Level.Trial)
     public static void initDataSource() throws Exception {
 
         String initSqlPath = "src/test/resources/init.sql";
 
         HikariConfig config1 = new HikariConfig();
-        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;TRACE_LEVEL_SYSTEM_OUT=3;");
+        // TRACE_LEVEL_SYSTEM_OUT=3;
+        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;");
         config1.setDriverClassName("org.h2.Driver");
         config1.setUsername("sa");
         config1.setPassword("");
@@ -466,8 +464,8 @@ public class DefaultRoutingDataSourceTest {
                 .shouldFailOnError(true)
                 .shouldDoGC(false)
                 .verbosity(VerboseMode.EXTRA)
-                .resultFormat(ResultFormatType.CSV)
-                .output("./benchmark.csv")
+                .resultFormat(ResultFormatType.JSON)
+                .output("./DefaultRoutingDataSourceBenchmark.json")
                 .build();
 
         new Runner(opt).run();
