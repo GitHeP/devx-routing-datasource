@@ -1,10 +1,22 @@
 package com.github.devx.routing.sql.parser;
 
+import com.github.devx.routing.datasource.DefaultRoutingDataSourceTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.results.format.ResultFormatType;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.VerboseMode;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @see JSqlParser
  */
-class JSqlParserTest {
+
+@State(Scope.Benchmark)
+@Slf4j
+public class JSqlParserTest {
 
     static SqlParser sqlParser = new JSqlParser();
 
@@ -26,7 +41,33 @@ class JSqlParserTest {
     }
 
     @Test
+    public void testBenchmark() throws Exception {
+        Options opt = new OptionsBuilder()
+                .include(JSqlParserTest.class.getSimpleName())
+                .mode(Mode.AverageTime)
+                .timeUnit(TimeUnit.NANOSECONDS)
+                //.warmupIterations(5)
+                //.measurementIterations(5)
+                //.measurementTime(TimeValue.minutes(1))
+                .forks(0)
+                //.threads(Runtime.getRuntime().availableProcessors() * 16)
+                .threads(1)
+                .syncIterations(true)
+                .shouldFailOnError(true)
+                .shouldDoGC(false)
+                .verbosity(VerboseMode.EXTRA)
+                .resultFormat(ResultFormatType.JSON)
+                .output("./JSqlParser_Benchmark.json")
+                .build();
+
+        new Runner(opt).run();
+
+    }
+
+    @Test
     void testParseJoin() {
+
+        log.info("testing parse join select sql");
 
         String sql = "SELECT customers.customer_name, orders.order_id, order_details.product_name, order_details.unit_price, " +
                 "order_details.quantity, (order_details.unit_price * order_details.quantity) AS total_price\n" +
@@ -51,7 +92,10 @@ class JSqlParserTest {
     }
 
     @Test
-    void testParseSubSelect() {
+    @Benchmark
+    public void testParseSubSelect() {
+
+        log.info("testing parse sub select sql");
 
         String sql = "SELECT s1.student_name, s1.student_id, s1.grade\n" +
                 "FROM students s1\n" +
