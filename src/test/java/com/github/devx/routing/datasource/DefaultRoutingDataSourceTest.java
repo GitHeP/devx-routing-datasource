@@ -99,7 +99,6 @@ public class DefaultRoutingDataSourceTest {
 
         HikariDataSource writeDataSource = new HikariDataSource(config1);
 
-        RoutingContext.force(writeDataSourceName);
         Connection conn1 = writeDataSource.getConnection();
         ResultSet rs1 = RunScript.execute(conn1 , new FileReader(initSqlPath));
         close(rs1 , null , conn1);
@@ -116,7 +115,6 @@ public class DefaultRoutingDataSourceTest {
 
         HikariDataSource readDataSource0 = new HikariDataSource(config2);
 
-        RoutingContext.force(readDataSource0Name);
         Connection conn2 = readDataSource0.getConnection();
         ResultSet rs2 = RunScript.execute(conn2, new FileReader(initSqlPath));
         close(rs2 , null , conn2);
@@ -133,7 +131,6 @@ public class DefaultRoutingDataSourceTest {
 
         HikariDataSource readDataSource1 = new HikariDataSource(config3);
 
-        RoutingContext.force(readDataSource1Name);
         Connection conn3 = readDataSource1.getConnection();
         ResultSet rs3 = RunScript.execute(conn3, new FileReader(initSqlPath));
         close(rs3 , null , conn3);
@@ -168,8 +165,6 @@ public class DefaultRoutingDataSourceTest {
         RoutingRule rule = new CompositeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames , routingRules);
         RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
         dataSource = new DefaultRoutingDataSource(dataSources , rule , routingKeyProvider);
-
-        RoutingContext.clear();
     }
 
     @TearDown
