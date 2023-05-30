@@ -4,6 +4,7 @@ import com.github.devx.routing.datasource.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.datasource.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.datasource.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceReadRoutingRule;
+import com.github.devx.routing.datasource.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.datasource.routing.rule.RoutingRule;
@@ -17,7 +18,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -85,10 +85,10 @@ public class DefaultRoutingDataSourceTest {
     @Setup(Level.Trial)
     public static void initDataSource() throws Exception {
 
-        FileReader initSqlReader = new FileReader("src/test/resources/init.sql");
+        String initSqlPath = "src/test/resources/init.sql";
 
         HikariConfig config1 = new HikariConfig();
-        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;");
+        config1.setJdbcUrl("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;TRACE_LEVEL_SYSTEM_OUT=3;");
         config1.setDriverClassName("org.h2.Driver");
         config1.setUsername("sa");
         config1.setPassword("");
@@ -101,11 +101,11 @@ public class DefaultRoutingDataSourceTest {
 
         RoutingContext.force(writeDataSourceName);
         Connection conn1 = writeDataSource.getConnection();
-        ResultSet rs1 = RunScript.execute(conn1 , initSqlReader);
+        ResultSet rs1 = RunScript.execute(conn1 , new FileReader(initSqlPath));
         close(rs1 , null , conn1);
 
         HikariConfig config2 = new HikariConfig();
-        config2.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;");
+        config2.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;");
         config2.setDriverClassName("org.h2.Driver");
         config2.setUsername("sa");
         config2.setPassword("");
@@ -118,11 +118,11 @@ public class DefaultRoutingDataSourceTest {
 
         RoutingContext.force(readDataSource0Name);
         Connection conn2 = readDataSource0.getConnection();
-        ResultSet rs2 = RunScript.execute(conn2, initSqlReader);
+        ResultSet rs2 = RunScript.execute(conn2, new FileReader(initSqlPath));
         close(rs2 , null , conn2);
 
         HikariConfig config3 = new HikariConfig();
-        config3.setJdbcUrl("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;INIT=runscript from 'src/test/resources/init.sql'");
+        config3.setJdbcUrl("jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;");
         config3.setDriverClassName("org.h2.Driver");
         config3.setUsername("sa");
         config3.setPassword("");
@@ -134,8 +134,8 @@ public class DefaultRoutingDataSourceTest {
         HikariDataSource readDataSource1 = new HikariDataSource(config3);
 
         RoutingContext.force(readDataSource1Name);
-        Connection conn3 = readDataSource0.getConnection();
-        ResultSet rs3 = RunScript.execute(conn3, initSqlReader);
+        Connection conn3 = readDataSource1.getConnection();
+        ResultSet rs3 = RunScript.execute(conn3, new FileReader(initSqlPath));
         close(rs3 , null , conn3);
 
         Set<String> readDataSourceNames = new HashSet<>();
@@ -155,6 +155,7 @@ public class DefaultRoutingDataSourceTest {
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
 
         List<StatementRoutingRule> routingRules = new ArrayList<>();
         routingRules.add(unknownStatementRoutingRule);
@@ -162,10 +163,13 @@ public class DefaultRoutingDataSourceTest {
         routingRules.add(readWriteSplittingRoutingRule);
         routingRules.add(forceWriteRoutingRule);
         routingRules.add(forceReadRoutingRule);
+        routingRules.add(forceTargetRoutingRule);
 
         RoutingRule rule = new CompositeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames , routingRules);
         RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
         dataSource = new DefaultRoutingDataSource(dataSources , rule , routingKeyProvider);
+
+        RoutingContext.clear();
     }
 
     @TearDown
@@ -174,31 +178,31 @@ public class DefaultRoutingDataSourceTest {
 
     }
 
-    @AfterEach
+    //@AfterEach
     void clearData() throws Exception {
 
-        RoutingContext.force(writeDataSourceName);
-        Connection conn1 = dataSource.getConnection();
-        conn1.setAutoCommit(true);
-        Statement stmt1 = conn1.createStatement();
-        stmt1.execute("DROP ALL OBJECTS");
-        close(null , stmt1 , conn1);
-
-        RoutingContext.force(readDataSource0Name);
-        Connection conn2 = dataSource.getConnection();
-        conn2.setAutoCommit(true);
-
-        Statement stmt2 = conn2.createStatement();
-        stmt2.execute("DROP ALL OBJECTS");
-        close(null , stmt2 , conn2);
-
-        RoutingContext.force(readDataSource1Name);
-        Connection conn3 = dataSource.getConnection();
-        conn3.setAutoCommit(true);
-
-        Statement stmt3 = conn3.createStatement();
-        stmt1.execute("DROP ALL OBJECTS");
-        close(null , stmt3 , conn3);
+        //RoutingContext.force(writeDataSourceName);
+        //Connection conn1 = dataSource.getConnection();
+        //conn1.setAutoCommit(true);
+        //Statement stmt1 = conn1.createStatement();
+        //stmt1.execute("DROP ALL OBJECTS");
+        //close(null , stmt1 , conn1);
+        //
+        //RoutingContext.force(readDataSource0Name);
+        //Connection conn2 = dataSource.getConnection();
+        //conn2.setAutoCommit(true);
+        //
+        //Statement stmt2 = conn2.createStatement();
+        //stmt2.execute("DROP ALL OBJECTS");
+        //close(null , stmt2 , conn2);
+        //
+        //RoutingContext.force(readDataSource1Name);
+        //Connection conn3 = dataSource.getConnection();
+        //conn3.setAutoCommit(true);
+        //
+        //Statement stmt3 = conn3.createStatement();
+        //stmt1.execute("DROP ALL OBJECTS");
+        //close(null , stmt3 , conn3);
     }
 
 
