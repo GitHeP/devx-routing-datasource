@@ -1,7 +1,7 @@
 
 -- Create area table
 CREATE TABLE area (
-  id INT PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
@@ -12,7 +12,7 @@ INSERT INTO area (id, name) VALUES
 
 -- Create department table
 CREATE TABLE department (
-  id INT PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   area_id INT NOT NULL
 );
@@ -24,7 +24,7 @@ INSERT INTO department (id, name, area_id) VALUES
 
 -- Create employee table
 CREATE TABLE employee (
-  id INT PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   department_id INT NOT NULL
 );

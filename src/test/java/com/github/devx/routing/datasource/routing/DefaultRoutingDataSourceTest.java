@@ -14,10 +14,27 @@ import com.github.devx.routing.datasource.sql.parser.JSqlParser;
 import com.github.devx.routing.datasource.sql.parser.SqlParser;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.CompilerControl;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.results.format.ResultFormatType;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.VerboseMode;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -30,12 +47,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,8 +68,9 @@ import static org.assertj.core.api.Assertions.tuple;
  * @since 1.0
  */
 
-
-class DefaultRoutingDataSourceTest {
+@State(Scope.Benchmark)
+@Slf4j
+public class DefaultRoutingDataSourceTest {
 
     static DataSource dataSource;
 
@@ -58,22 +78,47 @@ class DefaultRoutingDataSourceTest {
     static String readDataSource0Name = "read0";
     static String readDataSource1Name = "read1";
 
+    static Random random = new Random();
+
     @BeforeAll
-    static void initDataSource() {
+    @Setup(Level.Trial)
+    public static void initDataSource() {
 
+        HikariConfig config1 = new HikariConfig();
+        config1.setJdbcUrl("jdbc:h2:~/test1;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config1.setDriverClassName("org.h2.Driver");
+        config1.setUsername("sa");
+        config1.setPassword("");
+        config1.setMinimumIdle(5);
+        config1.setMaximumPoolSize(30);
+        config1.setConnectionTimeout(30000);
+        config1.setAutoCommit(false);
 
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:~/test1");
-        config.setUsername("sa");
-        config.setPassword("");
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(10);
-        config.setConnectionTimeout(30000);
-        config.setAutoCommit(false);
+        HikariDataSource writeDataSource = new HikariDataSource(config1);
 
-        HikariDataSource writeDataSource = new HikariDataSource(config);
-        HikariDataSource readDataSource0 = new HikariDataSource(config);
-        HikariDataSource readDataSource1 = new HikariDataSource(config);
+        HikariConfig config2 = new HikariConfig();
+        config2.setJdbcUrl("jdbc:h2:~/test2;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config2.setDriverClassName("org.h2.Driver");
+        config2.setUsername("sa");
+        config2.setPassword("");
+        config2.setMinimumIdle(5);
+        config2.setMaximumPoolSize(30);
+        config2.setConnectionTimeout(30000);
+        config2.setAutoCommit(false);
+
+        HikariDataSource readDataSource0 = new HikariDataSource(config2);
+
+        HikariConfig config3 = new HikariConfig();
+        config3.setJdbcUrl("jdbc:h2:~/test2;FILE_LOCK=SOCKET;AUTO_SERVER=true");
+        config3.setDriverClassName("org.h2.Driver");
+        config3.setUsername("sa");
+        config3.setPassword("");
+        config3.setMinimumIdle(5);
+        config3.setMaximumPoolSize(30);
+        config3.setConnectionTimeout(30000);
+        config3.setAutoCommit(false);
+
+        HikariDataSource readDataSource1 = new HikariDataSource(config3);
 
         Set<String> readDataSourceNames = new HashSet<>();
         readDataSourceNames.add(readDataSource0Name);
@@ -116,14 +161,39 @@ class DefaultRoutingDataSourceTest {
 
     }
 
+    @TearDown
     @AfterAll
-    static void clearDataBase() throws Exception {
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("DROP ALL OBJECTS");
-        statement.close();
-        connection.close();
+    public static void clearDataBase() throws Exception {
+
     }
+
+    @AfterEach
+    void clearData() throws Exception {
+
+        RoutingContext.force(writeDataSourceName);
+        Connection conn1 = dataSource.getConnection();
+        conn1.setAutoCommit(true);
+        Statement stmt1 = conn1.createStatement();
+        stmt1.execute("DROP ALL OBJECTS");
+        close(null , stmt1 , conn1);
+
+        RoutingContext.force(readDataSource0Name);
+        Connection conn2 = dataSource.getConnection();
+        conn2.setAutoCommit(true);
+
+        Statement stmt2 = conn2.createStatement();
+        stmt2.execute("DROP ALL OBJECTS");
+        close(null , stmt2 , conn2);
+
+        RoutingContext.force(readDataSource1Name);
+        Connection conn3 = dataSource.getConnection();
+        conn3.setAutoCommit(true);
+
+        Statement stmt3 = conn3.createStatement();
+        stmt1.execute("DROP ALL OBJECTS");
+        close(null , stmt3 , conn3);
+    }
+
 
     @Test
     void testGetEmployeeNamesAndDepartmentNamesByArea() throws Exception {
@@ -374,7 +444,51 @@ class DefaultRoutingDataSourceTest {
                 .containsAll(idList);
     }
 
-    private void close(ResultSet rs , PreparedStatement stmt , Connection conn) throws Exception {
+    @Test
+    public void testBenchmark() throws Exception {
+        Options opt = new OptionsBuilder()
+                .include(DefaultRoutingDataSourceTest.class.getSimpleName())
+                .mode(Mode.AverageTime)
+                .timeUnit(TimeUnit.NANOSECONDS)
+                //.warmupIterations(5)
+                //.measurementIterations(5)
+                //.measurementTime(TimeValue.minutes(1))
+                .forks(0)
+                //.threads(Runtime.getRuntime().availableProcessors() * 16)
+                .threads(1)
+                .syncIterations(true)
+                .shouldFailOnError(true)
+                .shouldDoGC(false)
+                .verbosity(VerboseMode.EXTRA)
+                .resultFormat(ResultFormatType.CSV)
+                .output("./benchmark.csv")
+                .build();
+
+        new Runner(opt).run();
+
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10, time = 1 , timeUnit = TimeUnit.SECONDS)
+    @Measurement(iterations = 100, time = 1 , timeUnit = TimeUnit.SECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    public int testInsertBenchmark() throws Exception {
+
+        long id = System.nanoTime() + random.nextLong();
+        String sql = "INSERT INTO area (id, name) VALUES (?, 'New York')";
+        log.info("testInsertBenchmark sql [INSERT INTO area (id, name) VALUES ({}, 'New York')]" , id);
+        Connection conn = dataSource.getConnection();
+        conn.setAutoCommit(true);
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1 , id);
+
+        int row = stmt.executeUpdate();
+        assertThat(row).isEqualTo(1);
+        close(null , stmt , conn);
+        return row;
+    }
+
+    private static void close(ResultSet rs , Statement stmt , Connection conn) throws Exception {
         if (Objects.nonNull(rs)) {
             rs.close();
         }
