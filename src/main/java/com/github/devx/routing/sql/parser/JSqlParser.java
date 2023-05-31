@@ -16,12 +16,14 @@
 
 package com.github.devx.routing.sql.parser;
 
+import com.github.devx.routing.sql.SqlStatementType;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.ExplainStatement;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -39,7 +41,7 @@ import java.util.Set;
 
 /**
  * Parse SQL statements using JSqlParser.
- * <p>https://github.com/JSQLParser/JSqlParser<p/>
+ * <p><a href="https://github.com/JSQLParser/JSqlParser">JSqlParser</a><p/>
  *
  * @author he peng
  * @since 1.0
@@ -77,6 +79,8 @@ public class JSqlParser implements SqlParser {
 
     private static class SqlStatementVisitor extends TablesNamesFinder implements SqlStatementBuilder<Statement> {
 
+        private final SqlStatement statement = new SqlStatement();
+
         private final Set<String> databases = new HashSet<>();
 
         private final Set<String> tables = new HashSet<>();
@@ -87,8 +91,7 @@ public class JSqlParser implements SqlParser {
 
         private final Set<String> normalTables = new HashSet<>();
 
-        private final SqlStatement statement = new SqlStatement();
-
+        private SqlStatementType statementType;
 
         @Override
         public SqlStatement build(Statement obj) {
@@ -97,7 +100,16 @@ public class JSqlParser implements SqlParser {
             normalTables.removeAll(joinTables);
             return statement.setStatement(obj).setDatabases(databases).setNormalTables(normalTables)
                     .setTables(tables).setJoinTables(joinTables).setSubTables(subTables)
-                    .setWrite(isWrite(obj)).setRead(isRead(obj));
+                    .setWrite(isWrite(obj)).setRead(isRead(obj)).setStatementType(statementType);
+        }
+
+        @Override
+        public void visit(Insert insert) {
+            super.visit(insert);
+            statementType = SqlStatementType.INSERT;
+            Table table = insert.getTable();
+            normalTables.add(table.getName());
+            databases.add(table.getSchemaName());
         }
 
         @Override

@@ -16,6 +16,7 @@
 
 package com.github.devx.routing.sql.parser;
 
+import com.github.devx.routing.sql.SqlStatementType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -31,6 +32,8 @@ import java.util.Set;
 public class SqlStatement {
 
     private String sql;
+
+    private SqlStatementType statementType;
 
     private Object statement;
 
