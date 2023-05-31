@@ -19,16 +19,14 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.VerboseMode;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author he peng
- * @since 1.0
- *
  * @see JSqlParser
+ * @since 1.0
  */
 
 @State(Scope.Benchmark)
@@ -46,8 +44,8 @@ public class JSqlParserTest {
     public void testBenchmark() throws Exception {
         Options opt = new OptionsBuilder()
                 .include(JSqlParserTest.class.getSimpleName())
-                .mode(Mode.AverageTime)
-                .timeUnit(TimeUnit.NANOSECONDS)
+                .mode(Mode.Throughput)
+                .timeUnit(TimeUnit.MILLISECONDS)
                 .forks(0)
                 //.threads(Runtime.getRuntime().availableProcessors() * 16)
                 .threads(1)
@@ -64,8 +62,8 @@ public class JSqlParserTest {
     }
 
     @Benchmark
-    @Warmup(iterations = 5, time = 5 , timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 100, time = 5 , timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
     @CompilerControl(CompilerControl.Mode.INLINE)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
@@ -90,11 +88,18 @@ public class JSqlParserTest {
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
         assertThat(statement.getNormalTables()).contains("customers");
-        assertThat(statement.getJoinTables()).containsAll(Arrays.asList("orders" , "order_details"));
+        assertThat(statement.getJoinTables()).containsAll(Arrays.asList("orders", "order_details"));
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
     public void testParseSubSelect() {
 
@@ -115,13 +120,19 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getNormalTables()).contains("students");
+        assertThat(statement.getNormalTables()).containsOnly("students");
         assertThat(statement.getJoinTables()).isEmpty();
-        assertThat(statement.getSubTables()).contains("students");
+        assertThat(statement.getSubTables()).containsOnly("students");
         assertThat(statement.getDatabases()).isEmpty();
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
 
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
     public void testParseUnion() {
 
@@ -159,13 +170,19 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getNormalTables()).containsAll(Arrays.asList("p_tradewait" , "p_tradesend" , "p_tradestock" , "p_trade"));
-        assertThat(statement.getTables()).containsAll(Arrays.asList("p_tradedt" , "p_tradewait" , "p_tradesend" , "p_tradestock" , "p_trade"));
+        assertThat(statement.getNormalTables()).containsOnly("p_tradewait", "p_tradesend", "p_tradestock", "p_trade");
+        assertThat(statement.getTables()).containsOnly("p_tradedt", "p_tradewait", "p_tradesend", "p_tradestock", "p_trade");
         assertThat(statement.getJoinTables()).isEmpty();
-        assertThat(statement.getSubTables()).contains("p_tradedt");
-        assertThat(statement.getDatabases()).contains("py");
+        assertThat(statement.getSubTables()).containsOnly("p_tradedt");
+        assertThat(statement.getDatabases()).containsOnly("py");
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
     public void testParseJoinSubSelect() {
 
@@ -223,13 +240,20 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getNormalTables()).isEmpty();
-        assertThat(statement.getTables()).containsAll(Collections.singletonList("t_amazon_report_log"));
+        assertThat(statement.getNormalTables()).containsOnly("t_amazon_report_log");
+        assertThat(statement.getTables()).containsOnly("t_amazon_report_log");
         assertThat(statement.getJoinTables()).isEmpty();
-        assertThat(statement.getSubTables()).contains("t_amazon_report_log");
+        assertThat(statement.getSubTables()).containsOnly("t_amazon_report_log");
         assertThat(statement.getDatabases()).isEmpty();
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
     public void testParseMultiJoin() {
 
@@ -267,15 +291,23 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getNormalTables()).containsAll(Collections.singletonList("t_buy_purchase_demand"));
-        assertThat(statement.getTables()).containsAll(Arrays.asList("t_buy_purchase_demand" , "t_py_goods" , "t_user_baseinfo" , "t_buy_stock_order" , "t_buy_stock_order_details"));
-        assertThat(statement.getJoinTables()).containsAll(Arrays.asList("t_py_goods" , "t_user_baseinfo" , "t_buy_stock_order" , "t_buy_stock_order_details"));
+        assertThat(statement.getNormalTables()).containsOnly("t_buy_purchase_demand");
+        assertThat(statement.getTables()).containsOnly("t_buy_purchase_demand", "t_py_goods", "t_user_baseinfo", "t_buy_stock_order", "t_buy_stock_order_details");
+        assertThat(statement.getJoinTables()).containsOnly("t_py_goods", "t_user_baseinfo", "t_buy_stock_order", "t_buy_stock_order_details");
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
-    public void testParseInsert() {
+    public void testParseInsertIncludeSubSelect() {
+
+        log.info("testing parse insert include sub select sql");
 
         String sql = "INSERT INTO table1 (column1, column2, column3)\n" +
                 "VALUES ('value1', 'value2', (SELECT id FROM table2 WHERE name='value3'));";
@@ -284,7 +316,7 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
-        assertThat(statement.getTables()).containsOnly("table1" , "table2");
+        assertThat(statement.getTables()).containsOnly("table1", "table2");
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("table2");
@@ -292,8 +324,69 @@ public class JSqlParserTest {
 
     }
 
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Test
-    public void testParseUpdate() {
+    public void testParseInsertJoinSelect() {
+
+        log.info("testing parse insert join sql");
+
+        String sql = "INSERT INTO employees (first_name, last_name, job_id, hire_date, salary, commission_pct, manager_id, department_id)\n" +
+                "SELECT e.first_name, e.last_name, e.job_id, e.hire_date, e.salary, e.commission_pct, e.manager_id, e.department_id\n" +
+                "FROM employees e\n" +
+                "JOIN departments d ON e.department_id = d.department_id\n" +
+                "WHERE d.location_id = '1700';";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isTrue();
+        assertThat(statement.isRead()).isFalse();
+        assertThat(statement.getTables()).containsOnly("employees", "departments");
+        assertThat(statement.getNormalTables()).containsOnly("employees");
+        assertThat(statement.getJoinTables()).containsOnly("departments");
+        assertThat(statement.getSubTables()).isEmpty();
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+
+    }
+
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Test
+    public void testParseInsertJoinIncludeSubSelect() {
+
+        log.info("testing parse insert join include sub select sql");
+
+        String sql = "INSERT INTO purchase_order (product_id, supplier_id, price, quantity)\n" +
+                "SELECT p.id, s.id, (SELECT price FROM supplier_price WHERE supplier_id = s.id AND product_id = p.id AND status='ACTIVE'), 200\n" +
+                "FROM products p, suppliers s\n" +
+                "WHERE p.name = 'Product1' AND s.name = 'Supplier1';";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isTrue();
+        assertThat(statement.isRead()).isFalse();
+        assertThat(statement.getTables()).containsOnly("purchase_order", "supplier_price", "products", "suppliers");
+        assertThat(statement.getNormalTables()).containsOnly("purchase_order");
+        assertThat(statement.getJoinTables()).containsOnly("suppliers");
+        assertThat(statement.getSubTables()).containsOnly("supplier_price");
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+    }
+
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Test
+    public void testParseUpdateIncludeSubSelect() {
+
+        log.info("testing parse update include sub select sql");
 
         String sql = "UPDATE table1 \n" +
                 "SET column1 = value1, column2 = value2, column3 = (SELECT column4 FROM table2 WHERE column5 = value3)\n" +
@@ -303,10 +396,75 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
-        assertThat(statement.getTables()).containsOnly("table1" , "table2" , "table3");
+        assertThat(statement.getTables()).containsOnly("table1", "table2", "table3");
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
-        assertThat(statement.getSubTables()).containsOnly("table2" , "table3");
+        assertThat(statement.getSubTables()).containsOnly("table2", "table3");
         assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.UPDATE);
+    }
+
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Test
+    public void testParseUpdateJoinIncludeSubSelect() {
+
+        log.info("testing parse update join include sub select sql");
+
+        String sql = "UPDATE employees e\n" +
+                "SET e.salary = e.salary * 1.1\n" +
+                "WHERE e.department_id IN (\n" +
+                "    SELECT d.department_id \n" +
+                "    FROM departments d\n" +
+                "    JOIN locations l ON d.location_id = l.location_id \n" +
+                "    WHERE l.city = 'New York'\n" +
+                ");";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isTrue();
+        assertThat(statement.isRead()).isFalse();
+        assertThat(statement.getTables()).containsOnly("employees", "departments", "locations");
+        assertThat(statement.getNormalTables()).containsOnly("employees");
+        assertThat(statement.getJoinTables()).containsOnly("locations");
+        assertThat(statement.getSubTables()).containsOnly("departments");
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.UPDATE);
+    }
+
+    @Benchmark
+    @Warmup(iterations = 5, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 200, time = 5, timeUnit = TimeUnit.MILLISECONDS)
+    @CompilerControl(CompilerControl.Mode.INLINE)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Test
+    public void testParseDeleteIncludeJoinAndSubSelect() {
+        log.info("testing parse delete include join and sub select sql");
+        String sql = "DELETE FROM orders\n" +
+                "WHERE product_id IN (\n" +
+                "    SELECT product_id\n" +
+                "    FROM (\n" +
+                "        SELECT product_id, SUM(quantity_ordered) AS total_quantity\n" +
+                "        FROM order_details\n" +
+                "        GROUP BY product_id\n" +
+                "        HAVING total_quantity < (\n" +
+                "            SELECT AVG(quantity_ordered)\n" +
+                "            FROM order_details\n" +
+                "        )\n" +
+                "    ) AS subquery\n" +
+                "    JOIN products ON products.id = subquery.product_id\n" +
+                "    WHERE products.category_id = 2\n" +
+                ");";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isTrue();
+        assertThat(statement.isRead()).isFalse();
+        assertThat(statement.getTables()).containsOnly("orders", "order_details", "products");
+        assertThat(statement.getNormalTables()).containsOnly("orders");
+        assertThat(statement.getJoinTables()).containsOnly("products");
+        assertThat(statement.getSubTables()).containsOnly("order_details");
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.DELETE);
     }
 }

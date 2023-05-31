@@ -103,9 +103,12 @@ public class JSqlParser implements SqlParser {
         @Override
         public SqlStatement build(Statement obj) {
             getTableList(obj);
-            normalTables.removeAll(subTables);
-            normalTables.removeAll(joinTables);
-
+            if (normalTables.size() > subTables.size() && normalTables.containsAll(subTables)) {
+                normalTables.removeAll(subTables);
+            }
+            if (normalTables.size() > joinTables.size() && normalTables.containsAll(joinTables)) {
+                normalTables.removeAll(joinTables);
+            }
             databases.removeIf(Objects::isNull);
             tables.removeIf(Objects::isNull);
             normalTables.removeIf(Objects::isNull);
