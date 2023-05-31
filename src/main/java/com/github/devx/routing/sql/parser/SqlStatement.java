@@ -42,7 +42,7 @@ public class SqlStatement {
 
     private Set<String> tables;
 
-    private String fromTable;
+    private Set<String> normalTables;
 
     private Set<String> joinTables;
 

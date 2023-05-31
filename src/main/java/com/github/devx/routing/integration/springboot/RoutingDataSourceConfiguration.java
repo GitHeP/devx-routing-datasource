@@ -32,7 +32,7 @@ import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.rule.ForceReadRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
-import com.github.devx.routing.rule.FromTableRoutingRule;
+import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
 import com.github.devx.routing.rule.StatementRoutingRule;
@@ -120,8 +120,8 @@ public class RoutingDataSourceConfiguration {
 
         if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTableRule())) {
             TableRuleConfiguration tableRule = properties.getRules().getTableRule();
-            FromTableRoutingRule fromTableRoutingRule = new FromTableRoutingRule(tableRule);
-            routingRules.add(fromTableRoutingRule);
+            TableRoutingRule tableRoutingRule = new TableRoutingRule(tableRule);
+            routingRules.add(tableRoutingRule);
         }
 
         return new CompositeRoutingRule(sqlParser , loadBalancer , properties.getWriteDataSource(), readDataSources , routingRules);

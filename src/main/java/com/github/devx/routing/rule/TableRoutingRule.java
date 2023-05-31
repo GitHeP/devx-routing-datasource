@@ -24,6 +24,7 @@ import com.github.devx.routing.sql.parser.SqlStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Route based on the table name following the FROM fragment
@@ -34,25 +35,27 @@ import java.util.Objects;
  *
  * @see TableRuleConfiguration
  */
-public class FromTableRoutingRule implements StatementRoutingRule {
+public class TableRoutingRule implements StatementRoutingRule {
 
     private final TableRuleConfiguration tableRule;
 
-    public FromTableRoutingRule(TableRuleConfiguration tableRule) {
+    public TableRoutingRule(TableRuleConfiguration tableRule) {
         this.tableRule = tableRule;
     }
 
     @Override
     public String routing(SqlStatement statement) {
 
-        if (Objects.isNull(statement.getFromTable())) {
+        if (Objects.isNull(statement.getTables()) || statement.getTables().isEmpty()) {
             return null;
         }
 
-        String fromTable = statement.getFromTable();
         List<String> datasourceNames = new ArrayList<>();
-        if (tableRule.getTables().containsKey(fromTable)) {
-            datasourceNames.addAll(tableRule.getTables().get(fromTable));
+        Set<String> tables = statement.getTables();
+        for (String table : tables) {
+            if (tableRule.getTables().containsKey(table)) {
+                datasourceNames.addAll(tableRule.getTables().get(table));
+            }
         }
 
         RandomLoadBalancer balancer = new RandomLoadBalancer(datasourceNames);

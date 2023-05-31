@@ -1,7 +1,6 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.config.TableRuleConfiguration;
-import com.github.devx.routing.rule.FromTableRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.assertj.core.api.Assertions.setAllowComparingPrivateFields;
  * @author he peng
  * @since 1.0
  */
-class FromTableRoutingRuleTest {
+class TableRoutingRuleTest {
 
     @Test
     void routing() {
@@ -33,7 +32,7 @@ class FromTableRoutingRuleTest {
         employeeDatasourceNames.add("read2");
         tables.put("employee" , employeeDatasourceNames);
         tableRule.setTables(tables);
-        FromTableRoutingRule routingRule = new FromTableRoutingRule(tableRule);
+        TableRoutingRule routingRule = new TableRoutingRule(tableRule);
         String sql1 = "select * from employee where name = 'DevX'";
         String result1 = routingRule.routing(sqlParser.parse(sql1));
 

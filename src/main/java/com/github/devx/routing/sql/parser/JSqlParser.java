@@ -79,20 +79,24 @@ public class JSqlParser implements SqlParser {
 
         private final Set<String> databases = new HashSet<>();
 
+        private final Set<String> tables = new HashSet<>();
+
         private final Set<String> subTables = new HashSet<>();
 
         private final Set<String> joinTables = new HashSet<>();
 
-        private String fromTable;
+        private final Set<String> normalTables = new HashSet<>();
 
         private final SqlStatement statement = new SqlStatement();
 
 
         @Override
         public SqlStatement build(Statement obj) {
-            List<String> tableList = getTableList(obj);
-            return statement.setStatement(obj).setDatabases(databases).setFromTable(fromTable)
-                    .setTables(new HashSet<>(tableList)).setJoinTables(joinTables).setSubTables(subTables)
+            getTableList(obj);
+            normalTables.removeAll(subTables);
+            normalTables.removeAll(joinTables);
+            return statement.setStatement(obj).setDatabases(databases).setNormalTables(normalTables)
+                    .setTables(tables).setJoinTables(joinTables).setSubTables(subTables)
                     .setWrite(isWrite(obj)).setRead(isRead(obj));
         }
 
@@ -113,12 +117,13 @@ public class JSqlParser implements SqlParser {
         }
 
         @Override
-        public void visit(Table tableName) {
-            super.visit(tableName);
-            String database = tableName.getSchemaName();
+        public void visit(Table table) {
+            super.visit(table);
+            String database = table.getSchemaName();
             if (Objects.nonNull(database)) {
                 databases.add(database);
             }
+            tables.add(table.getName());
         }
 
         @Override
@@ -140,7 +145,8 @@ public class JSqlParser implements SqlParser {
 
             FromItem fromItem = plainSelect.getFromItem();
             if (fromItem instanceof Table) {
-                this.fromTable = ((Table) fromItem).getName();
+                String name = ((Table) fromItem).getName();
+                normalTables.add(name);
             }
 
             List<Join> joins = plainSelect.getJoins();

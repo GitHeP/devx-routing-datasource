@@ -1,6 +1,5 @@
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.datasource.DefaultRoutingDataSourceTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,12 +14,9 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.VerboseMode;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author he peng
@@ -85,7 +81,7 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getFromTable()).isEqualTo("customers");
+        assertThat(statement.getNormalTables()).contains("customers");
         assertThat(statement.getJoinTables()).containsAll(Arrays.asList("orders" , "order_details"));
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
@@ -112,10 +108,52 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getFromTable()).isEqualTo("students");
+        assertThat(statement.getNormalTables()).contains("students");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).contains("students");
         assertThat(statement.getDatabases()).isEmpty();
 
+    }
+
+    @Test
+    public void testParseUnion() {
+
+        String sql = "select\n" +
+                "        *,\n" +
+                "        (select GROUP_CONCAT(sku) from py.p_tradedt where tradenid = t.nid) skuList\n" +
+                "        from py.p_tradewait t\n" +
+                "        where t.ordertime >=  DATE_FORMAT('2023-05-26 00:00:00.241','%Y-%m-%d %H:%i:%s') and\n" +
+                "            DATE_FORMAT('2023-05-26 23:59:59.241','%Y-%m-%d %H:%i:%s') >= t.ordertime\n" +
+                "        union all\n" +
+                "        select\n" +
+                "        *,\n" +
+                "        (select GROUP_CONCAT(sku) from py.p_tradedt where tradenid = t.nid) skuList\n" +
+                "        from py.p_tradesend t\n" +
+                "        where t.ordertime >=  DATE_FORMAT('2023-05-26 00:00:00.241','%Y-%m-%d %H:%i:%s') and\n" +
+                "            DATE_FORMAT('2023-05-26 23:59:59.241','%Y-%m-%d %H:%i:%s') >= t.ordertime\n" +
+                "        union all\n" +
+                "        select\n" +
+                "        *,\n" +
+                "        (select GROUP_CONCAT(sku) from py.p_tradedt where tradenid = t.nid) skuList\n" +
+                "        from py.p_tradestock t\n" +
+                "        where t.ordertime >=  DATE_FORMAT('2023-05-26 00:00:00.241','%Y-%m-%d %H:%i:%s') and\n" +
+                "            DATE_FORMAT('2023-05-26 23:59:59.241','%Y-%m-%d %H:%i:%s') >= t.ordertime\n" +
+                "        union all\n" +
+                "        select\n" +
+                "        *,\n" +
+                "        (select GROUP_CONCAT(sku) from py.p_tradedt where tradenid = t.nid) skuList\n" +
+                "        from py.p_trade t\n" +
+                "        where t.ordertime >=  DATE_FORMAT('2023-05-26 00:00:00.241','%Y-%m-%d %H:%i:%s') and\n" +
+                "            DATE_FORMAT('2023-05-26 23:59:59.241','%Y-%m-%d %H:%i:%s') >= t.ordertime";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isFalse();
+        assertThat(statement.isRead()).isTrue();
+        assertThat(statement.getNormalTables()).containsAll(Arrays.asList("p_tradewait" , "p_tradesend" , "p_tradestock" , "p_trade"));
+        assertThat(statement.getTables()).containsAll(Arrays.asList("p_tradedt" , "p_tradewait" , "p_tradesend" , "p_tradestock" , "p_trade"));
+        assertThat(statement.getJoinTables()).isEmpty();
+        assertThat(statement.getSubTables()).contains("p_tradedt");
+        assertThat(statement.getDatabases()).contains("py");
     }
 }
