@@ -284,10 +284,29 @@ public class JSqlParserTest {
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
-        assertThat(statement.getTables()).containsAll(Arrays.asList("table1" , "table2"));
-        assertThat(statement.getNormalTables()).containsAll(Collections.singletonList("table1"));
+        assertThat(statement.getTables()).containsOnly("table1" , "table2");
+        assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
-        assertThat(statement.getSubTables()).containsAll(Collections.singletonList("table2"));
+        assertThat(statement.getSubTables()).containsOnly("table2");
         assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+
+    }
+
+    @Test
+    public void testParseUpdate() {
+
+        String sql = "UPDATE table1 \n" +
+                "SET column1 = value1, column2 = value2, column3 = (SELECT column4 FROM table2 WHERE column5 = value3)\n" +
+                "WHERE column6 IN (SELECT column7 FROM table3 WHERE column8 = value4);";
+
+        SqlStatement statement = sqlParser.parse(sql);
+        assertThat(statement).isNotNull();
+        assertThat(statement.isWrite()).isTrue();
+        assertThat(statement.isRead()).isFalse();
+        assertThat(statement.getTables()).containsOnly("table1" , "table2" , "table3");
+        assertThat(statement.getNormalTables()).containsOnly("table1");
+        assertThat(statement.getJoinTables()).isEmpty();
+        assertThat(statement.getSubTables()).containsOnly("table2" , "table3");
+        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.UPDATE);
     }
 }

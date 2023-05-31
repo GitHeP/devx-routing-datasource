@@ -19,10 +19,13 @@ package com.github.devx.routing.sql.parser;
 import com.github.devx.routing.sql.SqlStatementType;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.Model;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.ExplainStatement;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
@@ -31,6 +34,8 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
+import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.update.UpdateSet;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.Collections;
@@ -91,13 +96,22 @@ public class JSqlParser implements SqlParser {
 
         private final Set<String> normalTables = new HashSet<>();
 
-        private SqlStatementType statementType;
+        private SqlStatementType statementType = SqlStatementType.OTHER;
+
+        private Model prevVisited;
 
         @Override
         public SqlStatement build(Statement obj) {
             getTableList(obj);
             normalTables.removeAll(subTables);
             normalTables.removeAll(joinTables);
+
+            databases.removeIf(Objects::isNull);
+            tables.removeIf(Objects::isNull);
+            normalTables.removeIf(Objects::isNull);
+            joinTables.removeIf(Objects::isNull);
+            subTables.removeIf(Objects::isNull);
+            prevVisited = null;
             return statement.setStatement(obj).setDatabases(databases).setNormalTables(normalTables)
                     .setTables(tables).setJoinTables(joinTables).setSubTables(subTables)
                     .setWrite(isWrite(obj)).setRead(isRead(obj)).setStatementType(statementType);
@@ -105,11 +119,44 @@ public class JSqlParser implements SqlParser {
 
         @Override
         public void visit(Insert insert) {
+            prevVisited = insert;
             super.visit(insert);
-            statementType = SqlStatementType.INSERT;
             Table table = insert.getTable();
+            if (!normalTables.isEmpty()) {
+                normalTables.clear();
+            }
             normalTables.add(table.getName());
             databases.add(table.getSchemaName());
+            statementType = SqlStatementType.INSERT;
+        }
+
+        @Override
+        public void visit(Update update) {
+            prevVisited = update;
+            super.visit(update);
+            Table table = update.getTable();
+            normalTables.add(table.getName());
+            databases.add(table.getSchemaName());
+
+            // parse set fragment sub select
+            List<UpdateSet> sets = update.getUpdateSets();
+            if (Objects.nonNull(sets) && !sets.isEmpty()) {
+                for (UpdateSet set : sets) {
+                    for (Expression expression : set.getExpressions()) {
+                        expression.accept(this);
+                    }
+                }
+            }
+            statementType = SqlStatementType.UPDATE;
+        }
+
+        @Override
+        public void visit(Delete delete) {
+            super.visit(delete);
+            Table table = delete.getTable();
+            normalTables.add(table.getName());
+            databases.add(table.getSchemaName());
+            statementType = SqlStatementType.DELETE;
         }
 
         @Override
@@ -153,6 +200,10 @@ public class JSqlParser implements SqlParser {
 
         @Override
         public void visit(PlainSelect plainSelect) {
+            if (Objects.equals(prevVisited , plainSelect)) {
+                return;
+            }
+            prevVisited = plainSelect;
             super.visit(plainSelect);
 
             FromItem fromItem = plainSelect.getFromItem();
@@ -171,6 +222,7 @@ public class JSqlParser implements SqlParser {
                     }
                 }
             }
+            statementType = SqlStatementType.SELECT;
         }
 
         private boolean isRead(Statement statement) {
