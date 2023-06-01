@@ -1,7 +1,9 @@
 package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.config.DataSourceConfiguration;
+import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.datasource.DataSourceType;
+import com.github.devx.routing.sql.SqlStatementType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,36 @@ class PropertiesConfigTest extends SpringBootIntegrationTest {
         assertWrite0();
         assertRead0();
         assertRead1();
+    }
+
+    @Test
+    void testPropertiesFileTableRoutingRuleConfig() {
+
+        log.info("testing Table Routing Rule using spring boot properties config file");
+
+        assertThat(properties.getRules()).isNotNull();
+        Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();
+        assertThat(tables).isNotEmpty().containsOnlyKeys("employee");
+
+        for (Map.Entry<String, Map<String, SqlTypeConfiguration>> entry : tables.entrySet()) {
+            Map<String, SqlTypeConfiguration> datasourceMap = entry.getValue();
+            assertThat(datasourceMap).isNotEmpty();
+            assertThat(datasourceMap).containsOnlyKeys("write_0" , "read_0" , "read_1");
+            SqlTypeConfiguration write0 = datasourceMap.get("write_0");
+            assertThat(write0).isNotNull();
+            assertThat(write0.getAllowAllSqlTypes()).isNull();
+            assertThat(write0.getSqlTypes()).containsOnly(SqlStatementType.INSERT , SqlStatementType.UPDATE , SqlStatementType.DELETE , SqlStatementType.OTHER);
+
+            SqlTypeConfiguration read0 = datasourceMap.get("read_0");
+            assertThat(read0).isNotNull();
+            assertThat(read0.getAllowAllSqlTypes()).isNull();
+            assertThat(read0.getSqlTypes()).containsOnly(SqlStatementType.SELECT);
+
+            SqlTypeConfiguration read1 = datasourceMap.get("read_1");
+            assertThat(read1).isNotNull();
+            assertThat(read1.getAllowAllSqlTypes()).isNull();
+            assertThat(read1.getSqlTypes()).containsOnly(SqlStatementType.SELECT);
+        }
     }
 
     private void assertWrite0() {

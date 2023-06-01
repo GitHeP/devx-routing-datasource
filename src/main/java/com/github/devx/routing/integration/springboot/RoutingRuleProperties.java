@@ -16,8 +16,10 @@
 
 package com.github.devx.routing.integration.springboot;
 
-import com.github.devx.routing.config.TableRuleConfiguration;
+import com.github.devx.routing.config.SqlTypeConfiguration;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * @author Peng He
@@ -27,5 +29,10 @@ import lombok.Data;
 @Data
 public class RoutingRuleProperties {
 
-    private TableRuleConfiguration tableRule;
+    /**
+     * key is table name
+     * value Map key is datasource name
+     */
+    private Map<String , Map<String , SqlTypeConfiguration>> tables;
+
 }

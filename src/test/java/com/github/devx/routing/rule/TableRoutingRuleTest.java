@@ -1,6 +1,7 @@
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.config.TableRuleConfiguration;
+import com.github.devx.routing.config.SqlTypeConfiguration;
+import com.github.devx.routing.sql.SqlStatementType;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.junit.jupiter.api.Test;
@@ -20,30 +21,56 @@ import static org.assertj.core.api.Assertions.setAllowComparingPrivateFields;
 class TableRoutingRuleTest {
 
     @Test
-    void routing() {
+    void testRoutingPositive() {
 
         SqlParser sqlParser = new JSqlParser();
 
-        TableRuleConfiguration tableRule = new TableRuleConfiguration();
-        Map<String, Set<String>> tables = new HashMap<>();
-        Set<String> employeeDatasourceNames = new HashSet<>();
-        employeeDatasourceNames.add("read0");
-        employeeDatasourceNames.add("read1");
-        employeeDatasourceNames.add("read2");
-        tables.put("employee" , employeeDatasourceNames);
-        tableRule.setTables(tables);
+        Map<String, Map<String, SqlTypeConfiguration>> tableRule = new HashMap<>();
+        Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
+        SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
+        sqlTypeConfiguration.setAllowAllSqlTypes(false);
+        Set<SqlStatementType> sqlTypes = new HashSet<>();
+        sqlTypes.add(SqlStatementType.SELECT);
+        sqlTypeConfiguration.setSqlTypes(sqlTypes);
+        sqlTypeMap.put("read0" , sqlTypeConfiguration);
+        sqlTypeMap.put("read1" , sqlTypeConfiguration);
+        sqlTypeMap.put("read2" , sqlTypeConfiguration);
+
+        tableRule.put("employee" , sqlTypeMap);
         TableRoutingRule routingRule = new TableRoutingRule(tableRule);
-        String sql1 = "select * from employee where name = 'DevX'";
-        String result1 = routingRule.routing(sqlParser.parse(sql1));
+        String sql = "select * from employee where name = 'DevX'";
+        String result = routingRule.routing(sqlParser.parse(sql));
 
         setAllowComparingPrivateFields(true);
-        assertThat(employeeDatasourceNames).contains(result1);
+        assertThat(sqlTypeMap).containsKey(result);
 
-        String sql2 = "SELECT e.* , u.* \n" +
-                "FROM employee e , users u\n" +
+
+    }
+
+    @Test
+    void testRoutingNegative() {
+
+        SqlParser sqlParser = new JSqlParser();
+
+        Map<String, Map<String, SqlTypeConfiguration>> tableRule = new HashMap<>();
+        Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
+        SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
+        sqlTypeConfiguration.setAllowAllSqlTypes(false);
+        Set<SqlStatementType> sqlTypes = new HashSet<>();
+        sqlTypes.add(SqlStatementType.SELECT);
+        sqlTypeConfiguration.setSqlTypes(sqlTypes);
+        sqlTypeMap.put("read0" , sqlTypeConfiguration);
+        sqlTypeMap.put("read1" , sqlTypeConfiguration);
+        sqlTypeMap.put("read2" , sqlTypeConfiguration);
+        tableRule.put("employee" , sqlTypeMap);
+
+        TableRoutingRule routingRule = new TableRoutingRule(tableRule);
+
+        String sql = "SELECT e.* , u.* \n" +
+                "FROM dept e , users u\n" +
                 "WHERE e.user_id = u.id;";
-        String result2 = routingRule.routing(sqlParser.parse(sql2));
+        String result = routingRule.routing(sqlParser.parse(sql));
 
-        assertThat(employeeDatasourceNames).contains(result2);
+        assertThat(sqlTypeMap).doesNotContainKeys(result);
     }
 }

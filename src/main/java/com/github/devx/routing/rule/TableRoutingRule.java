@@ -16,13 +16,17 @@
 
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
+import com.github.devx.routing.sql.SqlStatementType;
 import com.github.devx.routing.sql.parser.SqlStatement;
+import com.github.devx.routing.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,24 +41,44 @@ import java.util.Set;
  */
 public class TableRoutingRule implements StatementRoutingRule {
 
-    private final TableRuleConfiguration tableRule;
+    private final Map<String, Map<String, SqlTypeConfiguration>> tableRule;
 
-    public TableRoutingRule(TableRuleConfiguration tableRule) {
+    private final Set<String> ruleTables;
+
+    public TableRoutingRule(Map<String, Map<String, SqlTypeConfiguration>> tableRule) {
         this.tableRule = tableRule;
+        this.ruleTables = tableRule.keySet();
     }
+
+
 
     @Override
     public String routing(SqlStatement statement) {
 
-        if (Objects.isNull(statement.getTables()) || statement.getTables().isEmpty()) {
+        if (Objects.isNull(statement.getTables()) || statement.getTables().isEmpty() || !CollectionUtils.containsAny(ruleTables , statement.getTables())) {
             return null;
         }
 
         List<String> datasourceNames = new ArrayList<>();
         Set<String> tables = statement.getTables();
         for (String table : tables) {
-            if (tableRule.getTables().containsKey(table)) {
-                datasourceNames.addAll(tableRule.getTables().get(table));
+
+            Map<String, SqlTypeConfiguration> sqlTypeConfigurationMap = tableRule.get(table);
+            if (Objects.isNull(sqlTypeConfigurationMap) || sqlTypeConfigurationMap.isEmpty()) {
+                continue;
+            }
+
+            for (Map.Entry<String, SqlTypeConfiguration> entry : sqlTypeConfigurationMap.entrySet()) {
+                String datasourceName = entry.getKey();
+                SqlTypeConfiguration sqlTypeConfiguration = entry.getValue();
+                if (Boolean.TRUE.equals(sqlTypeConfiguration.getAllowAllSqlTypes())) {
+                    datasourceNames.add(datasourceName);
+                }
+
+                Set<SqlStatementType> sqlTypes = sqlTypeConfiguration.getSqlTypes();
+                if (Objects.nonNull(sqlTypes) && sqlTypes.contains(statement.getStatementType())) {
+                    datasourceNames.add(datasourceName);
+                }
             }
         }
 

@@ -19,7 +19,6 @@ package com.github.devx.routing.config;
 import lombok.Data;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Peng He
@@ -30,8 +29,7 @@ import java.util.Set;
 public class TableRuleConfiguration {
 
     /**
-     * key - table name
-     * value - datasource names
+     * key is datasource name
      */
-    private Map<String , Set<String>> tables;
+    private Map<String , SqlTypeConfiguration> dataSources;
 }

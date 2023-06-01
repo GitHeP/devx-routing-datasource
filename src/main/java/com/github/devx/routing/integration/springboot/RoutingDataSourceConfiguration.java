@@ -17,26 +17,26 @@
 package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.config.DataSourceConfiguration;
-import com.github.devx.routing.config.TableRuleConfiguration;
-import com.github.devx.routing.exception.ConfigurationException;
-import com.github.devx.routing.integration.datasource.CompositeDataSourceInitializer;
-import com.github.devx.routing.integration.datasource.DataSourceInitializer;
-import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
-import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
+import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.datasource.DataSourceType;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
 import com.github.devx.routing.datasource.RoutingKeyProvider;
+import com.github.devx.routing.exception.ConfigurationException;
+import com.github.devx.routing.integration.datasource.CompositeDataSourceInitializer;
+import com.github.devx.routing.integration.datasource.DataSourceInitializer;
+import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
+import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.rule.ForceReadRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
-import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
 import com.github.devx.routing.rule.StatementRoutingRule;
+import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.TxRoutingRule;
 import com.github.devx.routing.rule.UnknownStatementRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
@@ -119,9 +119,9 @@ public class RoutingDataSourceConfiguration {
         routingRules.add(forceWriteRoutingRule);
         routingRules.add(forceReadRoutingRule);
 
-        if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTableRule())) {
-            TableRuleConfiguration tableRule = properties.getRules().getTableRule();
-            TableRoutingRule tableRoutingRule = new TableRoutingRule(tableRule);
+        if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
+            Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();
+            TableRoutingRule tableRoutingRule = new TableRoutingRule(tables);
             routingRules.add(tableRoutingRule);
         }
 
