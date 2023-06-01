@@ -121,7 +121,7 @@ class YamlConfigFormatTest extends SpringBootIntegrationTest {
 
         Map<String, Object> read1Props = read1Configuration.getProperties();
         assertThat(read1Props).isNotNull();
-        assertThat(read1Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
+        assertThat(read1Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(read1Props).extracting("username").isEqualTo("sa");
         assertThat(read1Props).extracting("password").isEqualTo("");
         assertThat(read1Props).extracting("minIdle").isEqualTo("15");

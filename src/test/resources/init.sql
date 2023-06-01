@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS employee (
 
 -- Insert test data
 INSERT INTO employee (id, name, department_id) VALUES
-  (1, 'DevX', 1),
+  (1, 'John Doe', 1),
   (2, 'Jane Doe', 1),
   (3, 'Bob Smith', 2),
   (4, 'Alice Jones', 2);

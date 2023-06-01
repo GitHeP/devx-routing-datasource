@@ -7,7 +7,6 @@ import com.github.devx.routing.jdbc.RoutingStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -21,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 1.0
  */
 
-@ActiveProfiles("props")
 @Slf4j
 public class DataSourceTest extends SpringBootIntegrationTest {
 

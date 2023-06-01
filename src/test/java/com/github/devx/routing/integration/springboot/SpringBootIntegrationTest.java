@@ -10,4 +10,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = {SpringBootApplication.class})
 public class SpringBootIntegrationTest {
+
 }
