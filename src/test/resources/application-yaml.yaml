@@ -1,0 +1,6 @@
+
+
+mybatis:
+  configuration:
+    use-actual-param-name: true
+

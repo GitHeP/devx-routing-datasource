@@ -25,8 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author he peng
- * @see JSqlParser
  * @since 1.0
+ *
+ * @see JSqlParser
  */
 
 @State(Scope.Benchmark)
