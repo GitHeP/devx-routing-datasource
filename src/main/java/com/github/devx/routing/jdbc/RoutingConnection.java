@@ -53,7 +53,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
     @Getter
     private volatile DataSourceType dataSourceType;
 
-    private volatile Boolean autoCommit;
+    private volatile Boolean autoCommit = true;
 
     private volatile boolean closed = false;
 

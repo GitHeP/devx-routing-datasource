@@ -32,6 +32,7 @@ import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.rule.CompositeRoutingRule;
 import com.github.devx.routing.rule.ForceReadRoutingRule;
+import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
@@ -110,6 +111,7 @@ public class RoutingDataSourceConfiguration {
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
+        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
         if (Objects.isNull(routingRules)) {
             routingRules = new ArrayList<>();
         }
@@ -118,6 +120,7 @@ public class RoutingDataSourceConfiguration {
         routingRules.add(readWriteSplittingRoutingRule);
         routingRules.add(forceWriteRoutingRule);
         routingRules.add(forceReadRoutingRule);
+        routingRules.add(forceTargetRoutingRule);
 
         if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
             Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();

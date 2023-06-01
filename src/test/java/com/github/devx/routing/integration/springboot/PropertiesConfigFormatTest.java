@@ -79,7 +79,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         Map<String, Object> write0Props = write0Configuration.getProperties();
         assertThat(write0Props).isNotNull();
-        assertThat(write0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;");
+        assertThat(write0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(write0Props).extracting("username").isEqualTo("sa");
         assertThat(write0Props).extracting("password").isEqualTo("");
         assertThat(write0Props).extracting("minIdle").isEqualTo("5");
@@ -100,7 +100,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         Map<String, Object> read0Props = read0Configuration.getProperties();
         assertThat(read0Props).isNotNull();
-        assertThat(read0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;");
+        assertThat(read0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(read0Props).extracting("username").isEqualTo("sa");
         assertThat(read0Props).extracting("password").isEqualTo("");
         assertThat(read0Props).extracting("minIdle").isEqualTo("10");
@@ -121,7 +121,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         Map<String, Object> read1Props = read1Configuration.getProperties();
         assertThat(read1Props).isNotNull();
-        assertThat(read1Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;");
+        assertThat(read1Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(read1Props).extracting("username").isEqualTo("sa");
         assertThat(read1Props).extracting("password").isEqualTo("");
         assertThat(read1Props).extracting("minIdle").isEqualTo("15");

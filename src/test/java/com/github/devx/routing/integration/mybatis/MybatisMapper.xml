@@ -3,6 +3,7 @@
 <mapper namespace="com.github.devx.routing.integration.mybatis.MyBatisMapper">
 
 
-
-
+    <select id="selectEmployeeById" resultType="java.util.Map" parameterType="java.lang.Long">
+        select * from employee where id = #{id}
+    </select>
 </mapper>
