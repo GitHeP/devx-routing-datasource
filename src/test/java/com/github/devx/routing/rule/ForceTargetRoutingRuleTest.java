@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 class ForceTargetRoutingRuleTest {

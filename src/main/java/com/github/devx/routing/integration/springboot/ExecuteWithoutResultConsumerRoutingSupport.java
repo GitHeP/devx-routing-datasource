@@ -22,7 +22,7 @@ import org.springframework.transaction.TransactionStatus;
 import java.util.function.Consumer;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class ExecuteWithoutResultConsumerRoutingSupport implements Consumer<TransactionStatus> {

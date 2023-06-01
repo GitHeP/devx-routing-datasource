@@ -17,7 +17,7 @@
 package com.github.devx.routing.datasource;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface RoutingContextClearable {

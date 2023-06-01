@@ -28,7 +28,7 @@ import java.util.Set;
  * data source routing based on the SQL cannot be performed.
  * It will be routed to the write data source by default.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see SqlParser

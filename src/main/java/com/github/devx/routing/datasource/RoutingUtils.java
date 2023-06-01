@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.util.Objects;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public abstract class RoutingUtils {

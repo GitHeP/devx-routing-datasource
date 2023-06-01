@@ -27,7 +27,7 @@ import java.util.Set;
  * and read statements will be routed to the read data source,
  * except when in a transaction.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class ReadWriteSplittingRoutingRule extends AbstractRoutingRule {

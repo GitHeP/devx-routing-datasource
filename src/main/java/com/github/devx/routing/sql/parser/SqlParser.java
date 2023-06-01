@@ -21,7 +21,7 @@ package com.github.devx.routing.sql.parser;
  * The purpose of the SQL parser is to parse the SQL and obtain the judgment basis information for selecting
  * the final data source in the subsequent routing process.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see JSqlParser

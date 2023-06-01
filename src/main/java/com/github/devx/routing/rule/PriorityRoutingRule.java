@@ -20,7 +20,7 @@ package com.github.devx.routing.rule;
  * Support routing rules that specify execution priority.
  * Sort by priority from small to large, with smaller numbers indicating higher priority.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface PriorityRoutingRule extends RoutingRule {

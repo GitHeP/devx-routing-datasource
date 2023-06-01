@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see JSqlParser

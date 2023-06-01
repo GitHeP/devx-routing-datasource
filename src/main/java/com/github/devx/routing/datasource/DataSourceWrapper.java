@@ -26,7 +26,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class DataSourceWrapper implements DataSource {

@@ -19,7 +19,7 @@ package com.github.devx.routing.datasource;
 /**
  * Provide RoutingKey instance from routing context
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see RoutingContext

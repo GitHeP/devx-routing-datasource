@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

@@ -30,7 +30,7 @@ import java.util.Set;
  * Route based on the table name following the FROM fragment
  * to select the corresponding data source configured for that table.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see TableRuleConfiguration

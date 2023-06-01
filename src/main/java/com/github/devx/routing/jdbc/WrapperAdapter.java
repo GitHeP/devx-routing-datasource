@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.sql.Wrapper;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class WrapperAdapter implements Wrapper {

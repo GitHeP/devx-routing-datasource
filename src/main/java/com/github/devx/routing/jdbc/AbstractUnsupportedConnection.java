@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public abstract class AbstractUnsupportedConnection extends WrapperAdapter implements Connection {

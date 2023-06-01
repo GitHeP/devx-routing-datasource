@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Round-robin load balancing.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class RoundRobinLoadBalancer implements LoadBalancer<String> {

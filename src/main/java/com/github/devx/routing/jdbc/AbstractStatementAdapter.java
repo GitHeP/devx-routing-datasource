@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public abstract class AbstractStatementAdapter extends AbstractUnsupportedStatement {

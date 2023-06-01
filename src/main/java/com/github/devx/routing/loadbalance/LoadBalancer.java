@@ -19,7 +19,7 @@ package com.github.devx.routing.loadbalance;
 /**
  * Load balancing among multiple data sources.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface LoadBalancer<T> {

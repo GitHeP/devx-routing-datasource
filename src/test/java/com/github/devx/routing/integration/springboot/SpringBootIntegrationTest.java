@@ -4,7 +4,7 @@ package com.github.devx.routing.integration.springboot;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

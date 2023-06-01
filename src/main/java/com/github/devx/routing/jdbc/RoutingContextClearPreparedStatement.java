@@ -43,7 +43,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

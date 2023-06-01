@@ -20,7 +20,7 @@ import com.github.devx.routing.config.TableRuleConfiguration;
 import lombok.Data;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

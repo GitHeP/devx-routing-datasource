@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public abstract class AbstractUnsupportedStatement extends WrapperAdapter implements Statement {

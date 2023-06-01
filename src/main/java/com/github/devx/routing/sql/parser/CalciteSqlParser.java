@@ -17,7 +17,7 @@
 package com.github.devx.routing.sql.parser;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class CalciteSqlParser implements SqlParser {

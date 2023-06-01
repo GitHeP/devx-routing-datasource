@@ -32,7 +32,7 @@ import java.util.Set;
  * in the transaction will be routed to the write data source
  * for execution.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class TxRoutingRule extends AbstractRoutingRule {

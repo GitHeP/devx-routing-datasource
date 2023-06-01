@@ -21,7 +21,7 @@ import com.github.devx.routing.datasource.RoutingKey;
 /**
  * Routing rules are responsible for the specific routing selection process.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface RoutingRule {

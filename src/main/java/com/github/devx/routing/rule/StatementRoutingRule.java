@@ -21,7 +21,7 @@ import com.github.devx.routing.sql.parser.SqlStatement;
 /**
  * Route selection based on SQL statements.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface StatementRoutingRule extends PriorityRoutingRule {

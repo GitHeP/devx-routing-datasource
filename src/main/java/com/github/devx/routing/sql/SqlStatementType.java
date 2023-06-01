@@ -2,7 +2,7 @@ package com.github.devx.routing.sql;
 
 /**
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public enum SqlStatementType {

@@ -3,7 +3,7 @@ package com.github.devx.routing.integration.springboot;
 import org.springframework.boot.SpringApplication;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

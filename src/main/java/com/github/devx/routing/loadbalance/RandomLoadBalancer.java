@@ -22,7 +22,7 @@ import java.util.Random;
 /**
  * Random load balancing.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class RandomLoadBalancer implements LoadBalancer<String> {

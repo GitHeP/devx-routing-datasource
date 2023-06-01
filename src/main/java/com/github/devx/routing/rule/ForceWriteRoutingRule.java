@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * Force routing to the write data source.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see RoutingContext#forceWrite()

@@ -48,7 +48,7 @@ import java.util.Set;
  * Parse SQL statements using JSqlParser.
  * <p><a href="https://github.com/JSQLParser/JSqlParser">JSqlParser</a><p/>
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 

@@ -30,7 +30,7 @@ import java.util.Set;
  * and randomly select between multiple data sources
  * if more than one are specified.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @see RoutingContext#force(String...) ()

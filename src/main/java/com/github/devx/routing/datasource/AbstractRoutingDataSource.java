@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public abstract class AbstractRoutingDataSource implements RoutingDataSource {

@@ -25,7 +25,7 @@ import java.sql.Statement;
 import java.util.Objects;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class RoutingStatement extends AbstractStatementAdapter implements RoutingContextClearable {

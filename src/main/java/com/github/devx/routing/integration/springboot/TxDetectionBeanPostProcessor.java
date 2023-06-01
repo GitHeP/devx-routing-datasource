@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class TxDetectionBeanPostProcessor implements BeanPostProcessor {

@@ -17,7 +17,7 @@
 package com.github.devx.routing.exception;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class UnsupportedJdbcMethodException extends RuntimeException {

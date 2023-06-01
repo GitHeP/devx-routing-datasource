@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class DefaultDataSourceInitializer implements GenericDataSourceInitializer<DataSource> {

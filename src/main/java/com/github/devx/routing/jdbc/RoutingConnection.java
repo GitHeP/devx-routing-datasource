@@ -43,7 +43,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public class RoutingConnection extends AbstractConnectionAdapter implements RoutingContextClearable {

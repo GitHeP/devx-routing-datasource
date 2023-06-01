@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface GenericDataSourceInitializer<T extends DataSource> extends DataSourceInitializer {

@@ -23,7 +23,7 @@ import javax.sql.DataSource;
  * each with a unique name, supports routing based on data source name
  * and SQL statements.
  *
- * @author he peng
+ * @author Peng He
  * @since 1.0
  */
 public interface RoutingDataSource extends DataSource {

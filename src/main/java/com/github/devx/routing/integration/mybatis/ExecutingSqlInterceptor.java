@@ -29,7 +29,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
- * @author he peng
+ * @author Peng He
  * @since 1.0
  *
  * @deprecated Perform SQL routing based on the JDBC API,
