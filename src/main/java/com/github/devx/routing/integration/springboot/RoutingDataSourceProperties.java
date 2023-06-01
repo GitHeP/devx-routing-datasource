@@ -31,7 +31,7 @@ import java.util.Set;
 @Data
 public class RoutingDataSourceProperties {
 
-    public static final String DATA_SOURCE_CLASS_NAME_KEY = "dataSourceClassName";
+    public static final String DATA_SOURCE_CLASS_NAME_KEY = "dataSourceClass";
 
     private Map<String , Map<String , Object>> dataSources;
 
