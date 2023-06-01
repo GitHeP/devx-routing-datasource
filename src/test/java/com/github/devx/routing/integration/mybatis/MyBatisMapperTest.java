@@ -1,7 +1,7 @@
 package com.github.devx.routing.integration.mybatis;
 
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.integration.springboot.InitDataTest;
+import com.github.devx.routing.integration.springboot.BeforeAfterEachHandleDataTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 1.0
  */
 
-class MyBatisMapperTest extends InitDataTest {
+class MyBatisMapperTest extends BeforeAfterEachHandleDataTest {
 
     @Autowired
     MyBatisMapper mapper;
@@ -26,11 +26,13 @@ class MyBatisMapperTest extends InitDataTest {
 
         Map<String, Object> employee = mapper.selectEmployeeById(1L);
         assertThat(employee).isNotNull();
-        assertThat(employee).extractingByKey("id").isEqualTo(1);
-        assertThat(employee).extractingByKey("name").isEqualTo("John Doe");
-        assertThat(employee).extractingByKey("department_id").isEqualTo(1);
+
+        // H2 database changes column names to uppercase
+        // I try IGNORECASE=TRUE parameter but not working
+        assertThat(employee).extractingByKey("ID").isEqualTo(1);
+        assertThat(employee).extractingByKey("NAME").isEqualTo("John Doe");
+        assertThat(employee).extractingByKey("DEPARTMENT_ID").isEqualTo(1);
         assertThat(RoutingContext.getRoutedDataSourceName()).containsAnyOf("read_0" , "read_1");
-        // TODO H2 Database IGNORECASE=TRUE not working
     }
 
 

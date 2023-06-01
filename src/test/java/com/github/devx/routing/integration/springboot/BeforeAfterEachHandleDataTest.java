@@ -21,7 +21,7 @@ import java.util.Objects;
  */
 
 @TestPropertySource(locations = "classpath:application.yaml")
-public class InitDataTest extends SpringBootIntegrationTest {
+public class BeforeAfterEachHandleDataTest extends SpringBootIntegrationTest {
 
     @Autowired
     RoutingDataSource dataSource;
