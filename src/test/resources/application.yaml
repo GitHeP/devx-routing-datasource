@@ -1,4 +1,8 @@
 
+logging:
+  level:
+    root: debug
+
 ############################# mybatis configuration #############################
 
 mybatis:

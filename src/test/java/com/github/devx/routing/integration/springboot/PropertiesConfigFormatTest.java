@@ -7,7 +7,7 @@ import com.github.devx.routing.sql.SqlStatementType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 
@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 1.0
  */
 
-@ActiveProfiles("props")
+@TestPropertySource(locations = "classpath:application.properties")
 @Slf4j
-class PropertiesConfigTest extends SpringBootIntegrationTest {
+class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
     @Autowired
     RoutingDataSourceProperties properties;
