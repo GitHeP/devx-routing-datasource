@@ -32,25 +32,25 @@ public abstract class RoutingUtils {
     }
 
     public static boolean isRoutingRead(Connection connection) {
-        return isRoutingTarget(DataSourceMode.READ , connection);
+        return isRoutingTarget(DataSourceType.READ , connection);
     }
 
     public static boolean isRoutingWrite(Connection connection) {
-        return isRoutingTarget(DataSourceMode.WRITE , connection);
+        return isRoutingTarget(DataSourceType.WRITE , connection);
     }
 
-    public static boolean isRoutingTarget(DataSourceMode targetMode , Connection connection) {
+    public static boolean isRoutingTarget(DataSourceType targetMode , Connection connection) {
         if (Objects.isNull(connection)) {
             return false;
         }
 
         if (connection instanceof RoutingConnection) {
             RoutingConnection rc = (RoutingConnection) connection;
-            DataSourceMode dataSourceMode = rc.getDataSourceMode();
-            if (Objects.isNull(dataSourceMode)) {
+            DataSourceType dataSourceType = rc.getDataSourceType();
+            if (Objects.isNull(dataSourceType)) {
                 return false;
             }
-            return Objects.equals(targetMode, dataSourceMode) || Objects.equals(DataSourceMode.READ_WRITE, dataSourceMode);
+            return Objects.equals(targetMode, dataSourceType) || Objects.equals(DataSourceType.READ_WRITE, dataSourceType);
         }
         return false;
     }

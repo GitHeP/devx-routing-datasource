@@ -16,13 +16,14 @@
 
 package com.github.devx.routing.integration.springboot;
 
+import com.github.devx.routing.config.DataSourceConfiguration;
 import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.exception.ConfigurationException;
 import com.github.devx.routing.integration.datasource.CompositeDataSourceInitializer;
 import com.github.devx.routing.integration.datasource.DataSourceInitializer;
 import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
 import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
-import com.github.devx.routing.datasource.DataSourceMode;
+import com.github.devx.routing.datasource.DataSourceType;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
@@ -135,17 +136,17 @@ public class RoutingDataSourceConfiguration {
         }
 
         Map<String , DataSource> dataSources = new HashMap<>();
-        for (Map.Entry<String, Map<String, Object>> entry : properties.getDataSources().entrySet()) {
+        for (Map.Entry<String, DataSourceConfiguration> entry : properties.getDataSources().entrySet()) {
             String name = entry.getKey();
-            Map<String, Object> property = entry.getValue();
-            Object dataSourceClassName = property.get(RoutingDataSourceProperties.DATA_SOURCE_CLASS_NAME_KEY);
+            DataSourceConfiguration configuration = entry.getValue();
+            Object dataSourceClassName = configuration.getDataSourceClass();
             if (Objects.isNull(dataSourceClassName)) {
                 throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingDataSourceProperties.DATA_SOURCE_CLASS_NAME_KEY));
             }
-            DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , property);
-            DataSourceMode mode = DataSourceMode.READ;
+            DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , configuration.getProperties());
+            DataSourceType mode = DataSourceType.READ;
             if (properties.getWriteDataSource().equals(name)) {
-                mode = DataSourceMode.READ_WRITE;
+                mode = DataSourceType.READ_WRITE;
             }
             dataSources.put(name , new DataSourceWrapper(dataSource , mode , name));
         }

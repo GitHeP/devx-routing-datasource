@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.jdbc;
 
-import com.github.devx.routing.datasource.DataSourceMode;
+import com.github.devx.routing.datasource.DataSourceType;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.datasource.RoutingContextClearable;
@@ -51,7 +51,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
     private Connection connection;
 
     @Getter
-    private volatile DataSourceMode dataSourceMode;
+    private volatile DataSourceType dataSourceType;
 
     private volatile Boolean autoCommit;
 
@@ -336,7 +336,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         }
         this.connection = dataSource.getConnection();
         if (dataSource instanceof DataSourceWrapper) {
-            this.dataSourceMode = ((DataSourceWrapper) dataSource).getMode();
+            this.dataSourceType = ((DataSourceWrapper) dataSource).getMode();
         }
         if (this.autoCommit != null) {
             this.connection.setAutoCommit(this.autoCommit);

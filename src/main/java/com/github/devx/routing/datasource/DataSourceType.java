@@ -20,7 +20,7 @@ package com.github.devx.routing.datasource;
  * @author Peng He
  * @since 1.0
  */
-public enum DataSourceMode {
+public enum DataSourceType {
 
     /**
      * only read

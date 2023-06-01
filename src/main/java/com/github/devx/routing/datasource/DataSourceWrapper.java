@@ -34,12 +34,12 @@ public class DataSourceWrapper implements DataSource {
     private final DataSource delegate;
 
     @Getter
-    private final DataSourceMode mode;
+    private final DataSourceType mode;
 
     @Getter
     private final String name;
 
-    public DataSourceWrapper(DataSource delegate, DataSourceMode mode, String name) {
+    public DataSourceWrapper(DataSource delegate, DataSourceType mode, String name) {
         this.delegate = delegate;
         this.mode = mode;
         this.name = name;

@@ -16,6 +16,7 @@
 
 package com.github.devx.routing.integration.springboot;
 
+import com.github.devx.routing.config.DataSourceConfiguration;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,7 +34,7 @@ public class RoutingDataSourceProperties {
 
     public static final String DATA_SOURCE_CLASS_NAME_KEY = "dataSourceClass";
 
-    private Map<String , Map<String , Object>> dataSources;
+    private Map<String , DataSourceConfiguration> dataSources;
 
     private String writeDataSource;
 

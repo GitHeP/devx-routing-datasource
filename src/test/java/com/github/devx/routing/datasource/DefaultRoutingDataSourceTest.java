@@ -142,9 +142,9 @@ public class DefaultRoutingDataSourceTest {
         readDataSourceNames.add(readDataSource1Name);
 
         Map<String, DataSource> dataSources = new HashMap<>();
-        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , DataSourceMode.READ_WRITE , writeDataSourceName));
-        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , DataSourceMode.READ , readDataSource0Name));
-        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , DataSourceMode.READ , readDataSource1Name));
+        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , DataSourceType.READ_WRITE , writeDataSourceName));
+        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , DataSourceType.READ , readDataSource0Name));
+        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , DataSourceType.READ , readDataSource1Name));
 
 
         SqlParser sqlParser = new JSqlParser();
