@@ -25,7 +25,9 @@ class PropertiesConfigTest extends SpringBootIntegrationTest {
     RoutingDataSourceProperties properties;
 
     @Test
-    void testPropertiesFileConfig() {
+    void testPropertiesFileDataSourcesConfig() {
+
+        log.info("testing DataSourceConfiguration using spring boot properties config file");
 
         assertThat(properties).isNotNull();
         assertThat(properties.getDataSources()).isNotEmpty();
@@ -53,6 +55,8 @@ class PropertiesConfigTest extends SpringBootIntegrationTest {
         assertThat(write0Props).extracting("connectionTimeout").isEqualTo("30000");
         assertThat(write0Props).extracting("isAutoCommit").isEqualTo("false");
         assertThat(write0Props).extracting("isReadOnly").isEqualTo("false");
+
+        log.info("write_0 DataSourceConfiguration testing pass {} " , write0Configuration);
     }
 
     private void assertRead0() {
@@ -72,6 +76,8 @@ class PropertiesConfigTest extends SpringBootIntegrationTest {
         assertThat(read0Props).extracting("connectionTimeout").isEqualTo("40000");
         assertThat(read0Props).extracting("isAutoCommit").isEqualTo("false");
         assertThat(read0Props).extracting("isReadOnly").isEqualTo("true");
+
+        log.info("read_0 DataSourceConfiguration testing pass {} " , read0Configuration);
     }
 
     private void assertRead1() {
@@ -91,6 +97,8 @@ class PropertiesConfigTest extends SpringBootIntegrationTest {
         assertThat(read1Props).extracting("connectionTimeout").isEqualTo("60000");
         assertThat(read1Props).extracting("isAutoCommit").isEqualTo("false");
         assertThat(read1Props).extracting("isReadOnly").isEqualTo("true");
+
+        log.info("read_1 DataSourceConfiguration testing pass {} " , read1Configuration);
     }
 
 }
