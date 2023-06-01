@@ -1,5 +1,6 @@
 package com.github.devx.routing.integration.springboot;
 
+import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.datasource.RoutingDataSource;
 import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterEach;
@@ -42,19 +43,16 @@ public class InitDataTest extends SpringBootIntegrationTest {
         ResultSet read0Rs = RunScript.execute(read0Conn , new FileReader(initSqlPath));
         close(read0Rs , null , read0Conn);
 
-        try {
-            DataSource read1 = dataSource.getDataSourceWithName("read_1");
-            Connection read1Conn = read1.getConnection();
-            ResultSet read1Rs = RunScript.execute(read1Conn , new FileReader(initSqlPath));
-            close(read1Rs , null , read1Conn);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        DataSource read1 = dataSource.getDataSourceWithName("read_1");
+        Connection read1Conn = read1.getConnection();
+        ResultSet read1Rs = RunScript.execute(read1Conn , new FileReader(initSqlPath));
+        close(read1Rs , null , read1Conn);
     }
 
     @AfterEach
     void clearData() throws Exception {
+
+        RoutingContext.clear();
         DataSource write0 = dataSource.getDataSourceWithName("write_0");
         Connection write0Conn = write0.getConnection();
         Statement write0Stmt = write0Conn.createStatement();
