@@ -1,7 +1,7 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.sql.SqlStatementType;
+import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,8 @@ class TableRoutingRuleTest {
         Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
         SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
         sqlTypeConfiguration.setAllowAllSqlTypes(false);
-        Set<SqlStatementType> sqlTypes = new HashSet<>();
-        sqlTypes.add(SqlStatementType.SELECT);
+        Set<SqlType> sqlTypes = new HashSet<>();
+        sqlTypes.add(SqlType.SELECT);
         sqlTypeConfiguration.setSqlTypes(sqlTypes);
         sqlTypeMap.put("read0" , sqlTypeConfiguration);
         sqlTypeMap.put("read1" , sqlTypeConfiguration);
@@ -56,8 +56,8 @@ class TableRoutingRuleTest {
         Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
         SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
         sqlTypeConfiguration.setAllowAllSqlTypes(false);
-        Set<SqlStatementType> sqlTypes = new HashSet<>();
-        sqlTypes.add(SqlStatementType.SELECT);
+        Set<SqlType> sqlTypes = new HashSet<>();
+        sqlTypes.add(SqlType.SELECT);
         sqlTypeConfiguration.setSqlTypes(sqlTypes);
         sqlTypeMap.put("read0" , sqlTypeConfiguration);
         sqlTypeMap.put("read1" , sqlTypeConfiguration);

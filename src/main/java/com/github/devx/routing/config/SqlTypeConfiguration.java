@@ -1,6 +1,6 @@
 package com.github.devx.routing.config;
 
-import com.github.devx.routing.sql.SqlStatementType;
+import com.github.devx.routing.sql.SqlType;
 import lombok.Data;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ import java.util.Set;
 @Data
 public class SqlTypeConfiguration {
 
-    private Set<SqlStatementType> sqlTypes;
+    private Set<SqlType> sqlTypes;
 
     /**
      * Whether to allow all SQL types, true means allowed.

@@ -16,6 +16,8 @@
 
 package com.github.devx.routing.sql.parser;
 
+import org.apache.calcite.sql.SqlNode;
+
 /**
  * @author Peng He
  * @since 1.0
@@ -24,9 +26,11 @@ public class CalciteSqlParser implements SqlParser {
 
     @Override
     public SqlStatement parse(String sql) {
-        //org.apache.calcite.sql.parser.SqlParser.Config config = org.apache.calcite.sql.parser.SqlParser.config()
-        //        .withQuoting(Quoting.SINGLE_QUOTE);
-        //org.apache.calcite.sql.parser.SqlParser parser = org.apache.calcite.sql.parser.SqlParser.create(sql, config);
+
+
+//        org.apache.calcite.sql.parser.SqlParser parser = org.apache.calcite.sql.parser.SqlParser.create(sql);
+//        SqlNode sqlNode = parser.parseStmt();
+//        sqlNode.accept();
         //try {
         //    SqlNode sqlNode = parser.parseStmt();
         //    SqlNode sqlNode1 = parser.parseQuery();

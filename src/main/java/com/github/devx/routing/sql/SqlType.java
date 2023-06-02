@@ -5,7 +5,7 @@ package com.github.devx.routing.sql;
  * @author Peng He
  * @since 1.0
  */
-public enum SqlStatementType {
+public enum SqlType {
 
     /**
      * insert sql

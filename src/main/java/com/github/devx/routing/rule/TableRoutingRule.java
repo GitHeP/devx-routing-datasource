@@ -20,7 +20,7 @@ import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.sql.SqlStatementType;
+import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.sql.parser.SqlStatement;
 import com.github.devx.routing.util.CollectionUtils;
 
@@ -75,7 +75,7 @@ public class TableRoutingRule implements StatementRoutingRule {
                     datasourceNames.add(datasourceName);
                 }
 
-                Set<SqlStatementType> sqlTypes = sqlTypeConfiguration.getSqlTypes();
+                Set<SqlType> sqlTypes = sqlTypeConfiguration.getSqlTypes();
                 if (Objects.nonNull(sqlTypes) && sqlTypes.contains(statement.getStatementType())) {
                     datasourceNames.add(datasourceName);
                 }

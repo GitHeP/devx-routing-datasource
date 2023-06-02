@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatementType;
+import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.Model;
@@ -96,7 +96,7 @@ public class JSqlParser implements SqlParser {
 
         private final Set<String> normalTables = new HashSet<>();
 
-        private SqlStatementType statementType = SqlStatementType.OTHER;
+        private SqlType statementType = SqlType.OTHER;
 
         private Model prevVisited;
 
@@ -130,7 +130,7 @@ public class JSqlParser implements SqlParser {
             }
             normalTables.add(table.getName());
             databases.add(table.getSchemaName());
-            statementType = SqlStatementType.INSERT;
+            statementType = SqlType.INSERT;
         }
 
         @Override
@@ -150,7 +150,7 @@ public class JSqlParser implements SqlParser {
                     }
                 }
             }
-            statementType = SqlStatementType.UPDATE;
+            statementType = SqlType.UPDATE;
         }
 
         @Override
@@ -159,7 +159,7 @@ public class JSqlParser implements SqlParser {
             Table table = delete.getTable();
             normalTables.add(table.getName());
             databases.add(table.getSchemaName());
-            statementType = SqlStatementType.DELETE;
+            statementType = SqlType.DELETE;
         }
 
         @Override
@@ -225,7 +225,7 @@ public class JSqlParser implements SqlParser {
                     }
                 }
             }
-            statementType = SqlStatementType.SELECT;
+            statementType = SqlType.SELECT;
         }
 
         private boolean isRead(Statement statement) {

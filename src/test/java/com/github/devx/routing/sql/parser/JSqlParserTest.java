@@ -1,6 +1,6 @@
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatementType;
+import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -92,7 +92,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).containsAll(Arrays.asList("orders", "order_details"));
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -125,7 +125,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("students");
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -176,7 +176,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("p_tradedt");
         assertThat(statement.getDatabases()).containsOnly("py");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
     }
 
     @Benchmark
@@ -246,7 +246,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("t_amazon_report_log");
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -297,7 +297,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).containsOnly("t_py_goods", "t_user_baseinfo", "t_buy_stock_order", "t_buy_stock_order_details");
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.SELECT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
     }
 
     @Benchmark
@@ -321,7 +321,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("table2");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
 
     }
 
@@ -349,7 +349,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("employees");
         assertThat(statement.getJoinTables()).containsOnly("departments");
         assertThat(statement.getSubTables()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
 
     }
 
@@ -376,7 +376,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("purchase_order");
         assertThat(statement.getJoinTables()).containsOnly("suppliers");
         assertThat(statement.getSubTables()).containsOnly("supplier_price");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.INSERT);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
     }
 
     @Benchmark
@@ -401,7 +401,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("table2", "table3");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.UPDATE);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.UPDATE);
     }
 
     @Benchmark
@@ -431,7 +431,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("employees");
         assertThat(statement.getJoinTables()).containsOnly("locations");
         assertThat(statement.getSubTables()).containsOnly("departments");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.UPDATE);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.UPDATE);
     }
 
     @Benchmark
@@ -466,6 +466,6 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("orders");
         assertThat(statement.getJoinTables()).containsOnly("products");
         assertThat(statement.getSubTables()).containsOnly("order_details");
-        assertThat(statement.getStatementType()).isEqualTo(SqlStatementType.DELETE);
+        assertThat(statement.getStatementType()).isEqualTo(SqlType.DELETE);
     }
 }
