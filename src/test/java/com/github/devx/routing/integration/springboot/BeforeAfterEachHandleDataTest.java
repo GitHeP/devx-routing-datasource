@@ -27,7 +27,7 @@ public class BeforeAfterEachHandleDataTest extends SpringBootIntegrationTest {
     RoutingDataSource dataSource;
 
     @BeforeEach
-    void initData() throws Exception {
+    protected void initData() throws Exception {
 
         String initSqlPath = "src/test/resources/init.sql";
 
@@ -50,7 +50,7 @@ public class BeforeAfterEachHandleDataTest extends SpringBootIntegrationTest {
     }
 
     @AfterEach
-    void clearData() throws Exception {
+    protected void clearData() throws Exception {
 
         RoutingContext.clear();
         DataSource write0 = dataSource.getDataSourceWithName("write_0");
