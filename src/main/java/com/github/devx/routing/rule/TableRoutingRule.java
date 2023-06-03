@@ -20,8 +20,8 @@ import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
-import com.github.devx.routing.sql.SqlStatement;
 import com.github.devx.routing.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.Set;
  *
  * @see TableRuleConfiguration
  */
-public class TableRoutingRule implements StatementRoutingRule {
+public class TableRoutingRule implements SqlAttributeRoutingRule {
 
     private final Map<String, Map<String, SqlTypeConfiguration>> tableRule;
 
@@ -53,14 +53,14 @@ public class TableRoutingRule implements StatementRoutingRule {
 
 
     @Override
-    public String routing(SqlStatement statement) {
+    public String routing(SqlAttribute attribute) {
 
-        if (Objects.isNull(statement.getTables()) || statement.getTables().isEmpty() || !CollectionUtils.containsAny(ruleTables , statement.getTables())) {
+        if (Objects.isNull(attribute.getTables()) || attribute.getTables().isEmpty() || !CollectionUtils.containsAny(ruleTables , attribute.getTables())) {
             return null;
         }
 
         List<String> datasourceNames = new ArrayList<>();
-        Set<String> tables = statement.getTables();
+        Set<String> tables = attribute.getTables();
         for (String table : tables) {
 
             Map<String, SqlTypeConfiguration> sqlTypeConfigurationMap = tableRule.get(table);
@@ -76,7 +76,7 @@ public class TableRoutingRule implements StatementRoutingRule {
                 }
 
                 Set<SqlType> sqlTypes = sqlTypeConfiguration.getSqlTypes();
-                if (Objects.nonNull(sqlTypes) && sqlTypes.contains(statement.getStatementType())) {
+                if (Objects.nonNull(sqlTypes) && sqlTypes.contains(attribute.getSqlType())) {
                     datasourceNames.add(datasourceName);
                 }
             }

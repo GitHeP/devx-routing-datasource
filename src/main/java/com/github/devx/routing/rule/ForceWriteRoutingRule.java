@@ -18,8 +18,9 @@ package com.github.devx.routing.rule;
 
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
 
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class ForceWriteRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    public String routing(SqlStatement statement) {
+    public String routing(SqlAttribute attribute) {
         return RoutingContext.isForceWriteDataSource() ? writeDataSourceName : null;
     }
 

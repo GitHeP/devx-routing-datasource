@@ -16,6 +16,8 @@
 
 package com.github.devx.routing;
 
+import java.util.Objects;
+
 /**
  * @author Peng He
  * @since 1.0
@@ -35,5 +37,13 @@ public enum RoutingTargetType {
     /**
      * read and write
      */
-    READ_WRITE
+    READ_WRITE;
+
+    public boolean isWrite() {
+        return Objects.equals(this , READ_WRITE) || Objects.equals(this , WRITE);
+    }
+
+    public boolean isRead() {
+        return Objects.equals(this , READ_WRITE) || Objects.equals(this , READ);
+    }
 }

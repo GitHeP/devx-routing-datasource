@@ -16,7 +16,8 @@
 
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
 
 /**
  * @author Peng He
@@ -25,7 +26,7 @@ import com.github.devx.routing.sql.SqlStatement;
 public class CalciteSqlParser implements SqlParser {
 
     @Override
-    public SqlStatement parse(String sql) {
+    public SqlAttribute parse(String sql) {
 
 
 //        org.apache.calcite.sql.parser.SqlParser parser = org.apache.calcite.sql.parser.SqlParser.create(sql);

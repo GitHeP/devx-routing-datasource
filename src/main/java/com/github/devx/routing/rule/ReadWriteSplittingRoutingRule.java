@@ -17,8 +17,9 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
 
 import java.util.Set;
 
@@ -43,7 +44,7 @@ public class ReadWriteSplittingRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    public String routing(SqlStatement statement) {
+    public String routing(SqlAttribute statement) {
         return statement.isWrite() ? writeDataSourceName : loadBalancer.choose();
     }
 }

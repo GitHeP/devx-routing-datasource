@@ -19,7 +19,7 @@ package com.github.devx.routing.rule;
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.SqlAttribute;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -35,10 +35,10 @@ import java.util.Set;
  *
  * @see RoutingContext#force(String...) ()
  */
-public class ForceTargetRoutingRule implements StatementRoutingRule {
+public class ForceTargetRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
-    public String routing(SqlStatement statement) {
+    public String routing(SqlAttribute attribute) {
 
         Set<String> dataSources = RoutingContext.getForceDataSources();
         if (Objects.isNull(dataSources) || dataSources.isEmpty()) {

@@ -16,7 +16,8 @@
 
 package com.github.devx.routing.datasource;
 
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -31,7 +32,7 @@ public class RoutingKey {
 
     private String sql;
 
-    private SqlStatement statement;
+    private SqlAttribute statement;
 
     /**
      * Whether to force routing to write datasource

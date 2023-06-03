@@ -16,7 +16,8 @@
 
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
 
 /**
  * SQL is an important basis for determining the target data source in the routing process of data sources.
@@ -27,14 +28,14 @@ import com.github.devx.routing.sql.SqlStatement;
  * @since 1.0
  *
  * @see JSqlParser
- * @see SqlStatement
+ * @see DefaultSqlAttribute
  */
 public interface SqlParser {
 
     /**
      * Parse a given SQL statement
      * @param sql sql statement
-     * @return {@link SqlStatement}
+     * @return {@link SqlAttribute}
      */
-    SqlStatement parse(String sql);
+    SqlAttribute parse(String sql);
 }

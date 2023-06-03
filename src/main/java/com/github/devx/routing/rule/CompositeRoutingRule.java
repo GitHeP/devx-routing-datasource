@@ -17,8 +17,8 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.SqlStatement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ import java.util.Set;
  * @author Peng He
  * @since 1.0
  *
- * @see UnknownStatementRoutingRule
+ * @see UnknownSqlAttributeRoutingRule
  * @see ForceWriteRoutingRule
  * @see TxRoutingRule
  * @see ReadWriteSplittingRoutingRule
@@ -46,11 +46,11 @@ import java.util.Set;
  */
 public class CompositeRoutingRule extends AbstractRoutingRule {
 
-    private final List<StatementRoutingRule> routingRules;
+    private final List<SqlAttributeRoutingRule> routingRules;
 
-    public CompositeRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames, List<StatementRoutingRule> routingRules) {
+    public CompositeRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames, List<SqlAttributeRoutingRule> routingRules) {
         super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
-        List<StatementRoutingRule> rules = new ArrayList<>();
+        List<SqlAttributeRoutingRule> rules = new ArrayList<>();
         if (Objects.nonNull(routingRules)) {
             rules.addAll(routingRules);
             rules.sort(Comparator.comparingInt(PriorityRoutingRule::priority));
@@ -59,11 +59,11 @@ public class CompositeRoutingRule extends AbstractRoutingRule {
     }
 
     @Override
-    public String routing(SqlStatement statement) {
+    public String routing(SqlAttribute attribute) {
 
         String datasourceName = null;
-        for (StatementRoutingRule routingRule : routingRules) {
-            datasourceName = routingRule.routing(statement);
+        for (SqlAttributeRoutingRule routingRule : routingRules) {
+            datasourceName = routingRule.routing(attribute);
             if (Objects.nonNull(datasourceName) && datasourceName.length() != 0) {
                 break;
             }

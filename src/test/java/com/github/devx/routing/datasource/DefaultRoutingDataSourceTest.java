@@ -9,9 +9,9 @@ import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
-import com.github.devx.routing.rule.StatementRoutingRule;
+import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TxRoutingRule;
-import com.github.devx.routing.rule.UnknownStatementRoutingRule;
+import com.github.devx.routing.rule.UnknownSqlAttributeRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import com.github.devx.routing.util.RoutingUtils;
@@ -151,14 +151,14 @@ public class DefaultRoutingDataSourceTest {
 
         SqlParser sqlParser = new JSqlParser();
         LoadBalancer<String> loadBalancer = new RandomLoadBalancer(new ArrayList<>(readDataSourceNames));
-        UnknownStatementRoutingRule unknownStatementRoutingRule = new UnknownStatementRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+        UnknownSqlAttributeRoutingRule unknownStatementRoutingRule = new UnknownSqlAttributeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, writeDataSourceName , readDataSourceNames);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
         ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
 
-        List<StatementRoutingRule> routingRules = new ArrayList<>();
+        List<SqlAttributeRoutingRule> routingRules = new ArrayList<>();
         routingRules.add(unknownStatementRoutingRule);
         routingRules.add(txRoutingRule);
         routingRules.add(readWriteSplittingRoutingRule);

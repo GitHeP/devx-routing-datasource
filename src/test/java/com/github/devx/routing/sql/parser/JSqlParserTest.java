@@ -1,6 +1,7 @@
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.SqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -85,15 +86,15 @@ public class JSqlParserTest {
                 "AND order_details.quantity > 10\n" +
                 "ORDER BY customers.customer_name ASC, orders.order_date DESC;\n";
 
-        SqlStatement statement = sqlParser.parse(sql);
-        assertThat(statement).isNotNull();
-        assertThat(statement.isWrite()).isFalse();
-        assertThat(statement.isRead()).isTrue();
-        assertThat(statement.getNormalTables()).contains("customers");
-        assertThat(statement.getJoinTables()).containsAll(Arrays.asList("orders", "order_details"));
-        assertThat(statement.getSubTables()).isEmpty();
-        assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
+        SqlAttribute attribute = sqlParser.parse(sql);
+        assertThat(attribute).isNotNull();
+        assertThat(attribute.isWrite()).isFalse();
+        assertThat(attribute.isRead()).isTrue();
+        assertThat(attribute.getNormalTables()).contains("customers");
+        assertThat(attribute.getJoinTables()).containsAll(Arrays.asList("orders", "order_details"));
+        assertThat(attribute.getSubTables()).isEmpty();
+        assertThat(attribute.getDatabases()).isEmpty();
+        assertThat(attribute.getSqlType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -118,7 +119,7 @@ public class JSqlParserTest {
                 "WHERE s1.gender = 'F'\n" +
                 "ORDER BY s1.grade DESC;\n";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
@@ -126,7 +127,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("students");
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -168,7 +169,7 @@ public class JSqlParserTest {
                 "        where t.ordertime >=  DATE_FORMAT('2023-05-26 00:00:00.241','%Y-%m-%d %H:%i:%s') and\n" +
                 "            DATE_FORMAT('2023-05-26 23:59:59.241','%Y-%m-%d %H:%i:%s') >= t.ordertime";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
@@ -177,7 +178,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("p_tradedt");
         assertThat(statement.getDatabases()).containsOnly("py");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.SELECT);
     }
 
     @Benchmark
@@ -238,7 +239,7 @@ public class JSqlParserTest {
                 "        request_report_type\n" +
                 "        ) t2 ON t1.request_report_type = t2.request_report_type";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
@@ -247,7 +248,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("t_amazon_report_log");
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.SELECT);
 
     }
 
@@ -289,7 +290,7 @@ public class JSqlParserTest {
                 "        and b.purchase_status in\n" +
                 "         (2 , 4 , 5 , 676 , 3423 , 3546 , 600 , 2545)";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isFalse();
         assertThat(statement.isRead()).isTrue();
@@ -298,7 +299,7 @@ public class JSqlParserTest {
         assertThat(statement.getJoinTables()).containsOnly("t_py_goods", "t_user_baseinfo", "t_buy_stock_order", "t_buy_stock_order_details");
         assertThat(statement.getSubTables()).isEmpty();
         assertThat(statement.getDatabases()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.SELECT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.SELECT);
     }
 
     @Benchmark
@@ -314,7 +315,7 @@ public class JSqlParserTest {
         String sql = "INSERT INTO table1 (column1, column2, column3)\n" +
                 "VALUES ('value1', 'value2', (SELECT id FROM table2 WHERE name='value3'));";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -322,7 +323,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("table2");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.INSERT);
 
     }
 
@@ -342,7 +343,7 @@ public class JSqlParserTest {
                 "JOIN departments d ON e.department_id = d.department_id\n" +
                 "WHERE d.location_id = '1700';";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -350,7 +351,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("employees");
         assertThat(statement.getJoinTables()).containsOnly("departments");
         assertThat(statement.getSubTables()).isEmpty();
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.INSERT);
 
     }
 
@@ -369,7 +370,7 @@ public class JSqlParserTest {
                 "FROM products p, suppliers s\n" +
                 "WHERE p.name = 'Product1' AND s.name = 'Supplier1';";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -377,7 +378,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("purchase_order");
         assertThat(statement.getJoinTables()).containsOnly("suppliers");
         assertThat(statement.getSubTables()).containsOnly("supplier_price");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.INSERT);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.INSERT);
     }
 
     @Benchmark
@@ -394,7 +395,7 @@ public class JSqlParserTest {
                 "SET column1 = value1, column2 = value2, column3 = (SELECT column4 FROM table2 WHERE column5 = value3)\n" +
                 "WHERE column6 IN (SELECT column7 FROM table3 WHERE column8 = value4);";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -402,7 +403,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("table1");
         assertThat(statement.getJoinTables()).isEmpty();
         assertThat(statement.getSubTables()).containsOnly("table2", "table3");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.UPDATE);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.UPDATE);
     }
 
     @Benchmark
@@ -424,7 +425,7 @@ public class JSqlParserTest {
                 "    WHERE l.city = 'New York'\n" +
                 ");";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -432,7 +433,7 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("employees");
         assertThat(statement.getJoinTables()).containsOnly("locations");
         assertThat(statement.getSubTables()).containsOnly("departments");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.UPDATE);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.UPDATE);
     }
 
     @Benchmark
@@ -459,7 +460,7 @@ public class JSqlParserTest {
                 "    WHERE products.category_id = 2\n" +
                 ");";
 
-        SqlStatement statement = sqlParser.parse(sql);
+        SqlAttribute statement = sqlParser.parse(sql);
         assertThat(statement).isNotNull();
         assertThat(statement.isWrite()).isTrue();
         assertThat(statement.isRead()).isFalse();
@@ -467,6 +468,6 @@ public class JSqlParserTest {
         assertThat(statement.getNormalTables()).containsOnly("orders");
         assertThat(statement.getJoinTables()).containsOnly("products");
         assertThat(statement.getSubTables()).containsOnly("order_details");
-        assertThat(statement.getStatementType()).isEqualTo(SqlType.DELETE);
+        assertThat(statement.getSqlType()).isEqualTo(SqlType.DELETE);
     }
 }

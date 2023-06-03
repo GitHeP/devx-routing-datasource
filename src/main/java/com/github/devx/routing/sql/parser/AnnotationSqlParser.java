@@ -1,12 +1,9 @@
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.RoutingTargetType;
-import com.github.devx.routing.sql.AnnotationSqlStatement;
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.AnnotationSqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * author he peng
@@ -26,24 +23,15 @@ public class AnnotationSqlParser implements SqlParser {
     }
 
     @Override
-    public SqlStatement parse(String sql) {
+    public SqlAttribute parse(String sql) {
 
-        SqlStatement statement;
+        SqlAttribute sqlAttribute;
         SqlHint sqlHint = sqlHintParser.parse(sql);
         if (Objects.nonNull(sqlHint)) {
-            SqlStatement nativeSqlStmt = delegate.parse(sqlHint.getNativeSql());
-            statement = AnnotationSqlStatement.of(nativeSqlStmt , sqlHint);
+            sqlAttribute = new AnnotationSqlAttribute(delegate.parse(sqlHint.getNativeSql()) , sqlHint);
         } else {
-            statement = delegate.parse(sql);
+            sqlAttribute = delegate.parse(sql);
         }
-        return statement;
-    }
-
-    private RoutingTargetType parseRoutingTargetType(String hint) {
-        if (hint == null || hint.length() != 0) {
-            return null;
-        }
-
-        return null;
+        return sqlAttribute;
     }
 }

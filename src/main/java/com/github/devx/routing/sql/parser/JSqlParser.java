@@ -16,8 +16,9 @@
 
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.sql.SqlStatement;
-import com.github.devx.routing.sql.SqlStatementBuilder;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
+import com.github.devx.routing.sql.SqlAttribute;
+import com.github.devx.routing.sql.SqlAttributeBuilder;
 import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
@@ -71,22 +72,22 @@ public class JSqlParser implements SqlParser {
     }
 
     @Override
-    public SqlStatement parse(String sql) {
-        SqlStatement sqlStatement;
+    public SqlAttribute parse(String sql) {
+        DefaultSqlAttribute sqlAttribute;
         try {
             Statement statement = CCJSqlParserUtil.parse(sql);
-            SqlStatementVisitor visitor = new SqlStatementVisitor();
-            sqlStatement = visitor.build(statement).setSql(sql);
+            SqlAttributeVisitor visitor = new SqlAttributeVisitor();
+            sqlAttribute = visitor.build(statement).setSql(sql);
         } catch (JSQLParserException e) {
             log.warn("Cannot be parsed SQL statement [{}]", sql);
-            sqlStatement = null;
+            sqlAttribute = null;
         }
-        return sqlStatement;
+        return sqlAttribute;
     }
 
-    private static class SqlStatementVisitor extends TablesNamesFinder implements SqlStatementBuilder<Statement> {
+    private static class SqlAttributeVisitor extends TablesNamesFinder implements SqlAttributeBuilder<Statement> {
 
-        private final SqlStatement statement = new SqlStatement();
+        private final DefaultSqlAttribute statement = new DefaultSqlAttribute();
 
         private final Set<String> databases = new HashSet<>();
 
@@ -103,7 +104,7 @@ public class JSqlParser implements SqlParser {
         private Model prevVisited;
 
         @Override
-        public SqlStatement build(Statement obj) {
+        public DefaultSqlAttribute build(Statement obj) {
             getTableList(obj);
             if (normalTables.size() > subTables.size() && normalTables.containsAll(subTables)) {
                 normalTables.removeAll(subTables);
@@ -119,7 +120,7 @@ public class JSqlParser implements SqlParser {
             prevVisited = null;
             return statement.setStatement(obj).setDatabases(databases).setNormalTables(normalTables)
                     .setTables(tables).setJoinTables(joinTables).setSubTables(subTables)
-                    .setWrite(isWrite(obj)).setRead(isRead(obj)).setStatementType(statementType);
+                    .setWrite(isWrite(obj)).setRead(isRead(obj)).setSqlType(statementType);
         }
 
         @Override

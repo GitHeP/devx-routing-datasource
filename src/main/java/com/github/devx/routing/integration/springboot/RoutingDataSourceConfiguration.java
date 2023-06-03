@@ -36,10 +36,10 @@ import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
-import com.github.devx.routing.rule.StatementRoutingRule;
+import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.TxRoutingRule;
-import com.github.devx.routing.rule.UnknownStatementRoutingRule;
+import com.github.devx.routing.rule.UnknownSqlAttributeRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.apache.ibatis.plugin.Interceptor;
@@ -97,7 +97,7 @@ public class RoutingDataSourceConfiguration {
 
     @SuppressWarnings("unchecked")
     @Bean
-    public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<StatementRoutingRule> routingRules) {
+    public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<SqlAttributeRoutingRule> routingRules) {
 
         Set<String> readDataSources = new HashSet<>();
         if (Objects.nonNull(properties.getReadDataSources())) {
@@ -106,7 +106,7 @@ public class RoutingDataSourceConfiguration {
         Class<RandomLoadBalancer> loadBalancerType = Objects.nonNull(properties.getLoadBalancer()) ? (Class<RandomLoadBalancer>) Reflect.onClass(properties.getLoadBalancer()).type() : RandomLoadBalancer.class;
         LoadBalancer<String> loadBalancer = Reflect.onClass(loadBalancerType).create(new ArrayList<>(readDataSources)).get();
 
-        UnknownStatementRoutingRule unknownStatementRoutingRule = new UnknownStatementRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
+        UnknownSqlAttributeRoutingRule unknownStatementRoutingRule = new UnknownSqlAttributeRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);

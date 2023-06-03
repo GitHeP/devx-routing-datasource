@@ -18,8 +18,8 @@ package com.github.devx.routing.rule;
 
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.SqlStatement;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Peng He
  * @since 1.0
  */
-public abstract class AbstractRoutingRule implements StatementRoutingRule {
+public abstract class AbstractRoutingRule implements SqlAttributeRoutingRule {
 
     protected final SqlParser sqlParser;
 
@@ -52,11 +52,11 @@ public abstract class AbstractRoutingRule implements StatementRoutingRule {
 
     @Override
     public String routing(RoutingKey key) {
-        SqlStatement statement = null;
+        SqlAttribute sqlAttribute = null;
         if (Objects.nonNull(key) && Objects.nonNull(key.getSql())) {
-            statement = sqlParser.parse(key.getSql());
+            sqlAttribute = sqlParser.parse(key.getSql());
         }
-        return routing(statement);
+        return routing(sqlAttribute);
     }
 
 }

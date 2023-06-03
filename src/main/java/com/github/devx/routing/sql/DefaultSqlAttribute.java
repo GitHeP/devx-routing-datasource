@@ -14,22 +14,40 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.rule;
+package com.github.devx.routing.sql;
 
-import com.github.devx.routing.sql.SqlStatement;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.util.Set;
 
 /**
- * Route selection based on SQL statements.
- *
  * @author Peng He
  * @since 1.0
  */
-public interface StatementRoutingRule extends PriorityRoutingRule {
 
-    /**
-     * routing with sql statement
-     * @param statement {@link SqlStatement}
-     * @return datasource name
-     */
-    String routing(SqlStatement statement);
+@Data
+@Accessors(chain = true)
+public class DefaultSqlAttribute implements SqlAttribute {
+
+    private String sql;
+
+    private SqlType sqlType;
+
+    private Object statement;
+
+    private boolean write;
+
+    private boolean read;
+
+    private Set<String> databases;
+
+    private Set<String> tables;
+
+    private Set<String> normalTables;
+
+    private Set<String> joinTables;
+
+    private Set<String> subTables;
+
 }

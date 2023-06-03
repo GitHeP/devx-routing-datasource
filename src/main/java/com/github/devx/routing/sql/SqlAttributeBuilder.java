@@ -20,7 +20,7 @@ package com.github.devx.routing.sql;
  * @author Peng He
  * @since 1.0
  */
-public interface SqlStatementBuilder<T> {
+public interface SqlAttributeBuilder<T> {
 
-    SqlStatement build(T obj);
+    SqlAttribute build(T obj);
 }

@@ -17,8 +17,9 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.SqlStatement;
+import com.github.devx.routing.sql.DefaultSqlAttribute;
 
 import java.util.Objects;
 import java.util.Set;
@@ -33,16 +34,16 @@ import java.util.Set;
  *
  * @see SqlParser
  */
-public class UnknownStatementRoutingRule extends AbstractRoutingRule {
+public class UnknownSqlAttributeRoutingRule extends AbstractRoutingRule {
 
 
-    public UnknownStatementRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
+    public UnknownSqlAttributeRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
         super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
     }
 
     @Override
-    public String routing(SqlStatement statement) {
-        return Objects.isNull(statement) ? writeDataSourceName : null;
+    public String routing(SqlAttribute attribute) {
+        return Objects.isNull(attribute) ? writeDataSourceName : null;
     }
 
     @Override
