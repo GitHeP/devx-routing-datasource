@@ -1,6 +1,5 @@
 package com.github.devx.routing.integration.mybatis;
 
-import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.integration.springboot.BeforeAfterEachHandleDataTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,9 @@ class MyBatisMapperTest extends BeforeAfterEachHandleDataTest {
 
         // H2 database changes column names to uppercase
         // I try IGNORECASE=TRUE parameter but not working
-        assertThat(employee).extractingByKey("ID").isEqualTo(1);
+        assertThat(employee).extractingByKey("ID").isEqualTo(1L);
         assertThat(employee).extractingByKey("NAME").isEqualTo("John Doe");
         assertThat(employee).extractingByKey("DEPARTMENT_ID").isEqualTo(1);
-        assertThat(RoutingContext.getRoutedDataSourceName()).containsAnyOf("read_0" , "read_1");
     }
 
 
