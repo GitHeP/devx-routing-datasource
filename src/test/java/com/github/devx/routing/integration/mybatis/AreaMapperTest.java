@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AreaMapperTest extends BeforeAfterEachHandleDataTest {
 
     @Autowired
-    AreaMapper areaMapper;
+    AreaMapper mapper;
 
     @Test
     void testInsert() {
@@ -25,11 +25,11 @@ class AreaMapperTest extends BeforeAfterEachHandleDataTest {
         Map<String, Object> row = new HashMap<>();
         row.put("id" , 6);
         row.put("name" , "Paris");
-        int rows = areaMapper.insert(row);
+        int rows = mapper.insert(row);
         assertThat(rows).isEqualTo(1);
 
         RoutingContext.forceWrite();
-        Map<String, Object> area = areaMapper.selectById(6L);
+        Map<String, Object> area = mapper.selectById(6L);
         assertThat(area).isNotNull()
                 .extracting("ID" , "NAME")
                 .containsExactlyInAnyOrder(6L , "Paris");
@@ -41,11 +41,11 @@ class AreaMapperTest extends BeforeAfterEachHandleDataTest {
         Map<String, Object> row = new HashMap<>();
         row.put("id" , 1);
         row.put("name" , "Tokyo");
-        int rows = areaMapper.updateById(row);
+        int rows = mapper.updateById(row);
         assertThat(rows).isEqualTo(1);
 
         RoutingContext.forceWrite();
-        Map<String, Object> area = areaMapper.selectById(1L);
+        Map<String, Object> area = mapper.selectById(1L);
         assertThat(area).isNotNull()
                 .extracting("ID" , "NAME")
                 .containsExactlyInAnyOrder(1L , "Tokyo");
@@ -54,17 +54,17 @@ class AreaMapperTest extends BeforeAfterEachHandleDataTest {
     @Test
     void testDelete() {
 
-        int rows = areaMapper.deleteById(1L);
+        int rows = mapper.deleteById(1L);
         assertThat(rows).isEqualTo(1);
         RoutingContext.forceWrite();
-        Map<String, Object> area = areaMapper.selectById(1L);
+        Map<String, Object> area = mapper.selectById(1L);
         assertThat(area).isNull();
     }
 
     @Test
     void testSelectById() {
 
-        Map<String, Object> area = areaMapper.selectById(1L);
+        Map<String, Object> area = mapper.selectById(1L);
         assertThat(area).isNotNull()
                 .extracting("ID" , "NAME")
                 .containsExactlyInAnyOrder(1L , "East");
