@@ -50,7 +50,7 @@ public abstract class AbstractAnnotationSqlHintParser implements AnnotationSqlHi
             if (kv.length != 2) {
                 throw new AnnotationSqlException("hint key and value in SQL annotations must be separated by an equal sign (=)");
             }
-            hintMap.put(kv[0] , kv[1]);
+            hintMap.put(kv[0].trim() , kv[1].trim());
         }
 
         return hintMap;
