@@ -32,8 +32,8 @@ class DepartmentMapperTest extends BeforeAfterEachHandleDataTest {
         RoutingContext.forceWrite();
         Map<String, Object> result = mapper.selectById(6L);
         assertThat(result).isNotNull()
-                .extracting("ID" , "NAME")
-                .containsExactlyInAnyOrder(6L , "After-sales Service");
+                .extracting("ID" , "NAME" , "AREA_ID")
+                .containsExactlyInAnyOrder(6L , "After-sales Service" , 1);
     }
 
     @Test
