@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.sql.parser;
 
-import org.apache.calcite.sql.SqlNode;
+import com.github.devx.routing.sql.SqlStatement;
 
 /**
  * @author Peng He

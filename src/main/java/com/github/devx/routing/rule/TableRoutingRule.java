@@ -21,7 +21,7 @@ import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.sql.SqlType;
-import com.github.devx.routing.sql.parser.SqlStatement;
+import com.github.devx.routing.sql.SqlStatement;
 import com.github.devx.routing.util.CollectionUtils;
 
 import java.util.ArrayList;

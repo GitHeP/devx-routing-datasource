@@ -1,6 +1,6 @@
 package com.github.devx.routing.config;
 
-import com.github.devx.routing.datasource.DataSourceType;
+import com.github.devx.routing.RoutingTargetType;
 import lombok.Data;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 public class DataSourceConfiguration {
 
-    private DataSourceType type;
+    private RoutingTargetType type;
 
     private String dataSourceClass;
 

@@ -4,7 +4,6 @@ import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.integration.mybatis.AreaMapper;
 import com.github.devx.routing.integration.mybatis.DepartmentMapper;
 import com.github.devx.routing.integration.mybatis.EmployeeMapper;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

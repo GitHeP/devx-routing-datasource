@@ -14,13 +14,26 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.sql.parser;
+package com.github.devx.routing;
 
 /**
  * @author Peng He
  * @since 1.0
  */
-public interface SqlStatementBuilder<T> {
+public enum RoutingTargetType {
 
-    SqlStatement build(T obj);
+    /**
+     * only read
+     */
+    READ ,
+
+    /**
+     * only write
+     */
+    WRITE ,
+
+    /**
+     * read and write
+     */
+    READ_WRITE
 }

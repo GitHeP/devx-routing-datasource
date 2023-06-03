@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.sql.parser.SqlStatement;
+import com.github.devx.routing.sql.SqlStatement;
 
 /**
  * Route selection based on SQL statements.

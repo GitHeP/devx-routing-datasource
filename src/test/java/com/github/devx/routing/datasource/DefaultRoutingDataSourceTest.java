@@ -1,5 +1,6 @@
 package com.github.devx.routing.datasource;
 
+import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.rule.CompositeRoutingRule;
@@ -13,6 +14,7 @@ import com.github.devx.routing.rule.TxRoutingRule;
 import com.github.devx.routing.rule.UnknownStatementRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
+import com.github.devx.routing.util.RoutingUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -142,9 +144,9 @@ public class DefaultRoutingDataSourceTest {
         readDataSourceNames.add(readDataSource1Name);
 
         Map<String, DataSource> dataSources = new HashMap<>();
-        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , DataSourceType.READ_WRITE , writeDataSourceName));
-        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , DataSourceType.READ , readDataSource0Name));
-        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , DataSourceType.READ , readDataSource1Name));
+        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , RoutingTargetType.READ_WRITE , writeDataSourceName));
+        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , RoutingTargetType.READ , readDataSource0Name));
+        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , RoutingTargetType.READ , readDataSource1Name));
 
 
         SqlParser sqlParser = new JSqlParser();

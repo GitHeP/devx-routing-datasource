@@ -14,8 +14,9 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.datasource;
+package com.github.devx.routing.util;
 
+import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.jdbc.RoutingConnection;
 
 import java.sql.Connection;
@@ -32,25 +33,25 @@ public abstract class RoutingUtils {
     }
 
     public static boolean isRoutingRead(Connection connection) {
-        return isRoutingTarget(DataSourceType.READ , connection);
+        return isRoutingTarget(RoutingTargetType.READ , connection);
     }
 
     public static boolean isRoutingWrite(Connection connection) {
-        return isRoutingTarget(DataSourceType.WRITE , connection);
+        return isRoutingTarget(RoutingTargetType.WRITE , connection);
     }
 
-    public static boolean isRoutingTarget(DataSourceType targetMode , Connection connection) {
+    public static boolean isRoutingTarget(RoutingTargetType targetMode , Connection connection) {
         if (Objects.isNull(connection)) {
             return false;
         }
 
         if (connection instanceof RoutingConnection) {
             RoutingConnection rc = (RoutingConnection) connection;
-            DataSourceType dataSourceType = rc.getDataSourceType();
-            if (Objects.isNull(dataSourceType)) {
+            RoutingTargetType routingTargetType = rc.getRoutingTargetType();
+            if (Objects.isNull(routingTargetType)) {
                 return false;
             }
-            return Objects.equals(targetMode, dataSourceType) || Objects.equals(DataSourceType.READ_WRITE, dataSourceType);
+            return Objects.equals(targetMode, routingTargetType) || Objects.equals(RoutingTargetType.READ_WRITE, routingTargetType);
         }
         return false;
     }

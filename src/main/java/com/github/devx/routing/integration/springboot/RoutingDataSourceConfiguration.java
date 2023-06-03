@@ -18,7 +18,7 @@ package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.config.DataSourceConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.datasource.DataSourceType;
+import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
@@ -147,9 +147,9 @@ public class RoutingDataSourceConfiguration {
                 throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingDataSourceProperties.DATA_SOURCE_CLASS_NAME_KEY));
             }
             DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , configuration.getProperties());
-            DataSourceType mode = DataSourceType.READ;
+            RoutingTargetType mode = RoutingTargetType.READ;
             if (properties.getWriteDataSource().equals(name)) {
-                mode = DataSourceType.READ_WRITE;
+                mode = RoutingTargetType.READ_WRITE;
             }
             dataSources.put(name , new DataSourceWrapper(dataSource , mode , name));
         }

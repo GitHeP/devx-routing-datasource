@@ -14,41 +14,13 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.sql.parser;
-
-import com.github.devx.routing.sql.SqlType;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.util.Set;
+package com.github.devx.routing.sql;
 
 /**
  * @author Peng He
  * @since 1.0
  */
+public interface SqlStatementBuilder<T> {
 
-@Data
-@Accessors(chain = true)
-public class SqlStatement {
-
-    private String sql;
-
-    private SqlType statementType;
-
-    private Object statement;
-
-    private boolean write;
-
-    private boolean read;
-
-    private Set<String> databases;
-
-    private Set<String> tables;
-
-    private Set<String> normalTables;
-
-    private Set<String> joinTables;
-
-    private Set<String> subTables;
-
+    SqlStatement build(T obj);
 }

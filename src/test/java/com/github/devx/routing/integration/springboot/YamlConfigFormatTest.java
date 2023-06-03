@@ -2,7 +2,7 @@ package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.config.DataSourceConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.datasource.DataSourceType;
+import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class YamlConfigFormatTest extends SpringBootIntegrationTest {
     private void assertWrite0() {
         DataSourceConfiguration write0Configuration = properties.getDataSources().get("write_0");
         assertThat(write0Configuration).isNotNull();
-        assertThat(write0Configuration.getType()).isEqualTo(DataSourceType.READ_WRITE);
+        assertThat(write0Configuration.getType()).isEqualTo(RoutingTargetType.READ_WRITE);
         assertThat(write0Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(write0Configuration.getWeight()).isEqualTo(99);
 
@@ -94,7 +94,7 @@ class YamlConfigFormatTest extends SpringBootIntegrationTest {
     private void assertRead0() {
         DataSourceConfiguration read0Configuration = properties.getDataSources().get("read_0");
         assertThat(read0Configuration).isNotNull();
-        assertThat(read0Configuration.getType()).isEqualTo(DataSourceType.READ);
+        assertThat(read0Configuration.getType()).isEqualTo(RoutingTargetType.READ);
         assertThat(read0Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(read0Configuration.getWeight()).isEqualTo(6);
 
@@ -115,7 +115,7 @@ class YamlConfigFormatTest extends SpringBootIntegrationTest {
     private void assertRead1() {
         DataSourceConfiguration read1Configuration = properties.getDataSources().get("read_1");
         assertThat(read1Configuration).isNotNull();
-        assertThat(read1Configuration.getType()).isEqualTo(DataSourceType.READ);
+        assertThat(read1Configuration.getType()).isEqualTo(RoutingTargetType.READ);
         assertThat(read1Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(read1Configuration.getWeight()).isEqualTo(10);
 

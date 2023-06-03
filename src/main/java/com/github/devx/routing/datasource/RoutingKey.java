@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.datasource;
 
-import com.github.devx.routing.sql.parser.SqlStatement;
+import com.github.devx.routing.sql.SqlStatement;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

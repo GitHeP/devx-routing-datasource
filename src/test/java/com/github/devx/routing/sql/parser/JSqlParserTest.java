@@ -1,5 +1,6 @@
 package com.github.devx.routing.sql.parser;
 
+import com.github.devx.routing.sql.SqlStatement;
 import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;

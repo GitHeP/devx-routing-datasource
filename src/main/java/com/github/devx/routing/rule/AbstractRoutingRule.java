@@ -19,7 +19,7 @@ package com.github.devx.routing.rule;
 import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.parser.SqlStatement;
+import com.github.devx.routing.sql.SqlStatement;
 
 import java.util.Collections;
 import java.util.HashSet;
