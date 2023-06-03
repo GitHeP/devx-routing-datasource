@@ -93,6 +93,49 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
         assertThat(RoutingContext.getRoutedDataSourceName()).isEqualTo("write_0");
     }
 
+    @Transactional(rollbackFor = Throwable.class , readOnly = true)
+    @Commit
+    @DirtiesContext
+    @Test
+    void testReadOnlyTxFunc() {
+
+        log.info("testing read only Tx");
+        assertThat(RoutingContext.inTx()).isEqualTo(true);
+        assertThat(RoutingContext.getTxReadOnly()).isEqualTo(true);
+
+        Map<String, Object> area = areaMapper.selectById(1L);
+        assertThat(area).isNotNull()
+                .extracting("ID" , "NAME")
+                .containsExactlyInAnyOrder(1L , "East");
+
+        Map<String, Object> dept = departmentMapper.selectById(1L);
+        assertThat(dept).isNotNull()
+                .extracting("ID" , "NAME" , "AREA_ID")
+                .containsExactlyInAnyOrder(1L , "Research and Development" , 1);
+
+        Map<String, Object> employee = employeeMapper.selectById(1L);
+        assertThat(employee).isNotNull()
+                .extracting("ID" , "NAME" , "DEPARTMENT_ID")
+                .containsExactlyInAnyOrder(1L , "John Doe" , 1);
+
+        String sql = "SELECT a.name AS area_name, d.name AS department_name, e.name AS employee_name , e.id as employee_id \n" +
+                "FROM area a\n" +
+                "JOIN department d ON a.id = d.area_id\n" +
+                "JOIN employee e ON d.id = e.department_id\n" +
+                "WHERE a.id = ?";
+
+        List<Map<String, Object>> results = jdbcTemplate.query(sql, new Object[]{1}, new ColumnMapRowMapper());
+        assertThat(results)
+                .extracting("AREA_NAME", "DEPARTMENT_NAME" , "EMPLOYEE_NAME" , "EMPLOYEE_ID")
+                .containsExactlyInAnyOrder(
+                        tuple("East", "Research and Development", "John Doe" , 1L),
+                        tuple("East", "Research and Development", "Jane Doe" , 2L)
+                );
+
+        assertThat(RoutingContext.getRoutedDataSourceName()).containsAnyOf("read_0" , "read_1");
+    }
+
+
 
     @Override
     protected void clearData() throws Exception {
