@@ -5,13 +5,19 @@ import com.github.devx.routing.integration.mybatis.AreaMapper;
 import com.github.devx.routing.integration.mybatis.DepartmentMapper;
 import com.github.devx.routing.integration.mybatis.EmployeeMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +34,7 @@ import static org.assertj.core.api.Assertions.tuple;
  */
 
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TransactionalTest extends BeforeAfterEachHandleDataTest {
 
     @Autowired
@@ -46,6 +53,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     @Commit
     @DirtiesContext
     @Test
+    @Order(1)
     void testReadWriteTxFunc() {
 
         log.info("testing read write Tx");
@@ -96,6 +104,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     @Commit
     @DirtiesContext
     @Test
+    @Order(2)
     void testReadOnlyTxFunc() {
 
         log.info("testing read only Tx");
@@ -136,6 +145,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
 
     @DirtiesContext
     @Test
+    @Order(3)
     void testReadWriteNoTxFunc() {
         log.info("testing read write No Tx");
         assertThat(RoutingContext.inTx()).isEqualTo(false);
@@ -181,6 +191,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
 
     @DirtiesContext
     @Test
+    @Order(4)
     void testReadOnlyNoTxFunc() {
         log.info("testing read only No Tx");
         assertThat(RoutingContext.inTx()).isEqualTo(false);
@@ -215,8 +226,25 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
                 );
     }
 
+    @AfterEach
     @Override
     protected void clearData() throws Exception {
         log.info("just nothing");
+
+        if (RoutingContext.inTx()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCompletion(int status) {
+                    try {
+                        TransactionalTest.super.clearData();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } else {
+            super.clearData();
+        }
+
     }
 }

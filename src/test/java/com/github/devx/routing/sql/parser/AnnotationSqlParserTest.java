@@ -2,14 +2,12 @@ package com.github.devx.routing.sql.parser;
 
 import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.sql.AnnotationSqlAttribute;
-import com.github.devx.routing.sql.DefaultSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
