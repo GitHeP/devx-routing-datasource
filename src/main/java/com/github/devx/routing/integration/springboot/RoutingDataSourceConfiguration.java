@@ -16,9 +16,9 @@
 
 package com.github.devx.routing.integration.springboot;
 
+import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.config.DataSourceConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
@@ -36,10 +36,13 @@ import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
+import com.github.devx.routing.rule.RoutingTypeAnnotationRoutingRule;
 import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.TxRoutingRule;
 import com.github.devx.routing.rule.UnknownSqlAttributeRoutingRule;
+import com.github.devx.routing.sql.parser.AnnotationSqlParser;
+import com.github.devx.routing.sql.parser.DefaultAnnotationSqlHintParser;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.apache.ibatis.plugin.Interceptor;
@@ -92,13 +95,13 @@ public class RoutingDataSourceConfiguration {
     @ConditionalOnMissingBean(SqlParser.class)
     public SqlParser sqlParser() {
         return new JSqlParser();
-        //return new CalciteSqlParser();
     }
 
     @SuppressWarnings("unchecked")
     @Bean
     public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<SqlAttributeRoutingRule> routingRules) {
 
+        sqlParser = new AnnotationSqlParser(sqlParser , new DefaultAnnotationSqlHintParser());
         Set<String> readDataSources = new HashSet<>();
         if (Objects.nonNull(properties.getReadDataSources())) {
             readDataSources.addAll(properties.getReadDataSources());
@@ -112,6 +115,7 @@ public class RoutingDataSourceConfiguration {
         ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
+        RoutingTypeAnnotationRoutingRule hintRoutingRule = new RoutingTypeAnnotationRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
         if (Objects.isNull(routingRules)) {
             routingRules = new ArrayList<>();
         }
@@ -121,6 +125,7 @@ public class RoutingDataSourceConfiguration {
         routingRules.add(forceWriteRoutingRule);
         routingRules.add(forceReadRoutingRule);
         routingRules.add(forceTargetRoutingRule);
+        routingRules.add(hintRoutingRule);
 
         if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
             Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();

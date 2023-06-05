@@ -21,7 +21,7 @@ public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
 
     private static final SqlHintConverter<RoutingTargetType> SQL_HINT_CONVERTER = new RoutingTypeSqlHintConverter();
 
-    protected RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
+    public RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
         super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
     }
 
