@@ -26,14 +26,12 @@ import com.github.devx.routing.exception.ConfigurationException;
 import com.github.devx.routing.integration.datasource.CompositeDataSourceInitializer;
 import com.github.devx.routing.integration.datasource.DataSourceInitializer;
 import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
-import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
 import com.github.devx.routing.rule.RoutingRule;
 import com.github.devx.routing.rule.group.EmbeddedRoutingGroup;
 import com.github.devx.routing.rule.group.CompositeRoutingGroup;
 import com.github.devx.routing.rule.group.RoutingGroup;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
-import org.apache.ibatis.plugin.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,11 +61,6 @@ public class RoutingDataSourceConfiguration {
     @Bean
     public TxDetectionBeanPostProcessor txBeanPostProcessor() {
         return new TxDetectionBeanPostProcessor();
-    }
-
-    @Bean
-    public Interceptor executingSqlInterceptor() {
-        return new ExecutingSqlInterceptor();
     }
 
     @Bean
