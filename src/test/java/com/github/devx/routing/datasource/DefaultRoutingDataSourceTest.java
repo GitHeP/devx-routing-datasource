@@ -144,9 +144,9 @@ public class DefaultRoutingDataSourceTest {
         readDataSourceNames.add(readDataSource1Name);
 
         Map<String, DataSource> dataSources = new HashMap<>();
-        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , RoutingTargetType.READ_WRITE , writeDataSourceName));
-        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , RoutingTargetType.READ , readDataSource0Name));
-        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , RoutingTargetType.READ , readDataSource1Name));
+        dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , new DataSourceAttribute(RoutingTargetType.READ_WRITE, writeDataSourceName, 1)));
+        dataSources.put(readDataSource0Name , new DataSourceWrapper(readDataSource0 , new DataSourceAttribute(RoutingTargetType.READ, readDataSource0Name, 1)));
+        dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , new DataSourceAttribute(RoutingTargetType.READ, readDataSource1Name, 1)));
 
 
         SqlParser sqlParser = new JSqlParser();

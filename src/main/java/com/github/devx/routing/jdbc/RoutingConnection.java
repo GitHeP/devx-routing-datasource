@@ -336,7 +336,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         }
         this.connection = dataSource.getConnection();
         if (dataSource instanceof DataSourceWrapper) {
-            this.routingTargetType = ((DataSourceWrapper) dataSource).getMode();
+            this.routingTargetType = ((DataSourceWrapper) dataSource).getDataSourceAttribute().getRoutingTargetType();
         }
         if (this.autoCommit != null) {
             this.connection.setAutoCommit(this.autoCommit);
