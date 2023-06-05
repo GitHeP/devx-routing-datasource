@@ -28,7 +28,7 @@ import com.github.devx.routing.integration.datasource.DataSourceInitializer;
 import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
 import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
 import com.github.devx.routing.rule.RoutingRule;
-import com.github.devx.routing.rule.group.BuiltInRoutingGroup;
+import com.github.devx.routing.rule.group.EmbeddedRoutingGroup;
 import com.github.devx.routing.rule.group.CompositeRoutingGroup;
 import com.github.devx.routing.rule.group.RoutingGroup;
 import com.github.devx.routing.sql.parser.JSqlParser;
@@ -87,7 +87,7 @@ public class RoutingDataSourceConfiguration {
     public RoutingGroup<? extends RoutingRule> compositeRoutingGroup(@Autowired(required = false) List<RoutingGroup> routingGroups , RoutingProperties routingProperties, SqlParser sqlParser) {
         CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
         compositeRoutingGroup.installFirst(routingGroups);
-        compositeRoutingGroup.installLast(new BuiltInRoutingGroup(routingProperties.getRouting() , sqlParser));
+        compositeRoutingGroup.installLast(new EmbeddedRoutingGroup(routingProperties.getRouting() , sqlParser));
         return compositeRoutingGroup;
     }
 

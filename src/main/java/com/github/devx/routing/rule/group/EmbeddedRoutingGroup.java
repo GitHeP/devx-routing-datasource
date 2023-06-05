@@ -29,11 +29,11 @@ import java.util.Objects;
  * @author Peng He
  * @since 1.0
  */
-public class BuiltInRoutingGroup extends AbstractComparableRoutingGroup<SqlAttributeRoutingRule> {
+public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttributeRoutingRule> {
 
     private final SqlParser sqlParser;
 
-    public BuiltInRoutingGroup(RoutingConfiguration routingConf, SqlParser sqlParser) {
+    public EmbeddedRoutingGroup(RoutingConfiguration routingConf, SqlParser sqlParser) {
 
         super(Comparator.comparingInt(PriorityRoutingRule::priority));
         if (!(sqlParser instanceof AnnotationSqlParser)) {
