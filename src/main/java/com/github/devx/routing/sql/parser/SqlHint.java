@@ -1,7 +1,8 @@
 package com.github.devx.routing.sql.parser;
 
-import com.github.devx.routing.RoutingTargetType;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  *
@@ -12,7 +13,18 @@ import lombok.Data;
 @Data
 public class SqlHint {
 
+    /**
+     * key is hint key , value is hint value
+     */
+    private Map<String , String> hints;
+
     private String nativeSql;
 
-    private RoutingTargetType routingTargetType;
+    public SqlHint() {
+    }
+
+    public SqlHint(Map<String, String> hints, String nativeSql) {
+        this.hints = hints;
+        this.nativeSql = nativeSql;
+    }
 }

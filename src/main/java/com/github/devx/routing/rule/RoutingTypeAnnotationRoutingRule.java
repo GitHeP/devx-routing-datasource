@@ -4,7 +4,9 @@ import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.sql.AnnotationSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
+import com.github.devx.routing.sql.parser.RoutingTypeSqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlHint;
+import com.github.devx.routing.sql.parser.SqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlParser;
 
 import java.util.Set;
@@ -17,6 +19,7 @@ import java.util.Set;
  */
 public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
 
+    private static final SqlHintConverter<RoutingTargetType> SQL_HINT_CONVERTER = new RoutingTypeSqlHintConverter();
 
     protected RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
         super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
@@ -38,7 +41,7 @@ public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
             return null;
         }
 
-        RoutingTargetType rtt = sqlHint.getRoutingTargetType();
+        RoutingTargetType rtt = SQL_HINT_CONVERTER.convert(sqlHint);
         if (rtt == null) {
             return null;
         }

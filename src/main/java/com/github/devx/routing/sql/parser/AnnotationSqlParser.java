@@ -6,8 +6,8 @@ import com.github.devx.routing.sql.SqlAttribute;
 import java.util.Objects;
 
 /**
- * author he peng
- * date 2023/6/3 18:03
+ * @author Peng He
+ * @since 1.0
  */
 public class AnnotationSqlParser implements SqlParser {
 
