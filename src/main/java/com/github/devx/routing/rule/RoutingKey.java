@@ -14,9 +14,8 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.datasource;
+package com.github.devx.routing.rule;
 
-import com.github.devx.routing.sql.DefaultSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
 import lombok.Data;
 import lombok.experimental.Accessors;

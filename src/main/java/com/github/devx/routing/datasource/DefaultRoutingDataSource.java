@@ -16,6 +16,7 @@
 
 package com.github.devx.routing.datasource;
 
+import com.github.devx.routing.rule.RoutingKey;
 import com.github.devx.routing.rule.RoutingRule;
 
 import javax.sql.DataSource;

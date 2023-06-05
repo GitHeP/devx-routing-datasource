@@ -16,8 +16,6 @@
 
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.datasource.RoutingKey;
-
 /**
  * Routing rules are responsible for the specific routing selection process.
  *

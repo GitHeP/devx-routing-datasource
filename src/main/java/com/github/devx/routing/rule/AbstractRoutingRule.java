@@ -16,7 +16,6 @@
 
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.datasource.RoutingKey;
 import com.github.devx.routing.loadbalance.LoadBalancer;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;

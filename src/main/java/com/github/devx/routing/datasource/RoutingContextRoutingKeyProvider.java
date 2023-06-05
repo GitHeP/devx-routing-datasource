@@ -16,6 +16,8 @@
 
 package com.github.devx.routing.datasource;
 
+import com.github.devx.routing.rule.RoutingKey;
+
 /**
  * Provide RoutingKey instance from routing context
  *
