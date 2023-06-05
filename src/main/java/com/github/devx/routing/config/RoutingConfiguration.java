@@ -4,9 +4,9 @@ import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.exception.InternalRuntimeException;
 import com.github.devx.routing.loadbalance.LoadBalance;
-import com.github.devx.routing.loadbalance.RandomLoadBalance;
+import com.github.devx.routing.loadbalance.WeightRandomLoadBalance;
 import com.github.devx.routing.loadbalance.ReadLoadBalanceType;
-import com.github.devx.routing.loadbalance.RoundRobinLoadBalance;
+import com.github.devx.routing.loadbalance.WeightRoundRobinLoadBalance;
 import com.github.devx.routing.loadbalance.WriteLoadBalanceType;
 import lombok.Data;
 
@@ -66,33 +66,26 @@ public class RoutingConfiguration {
                 .filter(attribute -> attribute.getRoutingTargetType().isRead())
                 .collect(Collectors.toList());
         if (type == null) {
-            return new RandomLoadBalance(allReads);
+            return new WeightRandomLoadBalance(allReads);
         }
 
         List<RoutingTargetAttribute> onlyReads = filterByRoutingTargetType(attributes, RoutingTargetType.READ);
         List<RoutingTargetAttribute> readWrites = filterByRoutingTargetType(attributes, RoutingTargetType.READ_WRITE);
 
+        // ugly code needs fix
         if (type == ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_ALL) {
-            lb = new RandomLoadBalance(allReads);
+            lb = new WeightRandomLoadBalance(allReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_ONLY_READ) {
-            lb = new RandomLoadBalance(onlyReads);
+            lb = new WeightRandomLoadBalance(onlyReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_READ_WRITE) {
-            lb = new RandomLoadBalance(readWrites);
+            lb = new WeightRandomLoadBalance(readWrites);
         } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_ALL) {
-            lb = new RoundRobinLoadBalance(allReads);
+            lb = new WeightRoundRobinLoadBalance(allReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_ONLY_READ) {
-            lb = new RoundRobinLoadBalance(onlyReads);
+            lb = new WeightRoundRobinLoadBalance(onlyReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_READ_WRITE) {
-            lb = new RoundRobinLoadBalance(readWrites);
-        }
-        //else if (type == ReadLoadBalanceType.WEIGHT_BALANCE_ALL) {
-        //
-        //} else if (type == ReadLoadBalanceType.WEIGHT_BALANCE_ONLY_READ) {
-        //
-        //} else if (type == ReadLoadBalanceType.WEIGHT_BALANCE_READ_WRITE) {
-        //
-        //}
-        else {
+            lb = new WeightRoundRobinLoadBalance(readWrites);
+        } else {
             throw new InternalRuntimeException(String.format("Unsupported load balancing type %s" , type));
         }
         return lb;
@@ -100,10 +93,32 @@ public class RoutingConfiguration {
 
     public LoadBalance<RoutingTargetAttribute> makeWriteLoadBalance(List<RoutingTargetAttribute> attributes) {
 
+        LoadBalance<RoutingTargetAttribute> lb;
+        WriteLoadBalanceType type = writeLoadBalanceType;
         List<RoutingTargetAttribute> allWrites = attributes.stream()
                 .filter(attribute -> attribute.getRoutingTargetType().isWrite())
                 .collect(Collectors.toList());
-        return new RandomLoadBalance(allWrites);
+        if (type == null) {
+            return new WeightRandomLoadBalance(allWrites);
+        }
+
+        List<RoutingTargetAttribute> onlyWrites = filterByRoutingTargetType(attributes, RoutingTargetType.WRITE);
+        List<RoutingTargetAttribute> readWrites = filterByRoutingTargetType(attributes, RoutingTargetType.READ_WRITE);
+
+        // ugly code needs fix
+        if (type == WriteLoadBalanceType.RANDOM_BALANCE_ONLY_WRITE) {
+            lb = new WeightRandomLoadBalance(onlyWrites);
+        } else if (type == WriteLoadBalanceType.RANDOM_BALANCE_READ_WRITE) {
+            lb = new WeightRandomLoadBalance(readWrites);
+        } else if (type == WriteLoadBalanceType.ROUND_ROBIN_BALANCE_ONLY_WRITE) {
+            lb = new WeightRoundRobinLoadBalance(onlyWrites);
+        } else if (type == WriteLoadBalanceType.ROUND_ROBIN_BALANCE_READ_WRITE) {
+            lb = new WeightRoundRobinLoadBalance(readWrites);
+        } else {
+            throw new InternalRuntimeException(String.format("Unsupported load balancing type %s" , type));
+        }
+
+        return lb;
     }
 
     private List<RoutingTargetAttribute> filterByRoutingTargetType(List<RoutingTargetAttribute> attributes , RoutingTargetType target) {

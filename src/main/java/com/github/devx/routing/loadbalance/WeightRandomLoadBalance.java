@@ -27,21 +27,31 @@ import java.util.Random;
  * @author Peng He
  * @since 1.0
  */
-public class RandomLoadBalance implements LoadBalance<RoutingTargetAttribute> {
+public class WeightRandomLoadBalance implements LoadBalance<RoutingTargetAttribute> {
 
     private final List<RoutingTargetAttribute> options;
-    private final Random random = new Random();
 
-    public RandomLoadBalance(List<RoutingTargetAttribute> options) {
+    public WeightRandomLoadBalance(List<RoutingTargetAttribute> options) {
         this.options = options;
     }
 
     @Override
     public RoutingTargetAttribute choose() {
-        if (options.isEmpty()) {
-            return null;
+
+        int totalWeight = 0;
+        for (RoutingTargetAttribute target : options) {
+            totalWeight += target.getWeight();
         }
-        int randomIndex = random.nextInt(options.size());
-        return options.get(randomIndex);
+
+        int randomWeight = new Random().nextInt(totalWeight) + 1;
+        int currentWeight = 0;
+        RoutingTargetAttribute chosen = null;
+        for (RoutingTargetAttribute attribute : options) {
+            currentWeight += attribute.getWeight();
+            if (randomWeight <= currentWeight) {
+                chosen = attribute;
+            }
+        }
+        return chosen;
     }
 }

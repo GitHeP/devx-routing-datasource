@@ -4,7 +4,7 @@ import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.datasource.DataSourceAttribute;
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.loadbalance.RandomLoadBalance;
+import com.github.devx.routing.loadbalance.WeightRandomLoadBalance;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import org.junit.jupiter.api.Test;
 
@@ -39,8 +39,8 @@ class ForceReadRoutingRuleTest {
         reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_2" , 33));
 
 
-        RandomLoadBalance readLoadBalance = new RandomLoadBalance(reads);
-        RandomLoadBalance writeLoadBalance = new RandomLoadBalance(writes);
+        WeightRandomLoadBalance readLoadBalance = new WeightRandomLoadBalance(reads);
+        WeightRandomLoadBalance writeLoadBalance = new WeightRandomLoadBalance(writes);
 
         ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , readLoadBalance , writeLoadBalance);
 
@@ -67,8 +67,8 @@ class ForceReadRoutingRuleTest {
         reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_2" , 33));
 
 
-        RandomLoadBalance readLoadBalance = new RandomLoadBalance(reads);
-        RandomLoadBalance writeLoadBalance = new RandomLoadBalance(writes);
+        WeightRandomLoadBalance readLoadBalance = new WeightRandomLoadBalance(reads);
+        WeightRandomLoadBalance writeLoadBalance = new WeightRandomLoadBalance(writes);
 
         ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , readLoadBalance , writeLoadBalance);
 

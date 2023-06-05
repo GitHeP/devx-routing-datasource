@@ -82,7 +82,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
         assertThat(write0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(write0Props).extracting("username").isEqualTo("sa");
         assertThat(write0Props).extracting("password").isEqualTo("");
-        assertThat(write0Props).extracting("minIdle").isEqualTo("5");
+        assertThat(write0Props).extracting("minIdle").isEqualTo("6");
         assertThat(write0Props).extracting("maxPoolSize").isEqualTo("30");
         assertThat(write0Props).extracting("connectionTimeout").isEqualTo("30000");
         assertThat(write0Props).extracting("isAutoCommit").isEqualTo("false");

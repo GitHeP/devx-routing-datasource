@@ -19,6 +19,9 @@ public class DataSourceAttribute implements RoutingTargetAttribute {
     public DataSourceAttribute(RoutingTargetType routingTargetType, String name, Integer weight) {
         this.routingTargetType = routingTargetType;
         this.name = name;
+        if (weight == null) {
+            weight = 0;
+        }
         this.weight = weight;
     }
 
