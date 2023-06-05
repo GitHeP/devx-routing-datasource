@@ -14,25 +14,19 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.integration.springboot;
-
-import com.github.devx.routing.config.SqlTypeConfiguration;
-import lombok.Data;
-
-import java.util.Map;
+package com.github.devx.routing.loadbalance;
 
 /**
+ * Load balancing among multiple data sources.
+ *
  * @author Peng He
  * @since 1.0
  */
-
-@Data
-public class RoutingRuleProperties {
+public interface LoadBalance<T> {
 
     /**
-     * key is table name
-     * value Map key is datasource name
+     * Choose an option that fits the load balancing algorithm.
+     * @return Generic instance
      */
-    private Map<String , Map<String , SqlTypeConfiguration>> tables;
-
+    T choose();
 }

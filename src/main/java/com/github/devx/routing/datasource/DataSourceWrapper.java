@@ -16,6 +16,7 @@
 
 package com.github.devx.routing.datasource;
 
+import com.github.devx.routing.RoutingTargetAttribute;
 import lombok.Getter;
 
 import javax.sql.DataSource;
@@ -34,11 +35,11 @@ public class DataSourceWrapper implements DataSource {
     private final DataSource delegate;
 
     @Getter
-    private final DataSourceAttribute dataSourceAttribute;
+    private final RoutingTargetAttribute routingTargetAttribute;
 
-    public DataSourceWrapper(DataSource delegate, DataSourceAttribute attribute) {
+    public DataSourceWrapper(DataSource delegate, RoutingTargetAttribute attribute) {
         this.delegate = delegate;
-        this.dataSourceAttribute = attribute;
+        this.routingTargetAttribute = attribute;
     }
 
     @Override

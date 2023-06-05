@@ -16,7 +16,8 @@
 
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.RoutingTargetAttribute;
+import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
 
@@ -25,7 +26,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * The composite RoutingRule implementation includes multiple
@@ -38,7 +38,7 @@ import java.util.Set;
  * @author Peng He
  * @since 1.0
  *
- * @see UnknownSqlAttributeRoutingRule
+ * @see NullSqlAttributeRoutingRule
  * @see ForceWriteRoutingRule
  * @see TxRoutingRule
  * @see ReadWriteSplittingRoutingRule
@@ -48,8 +48,8 @@ public class CompositeRoutingRule extends AbstractRoutingRule {
 
     private final List<SqlAttributeRoutingRule> routingRules;
 
-    public CompositeRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames, List<SqlAttributeRoutingRule> routingRules) {
-        super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+    public CompositeRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance, List<SqlAttributeRoutingRule> routingRules) {
+        super(sqlParser, readLoadBalance, writeLoadBalance);
         List<SqlAttributeRoutingRule> rules = new ArrayList<>();
         if (Objects.nonNull(routingRules)) {
             rules.addAll(routingRules);

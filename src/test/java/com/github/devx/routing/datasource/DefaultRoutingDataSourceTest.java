@@ -1,17 +1,12 @@
 package com.github.devx.routing.datasource;
 
 import com.github.devx.routing.RoutingTargetType;
-import com.github.devx.routing.loadbalance.LoadBalancer;
-import com.github.devx.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.rule.CompositeRoutingRule;
-import com.github.devx.routing.rule.ForceReadRoutingRule;
-import com.github.devx.routing.rule.ForceTargetRoutingRule;
-import com.github.devx.routing.rule.ForceWriteRoutingRule;
-import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
-import com.github.devx.routing.rule.RoutingRule;
-import com.github.devx.routing.rule.SqlAttributeRoutingRule;
-import com.github.devx.routing.rule.TxRoutingRule;
-import com.github.devx.routing.rule.UnknownSqlAttributeRoutingRule;
+import com.github.devx.routing.config.DataSourceConfiguration;
+import com.github.devx.routing.config.RoutingConfiguration;
+import com.github.devx.routing.loadbalance.ReadLoadBalanceType;
+import com.github.devx.routing.loadbalance.WriteLoadBalanceType;
+import com.github.devx.routing.rule.group.BuiltInRoutingGroup;
+import com.github.devx.routing.rule.group.CompositeRoutingGroup;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import com.github.devx.routing.util.RoutingUtils;
@@ -139,9 +134,52 @@ public class DefaultRoutingDataSourceTest {
         ResultSet rs3 = RunScript.execute(conn3, new FileReader(initSqlPath));
         close(rs3 , null , conn3);
 
-        Set<String> readDataSourceNames = new HashSet<>();
-        readDataSourceNames.add(readDataSource0Name);
-        readDataSourceNames.add(readDataSource1Name);
+
+        SqlParser sqlParser = new JSqlParser();
+
+        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
+        RoutingConfiguration conf = new RoutingConfiguration();
+
+        DataSourceConfiguration writeDSConf = new DataSourceConfiguration();
+        writeDSConf.setDataSourceClass(HikariDataSource.class.getCanonicalName());
+        writeDSConf.setName(writeDataSourceName);
+        writeDSConf.setType(RoutingTargetType.READ_WRITE);
+        writeDSConf.setWeight(1);
+
+        DataSourceConfiguration read0DSConf = new DataSourceConfiguration();
+        read0DSConf.setDataSourceClass(HikariDataSource.class.getCanonicalName());
+        read0DSConf.setName(readDataSource0Name);
+        read0DSConf.setType(RoutingTargetType.READ);
+        read0DSConf.setWeight(1);
+
+        DataSourceConfiguration read1DSConf = new DataSourceConfiguration();
+        read1DSConf.setDataSourceClass(HikariDataSource.class.getCanonicalName());
+        read1DSConf.setName(readDataSource0Name);
+        read1DSConf.setType(RoutingTargetType.READ);
+        read1DSConf.setWeight(1);
+
+
+        Map<String, DataSourceConfiguration> dataSourcesConf = new HashMap<>();
+        dataSourcesConf.put(writeDataSourceName , writeDSConf);
+        dataSourcesConf.put(readDataSource0Name , read0DSConf);
+        dataSourcesConf.put(readDataSource1Name , read1DSConf);
+
+
+        //conf.setDataSources(dataSourcesConf);
+        Set<String> masters = new HashSet<>();
+        masters.add(writeDataSourceName);
+        conf.setMasters(masters);
+        Set<String> replicas = new HashSet<>();
+        replicas.add(readDataSource0Name);
+        replicas.add(readDataSource1Name);
+        conf.setReplicas(replicas);
+        conf.setReadLoadBalanceType(ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_ONLY_READ);
+        conf.setWriteLoadBalanceType(WriteLoadBalanceType.RANDOM_BALANCE_READ_WRITE);
+        conf.setRules(null);
+        BuiltInRoutingGroup builtInRoutingGroup = new BuiltInRoutingGroup(conf , sqlParser);
+        compositeRoutingGroup.installLast(builtInRoutingGroup);
+
+        RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
 
         Map<String, DataSource> dataSources = new HashMap<>();
         dataSources.put(writeDataSourceName , new DataSourceWrapper(writeDataSource , new DataSourceAttribute(RoutingTargetType.READ_WRITE, writeDataSourceName, 1)));
@@ -149,26 +187,7 @@ public class DefaultRoutingDataSourceTest {
         dataSources.put(readDataSource1Name , new DataSourceWrapper(readDataSource1 , new DataSourceAttribute(RoutingTargetType.READ, readDataSource1Name, 1)));
 
 
-        SqlParser sqlParser = new JSqlParser();
-        LoadBalancer<String> loadBalancer = new RandomLoadBalancer(new ArrayList<>(readDataSourceNames));
-        UnknownSqlAttributeRoutingRule unknownStatementRoutingRule = new UnknownSqlAttributeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
-        TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, writeDataSourceName , readDataSourceNames);
-        ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
-        ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
-        ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
-        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
-
-        List<SqlAttributeRoutingRule> routingRules = new ArrayList<>();
-        routingRules.add(unknownStatementRoutingRule);
-        routingRules.add(txRoutingRule);
-        routingRules.add(readWriteSplittingRoutingRule);
-        routingRules.add(forceWriteRoutingRule);
-        routingRules.add(forceReadRoutingRule);
-        routingRules.add(forceTargetRoutingRule);
-
-        RoutingRule rule = new CompositeRoutingRule(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames , routingRules);
-        RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();
-        dataSource = new DefaultRoutingDataSource(dataSources , rule , routingKeyProvider);
+        dataSource = new DefaultRoutingDataSource(dataSources , compositeRoutingGroup , routingKeyProvider);
     }
 
     @TearDown

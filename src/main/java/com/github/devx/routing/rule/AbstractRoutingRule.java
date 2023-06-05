@@ -16,14 +16,12 @@
 
 package com.github.devx.routing.rule;
 
-import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.RoutingTargetAttribute;
+import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Peng He
@@ -33,20 +31,14 @@ public abstract class AbstractRoutingRule implements SqlAttributeRoutingRule {
 
     protected final SqlParser sqlParser;
 
-    protected final LoadBalancer<String> loadBalancer;
+    protected final LoadBalance<RoutingTargetAttribute> readLoadBalance;
 
-    protected final String writeDataSourceName;
+    protected final LoadBalance<RoutingTargetAttribute> writeLoadBalance;
 
-    protected final Set<String> readDataSourceNames;
-
-    protected AbstractRoutingRule(SqlParser sqlParser , LoadBalancer<String> loadBalancer , String writeDataSourceName , Set<String> readDataSourceNames) {
+    protected AbstractRoutingRule(SqlParser sqlParser , LoadBalance<RoutingTargetAttribute> readLoadBalance , LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
         this.sqlParser = sqlParser;
-        this.loadBalancer = loadBalancer;
-        this.writeDataSourceName = writeDataSourceName;
-        if (Objects.isNull(readDataSourceNames)) {
-            readDataSourceNames = new HashSet<>();
-        }
-        this.readDataSourceNames = Collections.synchronizedSet(readDataSourceNames);
+        this.readLoadBalance = readLoadBalance;
+        this.writeLoadBalance = writeLoadBalance;
     }
 
     @Override
@@ -56,6 +48,14 @@ public abstract class AbstractRoutingRule implements SqlAttributeRoutingRule {
             sqlAttribute = sqlParser.parse(key.getSql());
         }
         return routing(sqlAttribute);
+    }
+
+    protected String chooseWriteTargetName() {
+        return writeLoadBalance.choose().getName();
+    }
+
+    protected String chooseReadTargetName() {
+        return readLoadBalance.choose().getName();
     }
 
 }

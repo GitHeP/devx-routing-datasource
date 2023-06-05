@@ -17,11 +17,11 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.sql.SqlAttribute;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -44,8 +44,8 @@ public class ForceTargetRoutingRule implements SqlAttributeRoutingRule {
             return null;
         }
 
-        RandomLoadBalancer balancer = new RandomLoadBalancer(new ArrayList<>(dataSources));
-        return balancer.choose();
+        Random random = new Random();
+        return new ArrayList<>(dataSources).get(random.nextInt(dataSources.size()));
     }
 
     @Override

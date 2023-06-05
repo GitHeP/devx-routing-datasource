@@ -1,6 +1,8 @@
 package com.github.devx.routing.config;
 
+import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.RoutingTargetType;
+import com.github.devx.routing.datasource.DataSourceAttribute;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 @Data
 public class DataSourceConfiguration {
+
+    private String name;
 
     private RoutingTargetType type;
 
@@ -26,4 +30,8 @@ public class DataSourceConfiguration {
      * load balancing weight
      */
     private Integer weight;
+
+    public RoutingTargetAttribute getRoutingTargetAttribute() {
+        return new DataSourceAttribute(type, name, weight);
+    }
 }

@@ -14,32 +14,21 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.loadbalance;
+package com.github.devx.routing.integration.springboot;
 
-import java.util.List;
-import java.util.Random;
+import com.github.devx.routing.config.RoutingConfiguration;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Random load balancing.
- *
  * @author Peng He
  * @since 1.0
  */
-public class RandomLoadBalancer implements LoadBalancer<String> {
 
-    private final List<String> options;
-    private final Random random = new Random();
+@ConfigurationProperties(prefix = "devx")
+@Data
+public class RoutingProperties {
 
-    public RandomLoadBalancer(List<String> options) {
-        this.options = options;
-    }
+    private RoutingConfiguration routing;
 
-    @Override
-    public String choose() {
-        if (options.isEmpty()) {
-            return null;
-        }
-        int randomIndex = random.nextInt(options.size());
-        return options.get(randomIndex);
-    }
 }

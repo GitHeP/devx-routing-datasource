@@ -20,10 +20,8 @@ package com.github.devx.routing.exception;
  * @author Peng He
  * @since 1.0
  */
-public class UnsupportedJdbcMethodException extends RuntimeException {
+public class UnsupportedJdbcMethodException extends InternalRuntimeException {
 
-    public UnsupportedJdbcMethodException() {
-    }
 
     public UnsupportedJdbcMethodException(String message) {
         super(message);

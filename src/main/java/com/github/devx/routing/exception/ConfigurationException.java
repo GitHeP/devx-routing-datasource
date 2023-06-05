@@ -20,11 +20,7 @@ package com.github.devx.routing.exception;
  * @author Peng He
  * @since 1.0
  */
-public class ConfigurationException extends RuntimeException {
-
-    public ConfigurationException() {
-        super();
-    }
+public class ConfigurationException extends InternalRuntimeException {
 
     public ConfigurationException(String message) {
         super(message);

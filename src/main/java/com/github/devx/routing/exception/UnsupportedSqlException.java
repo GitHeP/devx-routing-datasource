@@ -20,10 +20,8 @@ package com.github.devx.routing.exception;
  * @author Peng He
  * @since 1.0
  */
-public class UnsupportedSqlException extends RuntimeException {
+public class UnsupportedSqlException extends InternalRuntimeException {
 
-    public UnsupportedSqlException() {
-    }
 
     public UnsupportedSqlException(String message) {
         super(message);

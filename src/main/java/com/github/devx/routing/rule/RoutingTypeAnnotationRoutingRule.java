@@ -1,15 +1,14 @@
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.RoutingTargetType;
-import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.AnnotationSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.RoutingTypeSqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlHint;
 import com.github.devx.routing.sql.parser.SqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlParser;
-
-import java.util.Set;
 
 /**
  * Annotation Hint routingType Routing Rule
@@ -21,8 +20,8 @@ public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
 
     private static final SqlHintConverter<RoutingTargetType> SQL_HINT_CONVERTER = new RoutingTypeSqlHintConverter();
 
-    public RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
-        super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+    public RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
+        super(sqlParser, readLoadBalance, writeLoadBalance);
     }
 
     @Override
@@ -48,9 +47,9 @@ public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
 
         String choose = null;
         if (rtt.isWrite()) {
-            choose = writeDataSourceName;
+            choose = chooseWriteTargetName();
         } else if (rtt.isRead()) {
-            choose = loadBalancer.choose();
+            choose = chooseReadTargetName();
         }
 
         return choose;

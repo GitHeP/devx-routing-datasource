@@ -16,13 +16,11 @@
 
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-import com.github.devx.routing.sql.DefaultSqlAttribute;
-
-import java.util.Set;
 
 /**
  * Force routing to the read data source.
@@ -34,13 +32,14 @@ import java.util.Set;
  */
 public class ForceReadRoutingRule extends AbstractRoutingRule {
 
-    public ForceReadRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
-        super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+
+    public ForceReadRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
+        super(sqlParser, readLoadBalance, writeLoadBalance);
     }
 
     @Override
     public String routing(SqlAttribute attribute) {
-        return RoutingContext.isForceReadDataSource() ? loadBalancer.choose() : null;
+        return RoutingContext.isForceReadDataSource() ? chooseReadTargetName() : null;
     }
 
     @Override

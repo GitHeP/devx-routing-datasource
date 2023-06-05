@@ -11,67 +11,69 @@ mybatis:
 
 ############################# routing configuration #############################
 
-routing:
-  dataSources:
-    write_0:
-      type: READ_WRITE
-      weight: 99
-      dataSourceClass: com.zaxxer.hikari.HikariDataSource
-      properties:
-        jdbcUrl: jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
-        username: xa
-        password:
-        minIdle: 5
-        maxPoolSize: 30
-        connectionTimeout: 30000
-        isAutoCommit: false
-        isReadOnly: false
+devx:
+  routing:
+    dataSources:
+      - name: write_0
+        type: READ_WRITE
+        weight: 99
+        dataSourceClass: com.zaxxer.hikari.HikariDataSource
+        properties:
+          jdbcUrl: jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
+          username: sa
+          password:
+          minIdle: 5
+          maxPoolSize: 30
+          connectionTimeout: 30000
+          isAutoCommit: false
+          isReadOnly: false
 
-    read_0:
-      type: READ
-      weight: 6
-      dataSourceClass: com.zaxxer.hikari.HikariDataSource
-      properties:
-        jdbcUrl: jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
-        username: xa
-        password:
-        minIdle: 10
-        maxPoolSize: 30
-        connectionTimeout: 40000
-        isAutoCommit: false
-        isReadOnly: true
+      - name: read_0
+        type: READ
+        weight: 6
+        dataSourceClass: com.zaxxer.hikari.HikariDataSource
+        properties:
+          jdbcUrl: jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
+          username: sa
+          password:
+          minIdle: 10
+          maxPoolSize: 30
+          connectionTimeout: 40000
+          isAutoCommit: false
+          isReadOnly: true
 
-    read_1:
-      type: READ
-      weight: 10
-      dataSourceClass: com.zaxxer.hikari.HikariDataSource
-      properties:
-        jdbcUrl: jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
-        username: xa
-        password:
-        minIdle: 15
-        maxPoolSize: 30
-        connectionTimeout: 60000
-        isAutoCommit: false
-        isReadOnly: true
+      - name: read_1
+        type: READ
+        weight: 10
+        dataSourceClass: com.zaxxer.hikari.HikariDataSource
+        properties:
+          jdbcUrl: jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
+          username: sa
+          password:
+          minIdle: 15
+          maxPoolSize: 30
+          connectionTimeout: 60000
+          isAutoCommit: false
+          isReadOnly: true
 
-  writeDataSource: write_0
-  readDataSources:
-    - read_0
-    - read_1
+    masters:
+      - write_0
+    replicas:
+      - read_0
+      - read_1
 
-  rules:
-    tables:
-      employee:
-        write_0:
-          sqlTypes:
-            - INSERT
-            - UPDATE
-            - DELETE
-            - OTHER
-        read_0:
-          sqlTypes:
-            - SELECT
-        read_1:
-          sqlTypes:
-            - SELECT
+    rules:
+      tables:
+        employee:
+          write_0:
+            sqlTypes:
+              - INSERT
+              - UPDATE
+              - DELETE
+              - OTHER
+          read_0:
+            sqlTypes:
+              - SELECT
+          read_1:
+            sqlTypes:
+              - SELECT

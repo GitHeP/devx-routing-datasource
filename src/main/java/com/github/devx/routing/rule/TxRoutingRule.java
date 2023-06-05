@@ -16,12 +16,11 @@
 
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.loadbalance.LoadBalancer;
+import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.SqlParser;
-
-import java.util.Set;
 
 /**
  * When transactions exist, the routing rules are as follows:
@@ -38,8 +37,8 @@ import java.util.Set;
 public class TxRoutingRule extends AbstractRoutingRule {
 
 
-    public TxRoutingRule(SqlParser sqlParser, LoadBalancer<String> loadBalancer, String writeDataSourceName, Set<String> readDataSourceNames) {
-        super(sqlParser, loadBalancer, writeDataSourceName, readDataSourceNames);
+    public TxRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
+        super(sqlParser, readLoadBalance, writeLoadBalance);
     }
 
     @Override
@@ -56,6 +55,6 @@ public class TxRoutingRule extends AbstractRoutingRule {
         }
 
         // read only tx
-        return RoutingContext.getTxReadOnly() ? loadBalancer.choose() : writeDataSourceName;
+        return RoutingContext.getTxReadOnly() ? chooseReadTargetName() : chooseWriteTargetName();
     }
 }

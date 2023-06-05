@@ -8,10 +8,11 @@ import java.util.List;
  * @author Peng He
  * @since 1.0
  */
-public interface RoutingGroup extends RoutingRule {
+public interface RoutingGroup<T extends RoutingRule> extends RoutingRule {
 
-    void registerRoutingRule(RoutingRule rule);
+    void install(T rule);
 
-    void registerRoutingRule(List<RoutingRule> rules);
+    void install(List<T> rules);
 
+    boolean uninstall(Class<T> type);
 }

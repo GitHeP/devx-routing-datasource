@@ -16,10 +16,8 @@
 
 package com.github.devx.routing.integration.springboot;
 
-import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.config.DataSourceConfiguration;
-import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.datasource.DataSourceAttribute;
+import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
@@ -29,25 +27,13 @@ import com.github.devx.routing.integration.datasource.CompositeDataSourceInitial
 import com.github.devx.routing.integration.datasource.DataSourceInitializer;
 import com.github.devx.routing.integration.datasource.GenericDataSourceInitializer;
 import com.github.devx.routing.integration.mybatis.ExecutingSqlInterceptor;
-import com.github.devx.routing.loadbalance.LoadBalancer;
-import com.github.devx.routing.loadbalance.RandomLoadBalancer;
-import com.github.devx.routing.rule.CompositeRoutingRule;
-import com.github.devx.routing.rule.ForceReadRoutingRule;
-import com.github.devx.routing.rule.ForceTargetRoutingRule;
-import com.github.devx.routing.rule.ForceWriteRoutingRule;
-import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingRule;
-import com.github.devx.routing.rule.RoutingTypeAnnotationRoutingRule;
-import com.github.devx.routing.rule.SqlAttributeRoutingRule;
-import com.github.devx.routing.rule.TableRoutingRule;
-import com.github.devx.routing.rule.TxRoutingRule;
-import com.github.devx.routing.rule.UnknownSqlAttributeRoutingRule;
-import com.github.devx.routing.sql.parser.AnnotationSqlParser;
-import com.github.devx.routing.sql.parser.DefaultAnnotationSqlHintParser;
+import com.github.devx.routing.rule.group.BuiltInRoutingGroup;
+import com.github.devx.routing.rule.group.CompositeRoutingGroup;
+import com.github.devx.routing.rule.group.RoutingGroup;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.apache.ibatis.plugin.Interceptor;
-import org.joor.Reflect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,9 +41,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,7 +52,7 @@ import java.util.Set;
  * @since 1.0
  */
 
-@EnableConfigurationProperties(RoutingDataSourceProperties.class)
+@EnableConfigurationProperties(RoutingProperties.class)
 public class RoutingDataSourceConfiguration {
 
     @Bean
@@ -98,68 +82,84 @@ public class RoutingDataSourceConfiguration {
         return new JSqlParser();
     }
 
-    @SuppressWarnings("unchecked")
     @Bean
-    public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingDataSourceProperties properties , @Autowired(required = false) List<SqlAttributeRoutingRule> routingRules) {
-
-        sqlParser = new AnnotationSqlParser(sqlParser , new DefaultAnnotationSqlHintParser());
-        Set<String> readDataSources = new HashSet<>();
-        if (Objects.nonNull(properties.getReadDataSources())) {
-            readDataSources.addAll(properties.getReadDataSources());
-        }
-        Class<RandomLoadBalancer> loadBalancerType = Objects.nonNull(properties.getLoadBalancer()) ? (Class<RandomLoadBalancer>) Reflect.onClass(properties.getLoadBalancer()).type() : RandomLoadBalancer.class;
-        LoadBalancer<String> loadBalancer = Reflect.onClass(loadBalancerType).create(new ArrayList<>(readDataSources)).get();
-
-        UnknownSqlAttributeRoutingRule unknownStatementRoutingRule = new UnknownSqlAttributeRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
-        RoutingTypeAnnotationRoutingRule hintRoutingRule = new RoutingTypeAnnotationRoutingRule(sqlParser, loadBalancer, properties.getWriteDataSource(), readDataSources);
-        if (Objects.isNull(routingRules)) {
-            routingRules = new ArrayList<>();
-        }
-        routingRules.add(unknownStatementRoutingRule);
-        routingRules.add(txRoutingRule);
-        routingRules.add(readWriteSplittingRoutingRule);
-        routingRules.add(forceWriteRoutingRule);
-        routingRules.add(forceReadRoutingRule);
-        routingRules.add(forceTargetRoutingRule);
-        routingRules.add(hintRoutingRule);
-
-        if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
-            Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();
-            TableRoutingRule tableRoutingRule = new TableRoutingRule(tables);
-            routingRules.add(tableRoutingRule);
-        }
-
-        return new CompositeRoutingRule(sqlParser , loadBalancer , properties.getWriteDataSource(), readDataSources , routingRules);
+    public RoutingGroup<? extends RoutingRule> compositeRoutingGroup(@Autowired(required = false) List<RoutingGroup> routingGroups , RoutingProperties routingProperties, SqlParser sqlParser) {
+        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
+        compositeRoutingGroup.installFirst(routingGroups);
+        compositeRoutingGroup.installLast(new BuiltInRoutingGroup(routingProperties.getRouting() , sqlParser));
+        return compositeRoutingGroup;
     }
 
-    @Bean
-    public DataSource routingDataSource(RoutingKeyProvider routingKeyProvider, RoutingDataSourceProperties properties , DataSourceInitializer dataSourceInitializer , @Autowired @Qualifier("compositeRoutingRule") RoutingRule routingRule) {
+    @SuppressWarnings("unchecked")
+    //@Bean
+    //public RoutingRule compositeRoutingRule(SqlParser sqlParser, RoutingProperties properties , @Autowired(required = false) List<SqlAttributeRoutingRule> routingRules) {
+    //
+    //    RoutingConfiguration routing = properties.getRouting();
+    //    sqlParser = new AnnotationSqlParser(sqlParser , new DefaultAnnotationSqlHintParser());
+    //    Set<String> readDataSources = new HashSet<>();
+    //    if (Objects.nonNull(routing.getMasters())) {
+    //        readDataSources.addAll(routing.getReplicas());
+    //    }
+    //    Class<RandomLoadBalance> loadBalancerType = Objects.nonNull(routing.getReadLoadBalanceType()) ? (Class<RandomLoadBalance>) Reflect.onClass(properties.getLoadBalancer()).type() : RandomLoadBalance.class;
+    //    LoadBalance<String> loadBalance = Reflect.onClass(loadBalancerType).create(new ArrayList<>(readDataSources)).get();
+    //
+    //    NullSqlAttributeRoutingRule unknownStatementRoutingRule = new NullSqlAttributeRoutingRule(sqlParser, loadBalance, properties.getWrites(), readDataSources);
+    //    TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, loadBalance, routing.getMasters(), readDataSources);
+    //    ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, loadBalance, properties.getWrites(), readDataSources);
+    //    ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, loadBalance, properties.getWrites(), readDataSources);
+    //    ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, loadBalance, properties.getWrites(), readDataSources);
+    //    ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
+    //    RoutingTypeAnnotationRoutingRule hintRoutingRule = new RoutingTypeAnnotationRoutingRule(sqlParser, loadBalance, properties.getWrites(), readDataSources);
+    //    if (Objects.isNull(routingRules)) {
+    //        routingRules = new ArrayList<>();
+    //    }
+    //    routingRules.add(unknownStatementRoutingRule);
+    //    routingRules.add(txRoutingRule);
+    //    routingRules.add(readWriteSplittingRoutingRule);
+    //    routingRules.add(forceWriteRoutingRule);
+    //    routingRules.add(forceReadRoutingRule);
+    //    routingRules.add(forceTargetRoutingRule);
+    //    routingRules.add(hintRoutingRule);
+    //
+    //    if (Objects.nonNull(properties.getRules()) && Objects.nonNull(properties.getRules().getTables())) {
+    //        Map<String, Map<String, SqlTypeConfiguration>> tables = properties.getRules().getTables();
+    //        TableRoutingRule tableRoutingRule = new TableRoutingRule(tables);
+    //        routingRules.add(tableRoutingRule);
+    //    }
+    //
+    //    return new CompositeRoutingRule(sqlParser , loadBalance, properties.getWrites(), readDataSources , routingRules);
+    //}
 
-        if (Objects.isNull(properties.getWriteDataSource())) {
-            throw new ConfigurationException("Configuration item [writeDataSource] is required");
+    @Bean
+    public DataSource routingDataSource(RoutingKeyProvider routingKeyProvider, RoutingProperties properties , DataSourceInitializer dataSourceInitializer , @Autowired @Qualifier("compositeRoutingGroup") RoutingRule routingRule) {
+
+        if (Objects.isNull(properties.getRouting().getMasters()) || properties.getRouting().getMasters().isEmpty()) {
+            throw new ConfigurationException("Configuration item [masters] is required");
         }
+
+        RoutingConfiguration routing = properties.getRouting();
 
         Map<String , DataSource> dataSources = new HashMap<>();
-        for (Map.Entry<String, DataSourceConfiguration> entry : properties.getDataSources().entrySet()) {
-            String name = entry.getKey();
-            DataSourceConfiguration configuration = entry.getValue();
-            Object dataSourceClassName = configuration.getDataSourceClass();
+        //for (Map.Entry<String, DataSourceConfiguration> entry : routing.getDataSources().entrySet()) {
+        //    String name = entry.getKey();
+        //    DataSourceConfiguration configuration = entry.getValue();
+        //    Object dataSourceClassName = configuration.getDataSourceClass();
+        //    if (Objects.isNull(dataSourceClassName)) {
+        //        throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingConfiguration.DATA_SOURCE_CLASS_NAME_KEY));
+        //    }
+        //    DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , configuration.getProperties());
+        //    dataSources.put(name , new DataSourceWrapper(dataSource , configuration.getRoutingTargetAttribute()));
+        //}
+
+        for (DataSourceConfiguration dataSourceConf : routing.getDataSources()) {
+            Object dataSourceClassName = dataSourceConf.getDataSourceClass();
             if (Objects.isNull(dataSourceClassName)) {
-                throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingDataSourceProperties.DATA_SOURCE_CLASS_NAME_KEY));
+                throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingConfiguration.DATA_SOURCE_CLASS_NAME_KEY));
             }
-            DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , configuration.getProperties());
-            RoutingTargetType type = RoutingTargetType.READ;
-            if (properties.getWriteDataSource().equals(name)) {
-                type = RoutingTargetType.READ_WRITE;
-            }
-            DataSourceAttribute dataSourceAttribute = new DataSourceAttribute(type, name, configuration.getWeight());
-            dataSources.put(name , new DataSourceWrapper(dataSource , dataSourceAttribute));
+            DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , dataSourceConf.getProperties());
+            dataSources.put(dataSourceConf.getName() , new DataSourceWrapper(dataSource , dataSourceConf.getRoutingTargetAttribute()));
         }
+
 
         return new DefaultRoutingDataSource(dataSources , routingRule , routingKeyProvider);
     }

@@ -20,10 +20,8 @@ package com.github.devx.routing.exception;
  * @author Peng He
  * @since 1.0
  */
-public class NoSuchDataSourceException extends RuntimeException {
+public class NoSuchDataSourceException extends InternalRuntimeException {
 
-    public NoSuchDataSourceException() {
-    }
 
     public NoSuchDataSourceException(String message) {
         super(message);

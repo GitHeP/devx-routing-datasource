@@ -1,7 +1,10 @@
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
+import com.github.devx.routing.RoutingTargetType;
+import com.github.devx.routing.datasource.DataSourceAttribute;
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.loadbalance.RoundRobinLoadBalancer;
+import com.github.devx.routing.loadbalance.RandomLoadBalance;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +31,18 @@ class ForceReadRoutingRuleTest {
         readDataSourceNames.add("read_1");
         readDataSourceNames.add("read_2");
 
-        List<String> options = new ArrayList<>(readDataSourceNames);
-        ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , new RoundRobinLoadBalancer(options) , writeDataSourceName , readDataSourceNames);
+        List<RoutingTargetAttribute> writes = new ArrayList<>();
+        writes.add(new DataSourceAttribute(RoutingTargetType.WRITE , writeDataSourceName , 33));
+
+        List<RoutingTargetAttribute> reads = new ArrayList<>();
+        reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_0" , 33));
+        reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_2" , 33));
+
+
+        RandomLoadBalance readLoadBalance = new RandomLoadBalance(reads);
+        RandomLoadBalance writeLoadBalance = new RandomLoadBalance(writes);
+
+        ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , readLoadBalance , writeLoadBalance);
 
         String sql = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
         String result = routingRule.routing(new RoutingKey().setSql(sql));
@@ -46,8 +59,18 @@ class ForceReadRoutingRuleTest {
         readDataSourceNames.add("read_1");
         readDataSourceNames.add("read_2");
 
-        List<String> options = new ArrayList<>(readDataSourceNames);
-        ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , new RoundRobinLoadBalancer(options) , writeDataSourceName , readDataSourceNames);
+        List<RoutingTargetAttribute> writes = new ArrayList<>();
+        writes.add(new DataSourceAttribute(RoutingTargetType.WRITE , writeDataSourceName , 33));
+
+        List<RoutingTargetAttribute> reads = new ArrayList<>();
+        reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_0" , 33));
+        reads.add(new DataSourceAttribute(RoutingTargetType.READ , "read_2" , 33));
+
+
+        RandomLoadBalance readLoadBalance = new RandomLoadBalance(reads);
+        RandomLoadBalance writeLoadBalance = new RandomLoadBalance(writes);
+
+        ForceReadRoutingRule routingRule = new ForceReadRoutingRule(new JSqlParser() , readLoadBalance , writeLoadBalance);
 
         String sql = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
         String result = routingRule.routing(new RoutingKey().setSql(sql));

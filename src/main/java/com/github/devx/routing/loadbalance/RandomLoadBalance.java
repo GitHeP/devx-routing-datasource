@@ -16,31 +16,32 @@
 
 package com.github.devx.routing.loadbalance;
 
+import com.github.devx.routing.RoutingTargetAttribute;
+
 import java.util.List;
+import java.util.Random;
 
 /**
- * Round-robin load balancing.
+ * Random load balancing.
  *
  * @author Peng He
  * @since 1.0
  */
-public class RoundRobinLoadBalancer implements LoadBalancer<String> {
+public class RandomLoadBalance implements LoadBalance<RoutingTargetAttribute> {
 
-    private final List<String> options;
-    private Integer current;
+    private final List<RoutingTargetAttribute> options;
+    private final Random random = new Random();
 
-    public RoundRobinLoadBalancer(List<String> options) {
+    public RandomLoadBalance(List<RoutingTargetAttribute> options) {
         this.options = options;
-        this.current = 0;
     }
 
     @Override
-    public String choose() {
+    public RoutingTargetAttribute choose() {
         if (options.isEmpty()) {
             return null;
         }
-        String chosen = options.get(current);
-        current = (current + 1) % options.size();
-        return chosen;
+        int randomIndex = random.nextInt(options.size());
+        return options.get(randomIndex);
     }
 }

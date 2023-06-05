@@ -18,7 +18,6 @@ package com.github.devx.routing.rule;
 
 import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.config.TableRuleConfiguration;
-import com.github.devx.routing.loadbalance.RandomLoadBalancer;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.util.CollectionUtils;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -81,8 +81,8 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
             }
         }
 
-        RandomLoadBalancer balancer = new RandomLoadBalancer(datasourceNames);
-        return balancer.choose();
+        Random random = new Random();
+        return datasourceNames.get(random.nextInt(datasourceNames.size()));
     }
 
     @Override

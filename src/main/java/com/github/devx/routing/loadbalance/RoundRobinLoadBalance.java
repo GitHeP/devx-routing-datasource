@@ -16,17 +16,33 @@
 
 package com.github.devx.routing.loadbalance;
 
+import com.github.devx.routing.RoutingTargetAttribute;
+
+import java.util.List;
+
 /**
- * Load balancing among multiple data sources.
+ * Round-robin load balancing.
  *
  * @author Peng He
  * @since 1.0
  */
-public interface LoadBalancer<T> {
+public class RoundRobinLoadBalance implements LoadBalance<RoutingTargetAttribute> {
 
-    /**
-     * Choose an option that fits the load balancing algorithm.
-     * @return Generic instance
-     */
-    T choose();
+    private final List<RoutingTargetAttribute> options;
+    private Integer current;
+
+    public RoundRobinLoadBalance(List<RoutingTargetAttribute> options) {
+        this.options = options;
+        this.current = 0;
+    }
+
+    @Override
+    public RoutingTargetAttribute choose() {
+        if (options.isEmpty()) {
+            return null;
+        }
+        RoutingTargetAttribute chosen = options.get(current);
+        current = (current + 1) % options.size();
+        return chosen;
+    }
 }

@@ -4,10 +4,7 @@ package com.github.devx.routing.exception;
  * @author Peng He
  * @since 1.0
  */
-public class AnnotationSqlException extends RuntimeException {
-
-    public AnnotationSqlException() {
-    }
+public class AnnotationSqlException extends InternalRuntimeException {
 
     public AnnotationSqlException(String message) {
         super(message);
