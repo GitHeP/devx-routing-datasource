@@ -77,7 +77,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
         assertThat(write0Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(write0Configuration.getWeight()).isEqualTo(99);
 
-        Map<String, Object> write0Props = write0Configuration.getProperties();
+        Map<String, Object> write0Props = write0Configuration.getProps();
         assertThat(write0Props).isNotNull();
         assertThat(write0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(write0Props).extracting("username").isEqualTo("sa");
@@ -98,7 +98,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
         assertThat(read0Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(read0Configuration.getWeight()).isEqualTo(6);
 
-        Map<String, Object> read0Props = read0Configuration.getProperties();
+        Map<String, Object> read0Props = read0Configuration.getProps();
         assertThat(read0Props).isNotNull();
         assertThat(read0Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(read0Props).extracting("username").isEqualTo("sa");
@@ -119,7 +119,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
         assertThat(read1Configuration.getDataSourceClass()).isEqualTo("com.zaxxer.hikari.HikariDataSource");
         assertThat(read1Configuration.getWeight()).isEqualTo(10);
 
-        Map<String, Object> read1Props = read1Configuration.getProperties();
+        Map<String, Object> read1Props = read1Configuration.getProps();
         assertThat(read1Props).isNotNull();
         assertThat(read1Props).extracting("jdbcUrl").isEqualTo("jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;");
         assertThat(read1Props).extracting("username").isEqualTo("sa");

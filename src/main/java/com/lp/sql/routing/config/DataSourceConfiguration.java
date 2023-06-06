@@ -24,7 +24,7 @@ public class DataSourceConfiguration {
     /**
      * Native data source property configuration
      */
-    private Map<String , Object> properties;
+    private Map<String , Object> props;
 
     /**
      * load balancing weight
