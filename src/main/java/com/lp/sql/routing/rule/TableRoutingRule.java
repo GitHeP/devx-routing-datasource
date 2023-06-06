@@ -87,7 +87,7 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public int priority() {
-        return 10;
+        return 21;
     }
 
     @Override

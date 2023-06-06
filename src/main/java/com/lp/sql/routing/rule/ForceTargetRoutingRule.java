@@ -50,7 +50,7 @@ public class ForceTargetRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MIN_VALUE;
+        return 30;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class TxRoutingRule extends AbstractRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MIN_VALUE + 10;
+        return 0;
     }
 
     @Override
