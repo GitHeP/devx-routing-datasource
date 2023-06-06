@@ -1,6 +1,6 @@
 package com.lp.sql.routing.rule;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.sql.parser.JSqlParser;
 import com.lp.sql.routing.sql.parser.SqlParser;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.lp.sql.routing.integration.springboot;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.integration.mybatis.AreaMapper;
 import com.lp.sql.routing.integration.mybatis.DepartmentMapper;
 import com.lp.sql.routing.integration.mybatis.EmployeeMapper;

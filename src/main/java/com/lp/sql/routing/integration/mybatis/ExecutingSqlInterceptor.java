@@ -16,7 +16,7 @@
 
 package com.lp.sql.routing.integration.mybatis;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;

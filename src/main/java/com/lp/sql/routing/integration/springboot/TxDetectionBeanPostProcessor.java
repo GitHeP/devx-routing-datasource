@@ -16,7 +16,7 @@
 
 package com.lp.sql.routing.integration.springboot;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.Advisor;

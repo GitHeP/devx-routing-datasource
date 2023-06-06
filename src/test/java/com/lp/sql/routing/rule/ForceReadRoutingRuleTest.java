@@ -3,7 +3,7 @@ package com.lp.sql.routing.rule;
 import com.lp.sql.routing.RoutingTargetAttribute;
 import com.lp.sql.routing.RoutingTargetType;
 import com.lp.sql.routing.datasource.DataSourceAttribute;
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.loadbalance.WeightRandomLoadBalance;
 import com.lp.sql.routing.sql.parser.JSqlParser;
 import org.junit.jupiter.api.Test;

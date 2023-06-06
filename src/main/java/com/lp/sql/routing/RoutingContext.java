@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.lp.sql.routing.datasource;
+package com.lp.sql.routing;
 
 
 import com.alibaba.ttl.TransmittableThreadLocal;
@@ -37,6 +37,8 @@ public class RoutingContext {
     private static final String IN_TX_KEY = "IN_TX";
 
     private static final String TX_READ_ONLY_KEY = "TX_READ_ONLY";
+
+    private static final String CURRENT_TX_DATASOURCE_NAME_KEY = "CURRENT_TX_DATASOURCE_NAME";
 
     private static final String FORCE_WRITE_DATA_SOURCE_KEY = "FORCE_WRITE_DATA_SOURCE";
 
@@ -106,6 +108,17 @@ public class RoutingContext {
         Object value = getResource(IN_TX_KEY);
         return Objects.nonNull(value) && (boolean) value;
     }
+
+    public static void setCurrentTxDatasourceName(String name) {
+        addResource(CURRENT_TX_DATASOURCE_NAME_KEY , name);
+    }
+
+    public static String getCurrentTxDatasourceName() {
+        Object value = getResource(CURRENT_TX_DATASOURCE_NAME_KEY);
+        return Objects.nonNull(value) ? value.toString() : null;
+    }
+
+
 
     public static void setTxReadOnly(boolean readOnly) {
         addResource(TX_READ_ONLY_KEY , readOnly);

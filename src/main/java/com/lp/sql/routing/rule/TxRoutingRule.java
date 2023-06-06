@@ -17,7 +17,7 @@
 package com.lp.sql.routing.rule;
 
 import com.lp.sql.routing.RoutingTargetAttribute;
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.loadbalance.LoadBalance;
 import com.lp.sql.routing.sql.SqlAttribute;
 import com.lp.sql.routing.sql.parser.SqlParser;
@@ -54,7 +54,18 @@ public class TxRoutingRule extends AbstractRoutingRule {
             return null;
         }
 
-        // read only tx
-        return RoutingContext.getTxReadOnly() ? chooseReadTargetName() : chooseWriteTargetName();
+        String currentTxDatasourceName = RoutingContext.getCurrentTxDatasourceName();
+        if (currentTxDatasourceName != null && currentTxDatasourceName.length() != 0) {
+            return currentTxDatasourceName;
+        }
+
+        String targetName;
+        if (RoutingContext.getTxReadOnly()) {
+            targetName = chooseReadTargetName();
+        } else {
+            targetName = chooseWriteTargetName();
+        }
+        RoutingContext.setCurrentTxDatasourceName(targetName);
+        return targetName;
     }
 }

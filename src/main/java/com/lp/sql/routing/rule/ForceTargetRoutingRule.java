@@ -16,7 +16,7 @@
 
 package com.lp.sql.routing.rule;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.sql.SqlAttribute;
 
 import java.util.ArrayList;

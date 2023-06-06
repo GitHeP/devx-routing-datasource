@@ -17,7 +17,7 @@
 package com.lp.sql.routing.rule;
 
 import com.lp.sql.routing.RoutingTargetAttribute;
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.loadbalance.LoadBalance;
 import com.lp.sql.routing.sql.SqlAttribute;
 import com.lp.sql.routing.sql.parser.SqlParser;

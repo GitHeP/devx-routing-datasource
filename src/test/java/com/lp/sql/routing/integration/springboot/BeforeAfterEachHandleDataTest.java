@@ -1,6 +1,6 @@
 package com.lp.sql.routing.integration.springboot;
 
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.datasource.RoutingDataSource;
 import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterEach;

@@ -18,7 +18,7 @@ package com.lp.sql.routing.jdbc;
 
 import com.lp.sql.routing.RoutingTargetType;
 import com.lp.sql.routing.datasource.DataSourceWrapper;
-import com.lp.sql.routing.datasource.RoutingContext;
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.datasource.RoutingContextClearable;
 import com.lp.sql.routing.datasource.RoutingDataSource;
 import lombok.Getter;
