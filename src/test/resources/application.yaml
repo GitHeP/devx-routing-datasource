@@ -11,7 +11,7 @@ mybatis:
 
 ############################# routing configuration #############################
 
-devx:
+sql:
   routing:
     dataSources:
       - name: write_0
