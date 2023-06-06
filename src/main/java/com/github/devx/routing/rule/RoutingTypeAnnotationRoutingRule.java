@@ -26,7 +26,7 @@ public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MIN_VALUE + 100;
+        return 10;
     }
 
     @Override

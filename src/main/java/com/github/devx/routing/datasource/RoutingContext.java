@@ -17,7 +17,6 @@
 package com.github.devx.routing.datasource;
 
 
-import com.alibaba.ttl.TransmittableThreadLocal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public class RoutingContext {
     private static final String ROUTED_DATA_SOURCE_NAME_KEY = "ROUTED_DATA_SOURCE_NAME";
 
 
-    private static final TransmittableThreadLocal<Map<Object, Object>> RESOURCES = new TransmittableThreadLocal<Map<Object, Object>>() {
+    private static final InheritableThreadLocal<Map<Object, Object>> RESOURCES = new InheritableThreadLocal<Map<Object, Object>>() {
         @Override
         protected Map<Object, Object> initialValue() {
             return new HashMap<>(2 << 3);

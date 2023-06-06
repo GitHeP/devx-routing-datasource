@@ -10,7 +10,7 @@ import org.springframework.boot.SpringApplication;
 @org.springframework.boot.autoconfigure.SpringBootApplication(
         scanBasePackages = {"com.github.devx.routing.integration"}
 )
-@EnableRoutingDataSource
+@EnableSQLRouting
 public class SpringBootApplication {
 
     public static void main(String[] args) {

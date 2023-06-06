@@ -44,6 +44,6 @@ public class ForceReadRoutingRule extends AbstractRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MIN_VALUE;
+        return 20;
     }
 }

@@ -69,6 +69,8 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     private Properties clientInfo;
 
+    private DatabaseMetaData databaseMetaData;
+
     private final RoutingDataSource routingDataSource;
 
     public RoutingConnection(RoutingDataSource routingDataSource) {
@@ -178,7 +180,10 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        return acquireConnection(routingDataSource.getWriteDataSource()).getMetaData();
+        if (Objects.isNull(databaseMetaData)) {
+            databaseMetaData = acquireConnection(routingDataSource.getWriteDataSource()).getMetaData();
+        }
+        return databaseMetaData;
     }
 
     @Override

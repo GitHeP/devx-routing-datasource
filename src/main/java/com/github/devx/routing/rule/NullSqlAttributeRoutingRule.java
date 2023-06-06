@@ -46,6 +46,6 @@ public class NullSqlAttributeRoutingRule extends AbstractRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MIN_VALUE + 1;
+        return 0;
     }
 }
