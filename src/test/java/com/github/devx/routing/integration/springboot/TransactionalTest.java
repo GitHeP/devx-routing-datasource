@@ -65,6 +65,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
         log.info("insert area {}" , area);
         int areaRow = areaMapper.insert(area);
         assertThat(areaRow).isEqualTo(1);
+        assertThat(RoutingContext.getRoutedDataSourceName()).isEqualTo("write_0");
 
         Map<String, Object> dept = new HashMap<>();
         dept.put("id" , 6);
@@ -73,6 +74,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
         log.info("insert department {}" , dept);
         int deptRow = departmentMapper.insert(dept);
         assertThat(deptRow).isEqualTo(1);
+        assertThat(RoutingContext.getRoutedDataSourceName()).isEqualTo("write_0");
 
         Map<String, Object> employee = new HashMap<>();
         employee.put("id" , 6);
@@ -81,7 +83,6 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
         log.info("insert employee {}" , dept);
         int employeeRow = employeeMapper.insert(employee);
         assertThat(employeeRow).isEqualTo(1);
-
         assertThat(RoutingContext.getRoutedDataSourceName()).isEqualTo("write_0");
 
         String sql = "SELECT a.name AS area_name, d.name AS department_name, e.name AS employee_name\n" +
