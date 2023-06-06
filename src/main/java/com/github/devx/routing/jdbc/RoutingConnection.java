@@ -367,7 +367,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
         return this.connection;
     }
 
-    private RoutingContextClearPreparedStatement newPreparedStatement(PreparedStatement ps) {
-        return new RoutingContextClearPreparedStatement(ps);
+    private RoutingPreparedStatement newPreparedStatement(PreparedStatement ps) {
+        return new RoutingPreparedStatement(ps);
     }
 }

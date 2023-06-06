@@ -2,7 +2,7 @@ package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.datasource.RoutingDataSource;
 import com.github.devx.routing.jdbc.RoutingConnection;
-import com.github.devx.routing.jdbc.RoutingContextClearPreparedStatement;
+import com.github.devx.routing.jdbc.RoutingPreparedStatement;
 import com.github.devx.routing.jdbc.RoutingStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ public class DataSourceTest extends SpringBootIntegrationTest {
         Connection connection = dataSource.getConnection();
         assertThat(connection).isNotNull().isInstanceOf(RoutingConnection.class);
         PreparedStatement prepareStatement = connection.prepareStatement("show databases");
-        assertThat(prepareStatement).isNotNull().isInstanceOf(RoutingContextClearPreparedStatement.class);
+        assertThat(prepareStatement).isNotNull().isInstanceOf(RoutingPreparedStatement.class);
         prepareStatement.close();
         connection.close();
     }

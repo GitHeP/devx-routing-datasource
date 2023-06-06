@@ -47,11 +47,11 @@ import java.util.Calendar;
  * @since 1.0
  */
 
-public class RoutingContextClearPreparedStatement implements PreparedStatement , RoutingContextClearable {
+public class RoutingPreparedStatement implements PreparedStatement , RoutingContextClearable {
 
     private final PreparedStatement delegate;
 
-    public RoutingContextClearPreparedStatement(PreparedStatement delegate) {
+    public RoutingPreparedStatement(PreparedStatement delegate) {
         this.delegate = delegate;
     }
 
