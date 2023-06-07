@@ -14,22 +14,21 @@
  *    limitations under the License.
  */
 
-package com.github.devx.routing.datasource;
+package com.github.devx.routing.integration.springboot;
+
+import com.github.devx.routing.config.RoutingConfiguration;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Peng He
  * @since 1.0
  */
-public interface RoutingContextClearable {
 
-    default void forceClear() {
-        RoutingContext.clear();
-    }
+@ConfigurationProperties(prefix = "devx")
+@Data
+public class SqlRoutingProperties {
 
-    default void clearingWithoutTx() {
-        if (!RoutingContext.inTx()) {
-            RoutingContext.clear();
-        }
-    }
+    private RoutingConfiguration routing;
 
 }

@@ -25,6 +25,8 @@ import java.util.function.Consumer;
  * @author Peng He
  * @since 1.0
  */
+
+@Deprecated
 public class ExecuteWithoutResultConsumerRoutingSupport implements Consumer<TransactionStatus> {
 
     private final Consumer<TransactionStatus> consumer;

@@ -24,6 +24,8 @@ import org.springframework.transaction.support.TransactionCallback;
  * @author Peng He
  * @since 1.0
  */
+
+@Deprecated
 public class TransactionCallbackRoutingSupport<T> implements TransactionCallback<T> {
 
     private final TransactionCallback<T> callback;

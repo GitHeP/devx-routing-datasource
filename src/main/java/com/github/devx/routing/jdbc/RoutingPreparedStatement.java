@@ -16,7 +16,7 @@
 
 package com.github.devx.routing.jdbc;
 
-import com.github.devx.routing.datasource.RoutingContextClearable;
+import com.github.devx.routing.datasource.RoutingContextAccessible;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -47,7 +47,7 @@ import java.util.Calendar;
  * @since 1.0
  */
 
-public class RoutingPreparedStatement implements PreparedStatement , RoutingContextClearable {
+public class RoutingPreparedStatement implements PreparedStatement , RoutingContextAccessible {
 
     private final PreparedStatement delegate;
 

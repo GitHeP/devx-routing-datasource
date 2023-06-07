@@ -49,7 +49,7 @@ import java.util.Set;
  * @since 1.0
  */
 
-@EnableConfigurationProperties(RoutingProperties.class)
+@EnableConfigurationProperties(SqlRoutingProperties.class)
 public class RoutingConfiguration {
 
     @Bean
@@ -76,15 +76,15 @@ public class RoutingConfiguration {
 
     @Bean
     @SuppressWarnings({"all"})
-    public RoutingGroup<? extends RoutingRule> compositeRoutingGroup(@Autowired(required = false) List<RoutingGroup> routingGroups , RoutingProperties routingProperties, SqlParser sqlParser) {
+    public RoutingGroup<? extends RoutingRule> compositeRoutingGroup(@Autowired(required = false) List<RoutingGroup> routingGroups , SqlRoutingProperties sqlRoutingProperties, SqlParser sqlParser) {
         CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
         compositeRoutingGroup.installFirst(routingGroups);
-        compositeRoutingGroup.installLast(new EmbeddedRoutingGroup(routingProperties.getRouting() , sqlParser));
+        compositeRoutingGroup.installLast(new EmbeddedRoutingGroup(sqlRoutingProperties.getRouting() , sqlParser));
         return compositeRoutingGroup;
     }
 
     @Bean
-    public DataSource routingDataSource(RoutingKeyProvider routingKeyProvider, RoutingProperties properties , DataSourceInitializer dataSourceInitializer , @Autowired @Qualifier("compositeRoutingGroup") RoutingRule routingRule) {
+    public DataSource routingDataSource(RoutingKeyProvider routingKeyProvider, SqlRoutingProperties properties , DataSourceInitializer dataSourceInitializer , @Autowired @Qualifier("compositeRoutingGroup") RoutingRule routingRule) {
 
         if (Objects.isNull(properties.getRouting().getMasters()) || properties.getRouting().getMasters().isEmpty()) {
             throw new ConfigurationException("Configuration item [masters] is required");

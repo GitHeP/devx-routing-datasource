@@ -17,7 +17,6 @@
 package com.github.devx.routing.datasource;
 
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,8 +30,6 @@ import java.util.Set;
  */
 public class RoutingContext {
 
-    private static final String CURRENTLY_EXECUTING_SQL_KEY = "CURRENTLY_EXECUTING_SQL";
-
     private static final String IN_TX_KEY = "IN_TX";
 
     private static final String TX_READ_ONLY_KEY = "TX_READ_ONLY";
@@ -44,7 +41,6 @@ public class RoutingContext {
     private static final String FORCE_DATA_SOURCE_KEY = "FORCE_DATA_SOURCE";
 
     private static final String ROUTED_DATA_SOURCE_NAME_KEY = "ROUTED_DATA_SOURCE_NAME";
-
 
     private static final InheritableThreadLocal<Map<Object, Object>> RESOURCES = new InheritableThreadLocal<Map<Object, Object>>() {
         @Override
@@ -86,15 +82,6 @@ public class RoutingContext {
 
     public static Object getResource(Object key) {
         return RESOURCES.get().get(key);
-    }
-
-    public static void addCurrentlyExecutingSql(String sql) {
-        addResource(CURRENTLY_EXECUTING_SQL_KEY, sql);
-    }
-
-    public static String getCurrentlyExecutingSqlKey() {
-        Object value = getResource(CURRENTLY_EXECUTING_SQL_KEY);
-        return Objects.nonNull(value) ? value.toString() : null;
     }
 
     public static void setInTx() {
@@ -182,5 +169,4 @@ public class RoutingContext {
         Object value = getResource(ROUTED_DATA_SOURCE_NAME_KEY);
         return Objects.nonNull(value) ? value.toString() : "unknown";
     }
-
 }

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
     @Autowired
-    RoutingProperties properties;
+    SqlRoutingProperties properties;
 
     @Test
     void testPropertiesFileDataSourcesConfig() {

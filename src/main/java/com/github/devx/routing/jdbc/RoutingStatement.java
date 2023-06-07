@@ -16,7 +16,9 @@
 
 package com.github.devx.routing.jdbc;
 
-import com.github.devx.routing.datasource.RoutingContextClearable;
+import com.github.devx.routing.datasource.RoutingContextAccessible;
+import com.github.devx.routing.sql.parser.AnnotationSqlHintParser;
+import com.github.devx.routing.sql.parser.DefaultAnnotationSqlHintParser;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -28,7 +30,9 @@ import java.util.Objects;
  * @author Peng He
  * @since 1.0
  */
-public class RoutingStatement extends AbstractStatementAdapter implements RoutingContextClearable {
+public class RoutingStatement extends AbstractStatementAdapter implements RoutingContextAccessible {
+
+    private final AnnotationSqlHintParser sqlHintParser = new DefaultAnnotationSqlHintParser();
 
     private final RoutingConnection connection;
 
@@ -65,49 +69,49 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
     }
 
     @Override
-    public ResultSet executeQuery(String s) throws SQLException {
-        return acquireStatement(s).executeQuery(s);
+    public ResultSet executeQuery(String sql) throws SQLException {
+        return acquireStatement(sql).executeQuery(nativeSql(sql));
     }
 
     @Override
-    public int executeUpdate(String s) throws SQLException {
-        return acquireStatement(s).executeUpdate(s);
+    public int executeUpdate(String sql) throws SQLException {
+        return acquireStatement(sql).executeUpdate(nativeSql(sql));
     }
 
     @Override
-    public int executeUpdate(String s, int i) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , i);
+    public int executeUpdate(String sql, int i) throws SQLException {
+        return acquireStatement(sql).executeUpdate(nativeSql(sql) , i);
     }
 
     @Override
-    public int executeUpdate(String s, int[] ints) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , ints);
+    public int executeUpdate(String sql, int[] ints) throws SQLException {
+        return acquireStatement(sql).executeUpdate(nativeSql(sql) , ints);
     }
 
     @Override
-    public int executeUpdate(String s, String[] strings) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , strings);
+    public int executeUpdate(String sql, String[] strings) throws SQLException {
+        return acquireStatement(sql).executeUpdate(nativeSql(sql) , strings);
     }
 
 
     @Override
-    public boolean execute(String s) throws SQLException {
-        return acquireStatement(s).execute(s);
+    public boolean execute(String sql) throws SQLException {
+        return acquireStatement(sql).execute(nativeSql(sql));
     }
 
     @Override
-    public boolean execute(String s, int i) throws SQLException {
-        return acquireStatement(s).execute(s , i);
+    public boolean execute(String sql, int i) throws SQLException {
+        return acquireStatement(sql).execute(nativeSql(sql) , i);
     }
 
     @Override
-    public boolean execute(String s, int[] ints) throws SQLException {
-        return acquireStatement(s).execute(s , ints);
+    public boolean execute(String sql, int[] ints) throws SQLException {
+        return acquireStatement(sql).execute(nativeSql(sql) , ints);
     }
 
     @Override
-    public boolean execute(String s, String[] strings) throws SQLException {
-        return acquireStatement(s).execute(s , strings);
+    public boolean execute(String sql, String[] strings) throws SQLException {
+        return acquireStatement(sql).execute(nativeSql(sql) , strings);
     }
 
     @Override
@@ -276,5 +280,9 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
             this.statement.setQueryTimeout(this.queryTimeout);
         }
         return this.statement;
+    }
+
+    private String nativeSql(String sql) {
+        return sqlHintParser.parse(sql).getNativeSql();
     }
 }

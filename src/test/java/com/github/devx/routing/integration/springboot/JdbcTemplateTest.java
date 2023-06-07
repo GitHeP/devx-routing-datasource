@@ -25,7 +25,7 @@ class JdbcTemplateTest extends BeforeAfterEachHandleDataTest {
     @Test
     void testSelect_1() {
 
-        String sql = "select * from employee where id = ?";
+        String sql = "/*!routingType=write;*/ select * from employee where id = ?";
         Map<String, Object> result = jdbcTemplate.queryForObject(sql , new Object[] {1} ,new ColumnMapRowMapper());
         assertThat(result).isNotNull().extractingByKey("ID").isEqualTo(1L);
         assertThat(result).extractingByKey("NAME").isEqualTo("John Doe");
