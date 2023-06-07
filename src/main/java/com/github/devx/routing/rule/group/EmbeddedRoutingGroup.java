@@ -4,9 +4,7 @@ import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.loadbalance.LoadBalance;
-import com.github.devx.routing.rule.ForceReadRoutingRule;
 import com.github.devx.routing.rule.ForceTargetRoutingRule;
-import com.github.devx.routing.rule.ForceWriteRoutingRule;
 import com.github.devx.routing.rule.NullSqlAttributeRoutingRule;
 import com.github.devx.routing.rule.PriorityRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
@@ -49,9 +47,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         NullSqlAttributeRoutingRule nullSqlAttributeRoutingRule = new NullSqlAttributeRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        ForceWriteRoutingRule forceWriteRoutingRule = new ForceWriteRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        ForceReadRoutingRule forceReadRoutingRule = new ForceReadRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule();
+        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule(routingConf ,sqlParser, readLoadBalance, writeLoadBalance);
         RoutingTypeAnnotationRoutingRule hintRoutingRule = new RoutingTypeAnnotationRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
 
         if (Objects.nonNull(routingConf.getRules()) && Objects.nonNull(routingConf.getRules().getTables())) {
@@ -62,8 +58,6 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         install(nullSqlAttributeRoutingRule);
         install(txRoutingRule);
         install(readWriteSplittingRoutingRule);
-        install(forceWriteRoutingRule);
-        install(forceReadRoutingRule);
         install(forceTargetRoutingRule);
         install(hintRoutingRule);
     }

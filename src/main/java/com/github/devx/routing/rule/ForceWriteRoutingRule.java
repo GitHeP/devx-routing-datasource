@@ -30,6 +30,8 @@ import com.github.devx.routing.sql.parser.SqlParser;
  *
  * @see RoutingContext#forceWrite()
  */
+
+@Deprecated
 public class ForceWriteRoutingRule extends AbstractRoutingRule {
 
 

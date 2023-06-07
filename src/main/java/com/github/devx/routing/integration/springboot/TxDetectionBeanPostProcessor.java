@@ -35,6 +35,7 @@ import java.util.Objects;
  * @author Peng He
  * @since 1.0
  */
+@Deprecated
 public class TxDetectionBeanPostProcessor implements BeanPostProcessor {
 
     @Override

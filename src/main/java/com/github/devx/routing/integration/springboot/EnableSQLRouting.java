@@ -32,6 +32,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(RoutingDataSourceConfiguration.class)
+@Import(RoutingConfiguration.class)
 public @interface EnableSQLRouting {
 }

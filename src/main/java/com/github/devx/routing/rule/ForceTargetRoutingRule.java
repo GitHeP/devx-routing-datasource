@@ -16,12 +16,17 @@
 
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
+import com.github.devx.routing.config.DataSourceConfiguration;
+import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.datasource.RoutingContext;
+import com.github.devx.routing.loadbalance.LoadBalance;
+import com.github.devx.routing.loadbalance.WeightRandomLoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
+import com.github.devx.routing.sql.parser.SqlParser;
 
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Random;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,19 +38,46 @@ import java.util.Set;
  * @since 1.0
  *
  * @see RoutingContext#force(String...) ()
+ * @see RoutingContext#forceRead()
+ * @see RoutingContext#forceWrite()
  */
-public class ForceTargetRoutingRule implements SqlAttributeRoutingRule {
+public class ForceTargetRoutingRule extends AbstractRoutingRule {
+
+    private final RoutingConfiguration routingConf;
+
+    public ForceTargetRoutingRule(RoutingConfiguration routingConf , SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
+        super(sqlParser, readLoadBalance, writeLoadBalance);
+        this.routingConf = routingConf;
+    }
 
     @Override
-    public String routing(SqlAttribute attribute) {
+    public String routing(SqlAttribute sqlAttribute) {
 
-        Set<String> dataSources = RoutingContext.getForceDataSources();
-        if (Objects.isNull(dataSources) || dataSources.isEmpty()) {
-            return null;
+        Set<String> forceDataSources = RoutingContext.getForceDataSources();
+        if (forceDataSources != null && !forceDataSources.isEmpty()) {
+            List<RoutingTargetAttribute> routingTargetAttributes = new ArrayList<>();
+            for (String forceDataSource : forceDataSources) {
+                DataSourceConfiguration dataSourceConf = routingConf.getDataSourceConfByName(forceDataSource);
+                if (dataSourceConf != null) {
+                    routingTargetAttributes.add(dataSourceConf.getRoutingTargetAttribute());
+                }
+            }
+
+            if (!routingTargetAttributes.isEmpty()) {
+                WeightRandomLoadBalance loadBalance = new WeightRandomLoadBalance(routingTargetAttributes);
+                return loadBalance.choose().getName();
+            }
         }
 
-        Random random = new Random();
-        return new ArrayList<>(dataSources).get(random.nextInt(dataSources.size()));
+        if (RoutingContext.isForceWriteDataSource()) {
+            return chooseWriteTargetName();
+        }
+
+        if (RoutingContext.isForceReadDataSource()) {
+            return chooseReadTargetName();
+        }
+
+        return null;
     }
 
     @Override
@@ -53,10 +85,6 @@ public class ForceTargetRoutingRule implements SqlAttributeRoutingRule {
         return 20;
     }
 
-    @Override
-    public String routing(RoutingKey key) {
-        return null;
-    }
 
 
 }

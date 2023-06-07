@@ -1,7 +1,6 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.datasource.RoutingContext;
-import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,8 @@ class ForceTargetRoutingRuleTest {
         assertThat(dataSourceNames).containsAll(RoutingContext.getForceDataSources());
 
         SqlParser sqlParser = new JSqlParser();
-        ForceTargetRoutingRule routingRule = new ForceTargetRoutingRule();
+        ForceTargetRoutingRule routingRule = new ForceTargetRoutingRule(null ,sqlParser, null, null);
+
         String sql = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
         String result = routingRule.routing(sqlParser.parse(sql));
         assertThat(dataSourceNames).contains(result);
@@ -38,7 +38,7 @@ class ForceTargetRoutingRuleTest {
         RoutingContext.forceRead();
 
         SqlParser sqlParser = new JSqlParser();
-        ForceTargetRoutingRule routingRule = new ForceTargetRoutingRule();
+        ForceTargetRoutingRule routingRule = new ForceTargetRoutingRule(null ,sqlParser, null, null);
         String sql = "INSERT INTO area (id, name) VALUES (6, 'Birmingham')";
         String result = routingRule.routing(sqlParser.parse(sql));
         assertThat(result).isNull();

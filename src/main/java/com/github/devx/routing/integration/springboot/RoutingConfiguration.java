@@ -17,7 +17,6 @@
 package com.github.devx.routing.integration.springboot;
 
 import com.github.devx.routing.config.DataSourceConfiguration;
-import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.datasource.DataSourceWrapper;
 import com.github.devx.routing.datasource.DefaultRoutingDataSource;
 import com.github.devx.routing.datasource.RoutingContextRoutingKeyProvider;
@@ -51,7 +50,7 @@ import java.util.Set;
  */
 
 @EnableConfigurationProperties(RoutingProperties.class)
-public class RoutingDataSourceConfiguration {
+public class RoutingConfiguration {
 
     @Bean
     public DataSourceInitializer compositeDataSourceInitializer(@Autowired(required = false) Set<GenericDataSourceInitializer<?>> initializers) {
@@ -59,8 +58,8 @@ public class RoutingDataSourceConfiguration {
     }
 
     @Bean
-    public TxDetectionBeanPostProcessor txBeanPostProcessor() {
-        return new TxDetectionBeanPostProcessor();
+    public RoutingDataSourceTransactionManager routingDataSourceTransactionManager(DataSource dataSource) {
+        return new RoutingDataSourceTransactionManager(dataSource);
     }
 
     @Bean
@@ -91,13 +90,13 @@ public class RoutingDataSourceConfiguration {
             throw new ConfigurationException("Configuration item [masters] is required");
         }
 
-        RoutingConfiguration routing = properties.getRouting();
+        com.github.devx.routing.config.RoutingConfiguration routing = properties.getRouting();
 
         Map<String , DataSource> dataSources = new HashMap<>();
         for (DataSourceConfiguration dataSourceConf : routing.getDataSources()) {
             Object dataSourceClassName = dataSourceConf.getDataSourceClass();
             if (Objects.isNull(dataSourceClassName)) {
-                throw new ConfigurationException(String.format("Configuration item [%s] is required" , RoutingConfiguration.DATA_SOURCE_CLASS_NAME_KEY));
+                throw new ConfigurationException(String.format("Configuration item [%s] is required" , com.github.devx.routing.config.RoutingConfiguration.DATA_SOURCE_CLASS_NAME_KEY));
             }
             DataSource dataSource = dataSourceInitializer.initialize(dataSourceClassName.toString() , dataSourceConf.getProperties());
             dataSources.put(dataSourceConf.getName() , new DataSourceWrapper(dataSource , dataSourceConf.getRoutingTargetAttribute()));
