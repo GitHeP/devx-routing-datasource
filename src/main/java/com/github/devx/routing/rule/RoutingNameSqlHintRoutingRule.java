@@ -2,6 +2,7 @@ package com.github.devx.routing.rule;
 
 import com.github.devx.routing.sql.AnnotationSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
+import com.github.devx.routing.sql.parser.AnnotationSqlParser;
 import com.github.devx.routing.sql.parser.RoutingTargetNameSqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlHint;
 import com.github.devx.routing.sql.parser.SqlHintConverter;
@@ -16,6 +17,12 @@ public class RoutingNameSqlHintRoutingRule implements SqlAttributeRoutingRule {
 
     private static final SqlHintConverter<String> SQL_HINT_CONVERTER = new RoutingTargetNameSqlHintConverter();
 
+    private final AnnotationSqlParser sqlParser;
+
+    public RoutingNameSqlHintRoutingRule(AnnotationSqlParser sqlParser) {
+        this.sqlParser = sqlParser;
+    }
+
     @Override
     public int priority() {
         return 9;
@@ -23,7 +30,7 @@ public class RoutingNameSqlHintRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public String routing(RoutingKey key) {
-        return null;
+        return routing(sqlParser.parse(key.getSql()));
     }
 
     @Override

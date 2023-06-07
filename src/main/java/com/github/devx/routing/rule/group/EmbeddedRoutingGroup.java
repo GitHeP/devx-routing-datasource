@@ -9,6 +9,7 @@ import com.github.devx.routing.rule.NullSqlAttributeRoutingRule;
 import com.github.devx.routing.rule.PriorityRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingKey;
+import com.github.devx.routing.rule.RoutingNameSqlHintRoutingRule;
 import com.github.devx.routing.rule.RoutingTypeSqlHintRoutingRule;
 import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TableRoutingRule;
@@ -39,27 +40,23 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         } else {
             this.sqlParser = sqlParser;
         }
+        AnnotationSqlParser annotationSqlParser = (AnnotationSqlParser) this.sqlParser;
 
         List<RoutingTargetAttribute> routingTargetAttributes = routingConf.getRoutingTargetAttributes(routingConf.getDataSources());
         LoadBalance<RoutingTargetAttribute> readLoadBalance = routingConf.makeReadLoadBalance(routingTargetAttributes);
         LoadBalance<RoutingTargetAttribute> writeLoadBalance = routingConf.makeWriteLoadBalance(routingTargetAttributes);
-
-        NullSqlAttributeRoutingRule nullSqlAttributeRoutingRule = new NullSqlAttributeRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
-        ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule(routingConf ,sqlParser, readLoadBalance, writeLoadBalance);
-        RoutingTypeSqlHintRoutingRule hintRoutingRule = new RoutingTypeSqlHintRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
 
         if (Objects.nonNull(routingConf.getRules()) && Objects.nonNull(routingConf.getRules().getTables())) {
             Map<String, Map<String, SqlTypeConfiguration>> tables = routingConf.getRules().getTables();
             install(new TableRoutingRule(tables));
         }
 
-        install(nullSqlAttributeRoutingRule);
-        install(txRoutingRule);
-        install(readWriteSplittingRoutingRule);
-        install(forceTargetRoutingRule);
-        install(hintRoutingRule);
+        install(new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
+        install(new NullSqlAttributeRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
+        install(new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
+        install(new ForceTargetRoutingRule(routingConf ,sqlParser, readLoadBalance, writeLoadBalance));
+        install(new RoutingTypeSqlHintRoutingRule(annotationSqlParser, readLoadBalance, writeLoadBalance));
+        install(new RoutingNameSqlHintRoutingRule(annotationSqlParser));
     }
 
     @Override
