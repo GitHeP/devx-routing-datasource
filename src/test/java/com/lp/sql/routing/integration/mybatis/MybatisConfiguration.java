@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-@MapperScan(basePackages = {"com.github.devx.routing.integration.mybatis"})
+@MapperScan(basePackages = {"com.lp.sql.routing.integration.mybatis"})
 public class MybatisConfiguration {
 }

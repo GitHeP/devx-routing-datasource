@@ -18,7 +18,7 @@ sql:
         type: READ_WRITE
         weight: 99
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
-        properties:
+        props:
           jdbcUrl: jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:
@@ -32,7 +32,7 @@ sql:
         type: READ
         weight: 6
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
-        properties:
+        props:
           jdbcUrl: jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:
@@ -46,7 +46,7 @@ sql:
         type: READ
         weight: 10
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
-        properties:
+        props:
           jdbcUrl: jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:

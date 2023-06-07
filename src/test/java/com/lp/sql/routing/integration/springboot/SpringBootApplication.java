@@ -8,7 +8,7 @@ import org.springframework.boot.SpringApplication;
  */
 
 @org.springframework.boot.autoconfigure.SpringBootApplication(
-        scanBasePackages = {"com.github.devx.routing.integration"}
+        scanBasePackages = {"com.lp.sql.routing.integration"}
 )
 @EnableSQLRouting
 public class SpringBootApplication {

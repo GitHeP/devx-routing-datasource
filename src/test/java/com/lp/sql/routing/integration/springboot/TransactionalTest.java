@@ -58,7 +58,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     void testReadWriteTxFunc() {
 
         log.info("testing read write Tx");
-        Assertions.assertThat(RoutingContext.inTx()).isEqualTo(true);
+        Assertions.assertThat(RoutingContext.inTx()).isTrue();
 
         Map<String, Object> area = new HashMap<>();
         area.put("id" , 6);

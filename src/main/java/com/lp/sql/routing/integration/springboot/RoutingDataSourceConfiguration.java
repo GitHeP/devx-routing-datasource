@@ -27,8 +27,8 @@ import com.lp.sql.routing.integration.datasource.CompositeDataSourceInitializer;
 import com.lp.sql.routing.integration.datasource.DataSourceInitializer;
 import com.lp.sql.routing.integration.datasource.GenericDataSourceInitializer;
 import com.lp.sql.routing.rule.RoutingRule;
-import com.lp.sql.routing.rule.group.EmbeddedRoutingGroup;
 import com.lp.sql.routing.rule.group.CompositeRoutingGroup;
+import com.lp.sql.routing.rule.group.EmbeddedRoutingGroup;
 import com.lp.sql.routing.rule.group.RoutingGroup;
 import com.lp.sql.routing.sql.parser.JSqlParser;
 import com.lp.sql.routing.sql.parser.SqlParser;
@@ -59,8 +59,8 @@ public class RoutingDataSourceConfiguration {
     }
 
     @Bean
-    public TxDetectionBeanPostProcessor txBeanPostProcessor() {
-        return new TxDetectionBeanPostProcessor();
+    public RoutingDataSourceTransactionManager routingDataSourceTransactionManager(DataSource dataSource) {
+        return new RoutingDataSourceTransactionManager(dataSource);
     }
 
     @Bean

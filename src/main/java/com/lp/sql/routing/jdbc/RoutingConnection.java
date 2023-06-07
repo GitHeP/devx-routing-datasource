@@ -71,6 +71,8 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     private final RoutingDataSource routingDataSource;
 
+    private DatabaseMetaData databaseMetaData;
+
     public RoutingConnection(RoutingDataSource routingDataSource) {
         this.routingDataSource = routingDataSource;
     }
@@ -167,6 +169,7 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
             }
             this.closed = true;
         } finally {
+            this.connection = null;
             forceClear();
         }
     }
@@ -178,7 +181,10 @@ public class RoutingConnection extends AbstractConnectionAdapter implements Rout
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        return acquireConnection(routingDataSource.getWriteDataSource()).getMetaData();
+        if (Objects.isNull(this.databaseMetaData)) {
+            this.databaseMetaData = acquireConnection(routingDataSource.getWriteDataSource()).getMetaData();
+        }
+        return this.databaseMetaData;
     }
 
     @Override
