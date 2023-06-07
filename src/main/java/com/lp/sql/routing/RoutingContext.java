@@ -18,6 +18,7 @@ package com.lp.sql.routing;
 
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.lp.sql.routing.sql.SqlAttribute;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class RoutingContext {
 
     private static final String ROUTED_DATA_SOURCE_NAME_KEY = "ROUTED_DATA_SOURCE_NAME";
 
+    private static final String SQL_ATTRIBUTE_KEY = "SQL_ATTRIBUTE";
 
     private static final TransmittableThreadLocal<Map<Object, Object>> RESOURCES = new TransmittableThreadLocal<Map<Object, Object>>() {
         @Override
@@ -55,7 +57,6 @@ public class RoutingContext {
             return new HashMap<>(2 << 3);
         }
     };
-
 
     private RoutingContext() {
         throw new IllegalStateException("Instantiating RoutingContext is not allowed");
@@ -194,7 +195,15 @@ public class RoutingContext {
 
     public static String getRoutedDataSourceName() {
         Object value = getResource(ROUTED_DATA_SOURCE_NAME_KEY);
-        return Objects.nonNull(value) ? value.toString() : "unknown";
+        return Objects.nonNull(value) ? value.toString() : null;
     }
 
+    public static void setSqlAttribute(SqlAttribute sqlAttribute) {
+        addResource(SQL_ATTRIBUTE_KEY , sqlAttribute);
+    }
+
+    public static SqlAttribute getSqlAttribute() {
+        Object value = getResource(SQL_ATTRIBUTE_KEY);
+        return Objects.nonNull(value) ? (SqlAttribute) value : null;
+    }
 }

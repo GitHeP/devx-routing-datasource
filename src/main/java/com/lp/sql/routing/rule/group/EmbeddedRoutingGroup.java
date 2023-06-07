@@ -1,5 +1,6 @@
 package com.lp.sql.routing.rule.group;
 
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.RoutingTargetAttribute;
 import com.lp.sql.routing.config.RoutingConfiguration;
 import com.lp.sql.routing.config.SqlTypeConfiguration;
@@ -75,6 +76,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         SqlAttribute sqlAttribute = null;
         if (Objects.nonNull(key) && Objects.nonNull(key.getSql())) {
             sqlAttribute = sqlParser.parse(key.getSql());
+            RoutingContext.setSqlAttribute(sqlAttribute);
         }
 
         for (SqlAttributeRoutingRule routingRule : routingRules) {

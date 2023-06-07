@@ -16,7 +16,9 @@
 
 package com.lp.sql.routing.jdbc;
 
+import com.lp.sql.routing.RoutingContext;
 import com.lp.sql.routing.datasource.RoutingContextClearable;
+import com.lp.sql.routing.sql.SqlAttribute;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -66,48 +68,48 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
 
     @Override
     public ResultSet executeQuery(String s) throws SQLException {
-        return acquireStatement(s).executeQuery(s);
+        return acquireStatement(s).executeQuery(getNativeSql(s));
     }
 
     @Override
     public int executeUpdate(String s) throws SQLException {
-        return acquireStatement(s).executeUpdate(s);
+        return acquireStatement(s).executeUpdate(getNativeSql(s));
     }
 
     @Override
     public int executeUpdate(String s, int i) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , i);
+        return acquireStatement(s).executeUpdate(getNativeSql(s) , i);
     }
 
     @Override
     public int executeUpdate(String s, int[] ints) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , ints);
+        return acquireStatement(s).executeUpdate(getNativeSql(s) , ints);
     }
 
     @Override
     public int executeUpdate(String s, String[] strings) throws SQLException {
-        return acquireStatement(s).executeUpdate(s , strings);
+        return acquireStatement(s).executeUpdate(getNativeSql(s) , strings);
     }
 
 
     @Override
     public boolean execute(String s) throws SQLException {
-        return acquireStatement(s).execute(s);
+        return acquireStatement(s).execute(getNativeSql(s));
     }
 
     @Override
     public boolean execute(String s, int i) throws SQLException {
-        return acquireStatement(s).execute(s , i);
+        return acquireStatement(s).execute(getNativeSql(s) , i);
     }
 
     @Override
     public boolean execute(String s, int[] ints) throws SQLException {
-        return acquireStatement(s).execute(s , ints);
+        return acquireStatement(s).execute(getNativeSql(s) , ints);
     }
 
     @Override
     public boolean execute(String s, String[] strings) throws SQLException {
-        return acquireStatement(s).execute(s , strings);
+        return acquireStatement(s).execute(getNativeSql(s) , strings);
     }
 
     @Override
@@ -276,5 +278,13 @@ public class RoutingStatement extends AbstractStatementAdapter implements Routin
             this.statement.setQueryTimeout(this.queryTimeout);
         }
         return this.statement;
+    }
+
+    private String getNativeSql(String defaultSql) {
+        SqlAttribute sqlAttribute = RoutingContext.getSqlAttribute();
+        if (sqlAttribute != null) {
+            return sqlAttribute.getSql();
+        }
+        return defaultSql;
     }
 }
