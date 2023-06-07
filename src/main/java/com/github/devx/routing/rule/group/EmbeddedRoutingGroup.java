@@ -10,6 +10,7 @@ import com.github.devx.routing.rule.PriorityRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingKey;
 import com.github.devx.routing.rule.RoutingNameSqlHintRoutingRule;
+import com.github.devx.routing.rule.RoutingRule;
 import com.github.devx.routing.rule.RoutingTypeSqlHintRoutingRule;
 import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TableRoutingRule;
@@ -18,6 +19,7 @@ import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.parser.AnnotationSqlParser;
 import com.github.devx.routing.sql.parser.DefaultAnnotationSqlHintParser;
 import com.github.devx.routing.sql.parser.SqlParser;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +30,8 @@ import java.util.Objects;
  * @author Peng He
  * @since 1.0
  */
+
+@Slf4j
 public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttributeRoutingRule> {
 
     private final SqlParser sqlParser;
@@ -76,4 +80,26 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         }
         return targetName;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
+        sb.append(" Routing Rules : ");
+        if (routingRules == null) {
+            sb.append("no match");
+        }
+        else if (routingRules.isEmpty()) {
+            sb.append("[] empty (bypassed by RoutingRule='none') ");
+        }
+        else {
+            sb.append("[\n");
+            for (RoutingRule r : routingRules) {
+                sb.append("  ").append(r.getClass().getSimpleName()).append("\n");
+            }
+            sb.append("]");
+        }
+
+        return sb.toString();
+    }
+
 }

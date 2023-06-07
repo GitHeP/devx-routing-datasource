@@ -3,6 +3,7 @@ package com.github.devx.routing.rule.group;
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.exception.InternalRuntimeException;
 import com.github.devx.routing.rule.RoutingKey;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.Objects;
  * @author Peng He
  * @since 1.0
  */
+
+@Slf4j
 public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
 
     private final LinkedList<RoutingGroup> routingGroups = new LinkedList<RoutingGroup>();
@@ -22,6 +25,11 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
 
         String targetName = null;
         for (RoutingGroup routingGroup : routingGroups) {
+
+            if (log.isDebugEnabled()) {
+                log.debug(routingGroup.toString());
+            }
+
             targetName = routingGroup.routing(key);
             if (Objects.nonNull(targetName) && targetName.length() != 0) {
                 break;
