@@ -79,4 +79,22 @@ class JdbcTemplateTest extends BeforeAfterEachHandleDataTest {
             assertThat(result).isNull();
         }).isInstanceOf(EmptyResultDataAccessException.class);
     }
+
+    @Test
+    void testRoutingTargetNameAnnotation() {
+
+        String sql1 = "/*!routingTargetName=read_1;*/ insert into employee (id , name , department_id) values (? , ? , ?)";
+        int row = jdbcTemplate.update(sql1, ps -> {
+            ps.setLong(1 , 5L);
+            ps.setString(2 , "Peng He");
+            ps.setInt(3 , 1);
+        });
+        assertThat(row).isEqualTo(1);
+
+        String sql2 = "/*!routingTargetName=read_1;*/ select * from employee where id = ?";
+        Map<String, Object> result = jdbcTemplate.queryForObject(sql2 , new Object[] {5L} ,new ColumnMapRowMapper());
+        assertThat(result).isNotNull().extractingByKey("ID").isEqualTo(5L);
+        assertThat(result).extractingByKey("NAME").isEqualTo("Peng He");
+        assertThat(result).extractingByKey("DEPARTMENT_ID").isEqualTo(1);
+    }
 }
