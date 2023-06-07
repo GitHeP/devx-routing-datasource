@@ -32,6 +32,17 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
 
             targetName = routingGroup.routing(key);
             if (Objects.nonNull(targetName) && targetName.length() != 0) {
+                if (log.isDebugEnabled()) {
+                    String msg = new StringBuilder("Hit Routing Group")
+                            .append(System.lineSeparator())
+                            .append("Group: ").append(routingGroup.getClass().getSimpleName())
+                            .append(System.lineSeparator())
+                            .append("TargetName: ").append(targetName)
+                            .append(System.lineSeparator())
+                            .append("SQL: ").append(key.getSql())
+                            .toString();
+                    log.debug(msg);
+                }
                 break;
             }
         }

@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * @author Peng He
@@ -40,7 +41,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
 
         super(Comparator.comparingInt(PriorityRoutingRule::priority));
         if (!(sqlParser instanceof AnnotationSqlParser)) {
-            this.sqlParser = new AnnotationSqlParser(sqlParser , new DefaultAnnotationSqlHintParser());
+            this.sqlParser = new AnnotationSqlParser(sqlParser, new DefaultAnnotationSqlHintParser());
         } else {
             this.sqlParser = sqlParser;
         }
@@ -58,7 +59,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         install(new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
         install(new NullSqlAttributeRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
         install(new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
-        install(new ForceTargetRoutingRule(routingConf ,sqlParser, readLoadBalance, writeLoadBalance));
+        install(new ForceTargetRoutingRule(routingConf, sqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingTypeSqlHintRoutingRule(annotationSqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingNameSqlHintRoutingRule(annotationSqlParser));
     }
@@ -75,6 +76,17 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         for (SqlAttributeRoutingRule routingRule : routingRules) {
             targetName = routingRule.routing(sqlAttribute);
             if (Objects.nonNull(targetName) && targetName.length() != 0) {
+                if (log.isDebugEnabled()) {
+                    String msg = new StringBuilder("Hit Routing Rule")
+                            .append(System.lineSeparator())
+                            .append("Rule: ").append(routingRule.getClass().getSimpleName())
+                            .append(System.lineSeparator())
+                            .append("TargetName: ").append(targetName)
+                            .append(System.lineSeparator())
+                            .append("SQL: ").append(key.getSql())
+                            .toString();
+                    log.debug(msg);
+                }
                 break;
             }
         }
@@ -87,11 +99,9 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         sb.append(" Routing Rules : ");
         if (routingRules == null) {
             sb.append("no match");
-        }
-        else if (routingRules.isEmpty()) {
+        } else if (routingRules.isEmpty()) {
             sb.append("[] empty (bypassed by RoutingRule='none') ");
-        }
-        else {
+        } else {
             sb.append("[\n");
             for (RoutingRule r : routingRules) {
                 sb.append("  ").append(r.getClass().getSimpleName()).append("\n");
