@@ -167,6 +167,6 @@ public class RoutingContext {
 
     public static String getRoutedDataSourceName() {
         Object value = getResource(ROUTED_DATA_SOURCE_NAME_KEY);
-        return Objects.nonNull(value) ? value.toString() : "unknown";
+        return Objects.nonNull(value) ? value.toString() : null;
     }
 }

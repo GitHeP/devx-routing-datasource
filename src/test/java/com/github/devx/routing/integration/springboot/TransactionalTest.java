@@ -57,7 +57,9 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     void testReadWriteTxFunc() {
 
         log.info("testing read write Tx");
-        assertThat(RoutingContext.inTx()).isEqualTo(true);
+        assertThat(RoutingContext.inTx()).isTrue();
+        assertThat(RoutingContext.getTxReadOnly()).isFalse();
+        assertThat(RoutingContext.getRoutedDataSourceName()).isEqualTo("write_0");
 
         Map<String, Object> area = new HashMap<>();
         area.put("id" , 6);
@@ -109,8 +111,9 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     void testReadOnlyTxFunc() {
 
         log.info("testing read only Tx");
-        assertThat(RoutingContext.inTx()).isEqualTo(true);
-        assertThat(RoutingContext.getTxReadOnly()).isEqualTo(true);
+        assertThat(RoutingContext.inTx()).isTrue();
+        assertThat(RoutingContext.getTxReadOnly()).isTrue();
+        assertThat(RoutingContext.getRoutedDataSourceName()).containsAnyOf("read_0" , "read_1");
 
         Map<String, Object> area = areaMapper.selectById(1L);
         assertThat(area).isNotNull()
@@ -149,7 +152,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     @Order(3)
     void testReadWriteNoTxFunc() {
         log.info("testing read write No Tx");
-        assertThat(RoutingContext.inTx()).isEqualTo(false);
+        assertThat(RoutingContext.inTx()).isFalse();
 
         Map<String, Object> area = new HashMap<>();
         area.put("id" , 6);
@@ -195,7 +198,7 @@ class TransactionalTest extends BeforeAfterEachHandleDataTest {
     @Order(4)
     void testReadOnlyNoTxFunc() {
         log.info("testing read only No Tx");
-        assertThat(RoutingContext.inTx()).isEqualTo(false);
+        assertThat(RoutingContext.inTx()).isFalse();
 
         Map<String, Object> area = areaMapper.selectById(1L);
         assertThat(area).isNotNull()

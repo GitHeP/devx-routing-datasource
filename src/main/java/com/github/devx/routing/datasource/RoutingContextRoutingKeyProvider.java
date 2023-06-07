@@ -31,11 +31,6 @@ public class RoutingContextRoutingKeyProvider implements RoutingKeyProvider {
 
     @Override
     public RoutingKey getRoutingKey() {
-        String sql = RoutingContext.getCurrentlyExecutingSqlKey();
-        RoutingKey routingKey = new RoutingKey().setSql(sql);
-        if (RoutingContext.isForceWriteDataSource()) {
-            routingKey.setForeWriteDataSource(true);
-        }
-        return routingKey;
+        return new RoutingKey();
     }
 }

@@ -50,7 +50,7 @@ import java.util.Set;
  */
 
 @EnableConfigurationProperties(SqlRoutingProperties.class)
-public class RoutingConfiguration {
+public class SqlRoutingConfiguration {
 
     @Bean
     public DataSourceInitializer compositeDataSourceInitializer(@Autowired(required = false) Set<GenericDataSourceInitializer<?>> initializers) {

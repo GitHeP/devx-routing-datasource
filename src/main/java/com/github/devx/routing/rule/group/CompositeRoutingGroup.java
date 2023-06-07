@@ -1,5 +1,6 @@
 package com.github.devx.routing.rule.group;
 
+import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.exception.InternalRuntimeException;
 import com.github.devx.routing.rule.RoutingKey;
 
@@ -26,6 +27,7 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
                 break;
             }
         }
+        RoutingContext.setRoutedDataSourceName(targetName);
         return targetName;
     }
 

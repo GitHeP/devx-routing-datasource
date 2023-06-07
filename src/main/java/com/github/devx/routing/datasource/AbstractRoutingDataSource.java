@@ -50,7 +50,6 @@ public abstract class AbstractRoutingDataSource implements RoutingDataSource {
         if (Objects.isNull(dataSource)) {
             throw new NoSuchDataSourceException(String.format("No DataSource with name [%s] found" , name));
         }
-        RoutingContext.setRoutedDataSourceName(name);
         return dataSource;
     }
 
