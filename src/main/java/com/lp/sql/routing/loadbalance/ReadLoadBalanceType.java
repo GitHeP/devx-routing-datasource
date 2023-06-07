@@ -25,6 +25,4 @@ public enum ReadLoadBalanceType {
 
     WEIGHT_ROUND_ROBIN_BALANCE_ONLY_READ,
 
-    WEIGHT_ROUND_ROBIN_BALANCE_READ_WRITE,
-
 }

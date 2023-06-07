@@ -78,13 +78,11 @@ public class RoutingConfiguration {
         } else if (type == ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_ONLY_READ) {
             lb = new WeightRandomLoadBalance(onlyReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_RANDOM_BALANCE_READ_WRITE) {
-            lb = new WeightRandomLoadBalance(readWrites);
+            lb = new WeightRandomLoadBalance(allReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_ALL) {
             lb = new WeightRoundRobinLoadBalance(allReads);
         } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_ONLY_READ) {
             lb = new WeightRoundRobinLoadBalance(onlyReads);
-        } else if (type == ReadLoadBalanceType.WEIGHT_ROUND_ROBIN_BALANCE_READ_WRITE) {
-            lb = new WeightRoundRobinLoadBalance(readWrites);
         } else {
             throw new InternalRuntimeException(String.format("Unsupported load balancing type %s" , type));
         }
@@ -104,6 +102,14 @@ public class RoutingConfiguration {
 
         List<RoutingTargetAttribute> onlyWrites = filterByRoutingTargetType(attributes, RoutingTargetType.WRITE);
         List<RoutingTargetAttribute> readWrites = filterByRoutingTargetType(attributes, RoutingTargetType.READ_WRITE);
+        List<RoutingTargetAttribute> writableNodes = new ArrayList<>();
+        if (onlyWrites != null && !onlyWrites.isEmpty()) {
+            writableNodes.addAll(onlyWrites);
+        }
+        if (readWrites != null && !readWrites.isEmpty()) {
+            writableNodes.addAll(readWrites);
+        }
+
 
         // ugly code needs fix
         if (type == WriteLoadBalanceType.RANDOM_BALANCE_ONLY_WRITE) {
@@ -113,7 +119,7 @@ public class RoutingConfiguration {
         } else if (type == WriteLoadBalanceType.ROUND_ROBIN_BALANCE_ONLY_WRITE) {
             lb = new WeightRoundRobinLoadBalance(onlyWrites);
         } else if (type == WriteLoadBalanceType.ROUND_ROBIN_BALANCE_READ_WRITE) {
-            lb = new WeightRoundRobinLoadBalance(readWrites);
+            lb = new WeightRoundRobinLoadBalance(writableNodes);
         } else {
             throw new InternalRuntimeException(String.format("Unsupported load balancing type %s" , type));
         }
