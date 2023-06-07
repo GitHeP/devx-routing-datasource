@@ -6,7 +6,7 @@ import com.github.devx.routing.RoutingTargetType;
  * @author Peng He
  * @since 1.0
  */
-public class RoutingTypeSqlHintConverter implements SqlHintConverter<RoutingTargetType> {
+public class RoutingTargetTypeSqlHintConverter implements SqlHintConverter<RoutingTargetType> {
 
     protected static final String ROUTING_TYPE_KEY = "routingType";
 

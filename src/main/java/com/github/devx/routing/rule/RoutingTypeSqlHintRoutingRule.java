@@ -5,7 +5,7 @@ import com.github.devx.routing.RoutingTargetType;
 import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.sql.AnnotationSqlAttribute;
 import com.github.devx.routing.sql.SqlAttribute;
-import com.github.devx.routing.sql.parser.RoutingTypeSqlHintConverter;
+import com.github.devx.routing.sql.parser.RoutingTargetTypeSqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlHint;
 import com.github.devx.routing.sql.parser.SqlHintConverter;
 import com.github.devx.routing.sql.parser.SqlParser;
@@ -16,11 +16,11 @@ import com.github.devx.routing.sql.parser.SqlParser;
  * @author Peng He
  * @since 1.0
  */
-public class RoutingTypeAnnotationRoutingRule extends AbstractRoutingRule {
+public class RoutingTypeSqlHintRoutingRule extends AbstractRoutingRule {
 
-    private static final SqlHintConverter<RoutingTargetType> SQL_HINT_CONVERTER = new RoutingTypeSqlHintConverter();
+    private static final SqlHintConverter<RoutingTargetType> SQL_HINT_CONVERTER = new RoutingTargetTypeSqlHintConverter();
 
-    public RoutingTypeAnnotationRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
+    public RoutingTypeSqlHintRoutingRule(SqlParser sqlParser, LoadBalance<RoutingTargetAttribute> readLoadBalance, LoadBalance<RoutingTargetAttribute> writeLoadBalance) {
         super(sqlParser, readLoadBalance, writeLoadBalance);
     }
 

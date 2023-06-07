@@ -16,7 +16,7 @@ class AnnotationSqlParserTest {
 
     static SqlParser sqlParser = new AnnotationSqlParser(new JSqlParser(), new DefaultAnnotationSqlHintParser());
 
-    static SqlHintConverter<RoutingTargetType> sqlHintConverter = new RoutingTypeSqlHintConverter();
+    static SqlHintConverter<RoutingTargetType> sqlHintConverter = new RoutingTargetTypeSqlHintConverter();
 
 
     @Test

@@ -9,7 +9,7 @@ import com.github.devx.routing.rule.NullSqlAttributeRoutingRule;
 import com.github.devx.routing.rule.PriorityRoutingRule;
 import com.github.devx.routing.rule.ReadWriteSplittingRoutingRule;
 import com.github.devx.routing.rule.RoutingKey;
-import com.github.devx.routing.rule.RoutingTypeAnnotationRoutingRule;
+import com.github.devx.routing.rule.RoutingTypeSqlHintRoutingRule;
 import com.github.devx.routing.rule.SqlAttributeRoutingRule;
 import com.github.devx.routing.rule.TableRoutingRule;
 import com.github.devx.routing.rule.TxRoutingRule;
@@ -48,7 +48,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         TxRoutingRule txRoutingRule = new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
         ReadWriteSplittingRoutingRule readWriteSplittingRoutingRule = new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
         ForceTargetRoutingRule forceTargetRoutingRule = new ForceTargetRoutingRule(routingConf ,sqlParser, readLoadBalance, writeLoadBalance);
-        RoutingTypeAnnotationRoutingRule hintRoutingRule = new RoutingTypeAnnotationRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
+        RoutingTypeSqlHintRoutingRule hintRoutingRule = new RoutingTypeSqlHintRoutingRule(sqlParser, readLoadBalance, writeLoadBalance);
 
         if (Objects.nonNull(routingConf.getRules()) && Objects.nonNull(routingConf.getRules().getTables())) {
             Map<String, Map<String, SqlTypeConfiguration>> tables = routingConf.getRules().getTables();
