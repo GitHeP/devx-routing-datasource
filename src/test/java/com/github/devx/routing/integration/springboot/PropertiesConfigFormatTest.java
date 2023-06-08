@@ -105,7 +105,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         DatabaseRoutingConfiguration test1Rule = databases.get(0);
         assertThat(test1Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test1");
-        Map<String, SqlTypeConfiguration> test1Map = test1Rule.getTargets();
+        Map<String, SqlTypeConfiguration> test1Map = test1Rule.getNodes();
         assertThat(test1Map).containsOnlyKeys("write_0");
         SqlTypeConfiguration write0SqlTypeConf = test1Map.get("write_0");
         assertThat(write0SqlTypeConf).isNotNull()
@@ -113,7 +113,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         DatabaseRoutingConfiguration test2Rule = databases.get(1);
         assertThat(test2Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test2");
-        Map<String, SqlTypeConfiguration> test2Map = test2Rule.getTargets();
+        Map<String, SqlTypeConfiguration> test2Map = test2Rule.getNodes();
         assertThat(test2Map).containsOnlyKeys("read_0");
         SqlTypeConfiguration read0SqlTypeConf = test2Map.get("read_0");
         assertThat(read0SqlTypeConf).isNotNull()
@@ -121,7 +121,7 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
 
         DatabaseRoutingConfiguration test3Rule = databases.get(2);
         assertThat(test3Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test3");
-        Map<String, SqlTypeConfiguration> test3Map = test3Rule.getTargets();
+        Map<String, SqlTypeConfiguration> test3Map = test3Rule.getNodes();
         assertThat(test3Map).containsOnlyKeys("read_1");
         SqlTypeConfiguration read1SqlTypeConf = test3Map.get("read_1");
         assertThat(read1SqlTypeConf).isNotNull()

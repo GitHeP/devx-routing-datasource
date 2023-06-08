@@ -42,7 +42,7 @@ class DatabaseRoutingRuleTest {
         SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
         sqlTypeConfiguration.setAllowAllSqlTypes(true);
         targets.put("write_0" , sqlTypeConfiguration);
-        databaseRoutingConfiguration.setTargets(targets);
+        databaseRoutingConfiguration.setNodes(targets);
         databases.add(databaseRoutingConfiguration);
         routingRuleConfiguration.setDatabases(databases);
         routingConfiguration.setRules(routingRuleConfiguration);

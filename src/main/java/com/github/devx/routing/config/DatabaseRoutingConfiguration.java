@@ -14,5 +14,5 @@ public class DatabaseRoutingConfiguration {
 
     private String name;
 
-    private Map<String , SqlTypeConfiguration> targets;
+    private Map<String , SqlTypeConfiguration> nodes;
 }

@@ -75,17 +75,17 @@ devx:
     rules:
       databases:
         - name: test1
-          targets:
+          nodes:
             write_0:
               allowAllSqlTypes: true
 
         - name: test2
-          targets:
+          nodes:
             read_0:
               allowAllSqlTypes: true
 
         - name: test3
-          targets:
+          nodes:
             read_1:
               sqlTypes:
                 - SELECT

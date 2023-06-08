@@ -93,7 +93,7 @@ public class DatabaseRoutingRule implements SqlAttributeRoutingRule {
         for (String database : sqlAttribute.getDatabases()) {
             if (databaseRoutingMap.containsKey(database)) {
                 DatabaseRoutingConfiguration conf = databaseRoutingMap.get(database);
-                Map<String, SqlTypeConfiguration> targets = conf.getTargets();
+                Map<String, SqlTypeConfiguration> targets = conf.getNodes();
                 if (targets != null && !targets.isEmpty()) {
                     for (Map.Entry<String, SqlTypeConfiguration> entry : targets.entrySet()) {
                         String targetName = entry.getKey();
