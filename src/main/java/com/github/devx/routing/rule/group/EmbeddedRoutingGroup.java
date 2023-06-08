@@ -2,7 +2,6 @@ package com.github.devx.routing.rule.group;
 
 import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.config.RoutingConfiguration;
-import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.loadbalance.LoadBalance;
 import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.NullSqlAttributeRoutingRule;
@@ -23,9 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * @author Peng He
@@ -51,17 +48,13 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         LoadBalance<RoutingTargetAttribute> readLoadBalance = routingConf.makeReadLoadBalance(routingTargetAttributes);
         LoadBalance<RoutingTargetAttribute> writeLoadBalance = routingConf.makeWriteLoadBalance(routingTargetAttributes);
 
-        if (Objects.nonNull(routingConf.getRules()) && Objects.nonNull(routingConf.getRules().getTables())) {
-            Map<String, Map<String, SqlTypeConfiguration>> tables = routingConf.getRules().getTables();
-            install(new TableRoutingRule(tables));
-        }
-
         install(new TxRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
         install(new NullSqlAttributeRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
         install(new ReadWriteSplittingRoutingRule(sqlParser, readLoadBalance, writeLoadBalance));
         install(new ForceTargetRoutingRule(routingConf, sqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingTypeSqlHintRoutingRule(annotationSqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingNameSqlHintRoutingRule(annotationSqlParser));
+        install(new TableRoutingRule(routingConf));
     }
 
     @Override

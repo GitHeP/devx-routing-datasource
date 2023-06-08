@@ -49,6 +49,11 @@ public class RoutingConfiguration {
         return optional.orElse(null);
     }
 
+    public RoutingTargetAttribute getRoutingTargetAttribute(final String name) {
+        DataSourceConfiguration dsConf = getDataSourceConfByName(name);
+        return dsConf != null ? dsConf.getRoutingTargetAttribute() : null;
+    }
+
     public List<RoutingTargetAttribute> getRoutingTargetAttributes(List<DataSourceConfiguration> dataSources) {
         List<RoutingTargetAttribute> attributes = new ArrayList<>();
         for (DataSourceConfiguration dataSourceConf : dataSources) {

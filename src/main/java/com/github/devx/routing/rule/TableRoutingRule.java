@@ -16,7 +16,10 @@
 
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.RoutingTargetAttribute;
+import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
+import com.github.devx.routing.loadbalance.WeightRandomLoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.util.CollectionUtils;
@@ -25,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -38,12 +40,15 @@ import java.util.Set;
  */
 public class TableRoutingRule implements SqlAttributeRoutingRule {
 
+    private final RoutingConfiguration routingConfiguration;
+
     private final Map<String, Map<String, SqlTypeConfiguration>> tableRule;
 
     private final Set<String> ruleTables;
 
-    public TableRoutingRule(Map<String, Map<String, SqlTypeConfiguration>> tableRule) {
-        this.tableRule = tableRule;
+    public TableRoutingRule(RoutingConfiguration routingConfiguration) {
+        this.routingConfiguration = routingConfiguration;
+        this.tableRule = routingConfiguration.getRules().getTables();
         this.ruleTables = tableRule.keySet();
     }
 
@@ -56,7 +61,7 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
             return null;
         }
 
-        List<String> datasourceNames = new ArrayList<>();
+        List<String> targetNames = new ArrayList<>();
         Set<String> tables = attribute.getTables();
         for (String table : tables) {
 
@@ -66,21 +71,36 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
             }
 
             for (Map.Entry<String, SqlTypeConfiguration> entry : sqlTypeConfigurationMap.entrySet()) {
-                String datasourceName = entry.getKey();
+                String targetName = entry.getKey();
                 SqlTypeConfiguration sqlTypeConfiguration = entry.getValue();
-                if (Boolean.TRUE.equals(sqlTypeConfiguration.getAllowAllSqlTypes())) {
-                    datasourceNames.add(datasourceName);
-                }
-
                 Set<SqlType> sqlTypes = sqlTypeConfiguration.getSqlTypes();
-                if (Objects.nonNull(sqlTypes) && sqlTypes.contains(attribute.getSqlType())) {
-                    datasourceNames.add(datasourceName);
+                boolean matches = Boolean.TRUE.equals(sqlTypeConfiguration.getAllowAllSqlTypes()) || (Objects.nonNull(sqlTypes) && sqlTypes.contains(attribute.getSqlType()));
+                if (matches) {
+                    targetNames.add(targetName);
                 }
             }
         }
 
-        Random random = new Random();
-        return datasourceNames.get(random.nextInt(datasourceNames.size()));
+        List<RoutingTargetAttribute> routingTargetAttributes = new ArrayList<>();
+        for (String targetName : targetNames) {
+            RoutingTargetAttribute routingTargetAttribute = routingConfiguration.getRoutingTargetAttribute(targetName);
+            if (routingTargetAttribute != null) {
+                routingTargetAttributes.add(routingTargetAttribute);
+            }
+        }
+
+        if (!routingTargetAttributes.isEmpty()) {
+            String targetName;
+            if (routingTargetAttributes.size() == 1) {
+                targetName = routingTargetAttributes.get(0).getName();
+            } else {
+                WeightRandomLoadBalance loadBalance = new WeightRandomLoadBalance(routingTargetAttributes);
+                targetName = loadBalance.choose().getName();
+            }
+            return targetName;
+        }
+
+        return null;
     }
 
     @Override

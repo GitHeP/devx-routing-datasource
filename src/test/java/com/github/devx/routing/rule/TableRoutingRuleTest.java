@@ -1,5 +1,7 @@
 package com.github.devx.routing.rule;
 
+import com.github.devx.routing.config.RoutingConfiguration;
+import com.github.devx.routing.config.RoutingRuleConfiguration;
 import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.sql.parser.JSqlParser;
@@ -24,6 +26,8 @@ class TableRoutingRuleTest {
     void testRoutingPositive() {
 
         SqlParser sqlParser = new JSqlParser();
+        RoutingConfiguration routingConfiguration = new RoutingConfiguration();
+        RoutingRuleConfiguration routingRuleConfiguration = new RoutingRuleConfiguration();
 
         Map<String, Map<String, SqlTypeConfiguration>> tableRule = new HashMap<>();
         Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
@@ -35,9 +39,10 @@ class TableRoutingRuleTest {
         sqlTypeMap.put("read0" , sqlTypeConfiguration);
         sqlTypeMap.put("read1" , sqlTypeConfiguration);
         sqlTypeMap.put("read2" , sqlTypeConfiguration);
-
         tableRule.put("employee" , sqlTypeMap);
-        TableRoutingRule routingRule = new TableRoutingRule(tableRule);
+        routingRuleConfiguration.setTables(tableRule);
+        routingConfiguration.setRules(routingRuleConfiguration);
+        TableRoutingRule routingRule = new TableRoutingRule(routingConfiguration);
         String sql = "select * from employee where name = 'DevX'";
         String result = routingRule.routing(sqlParser.parse(sql));
 
@@ -52,6 +57,9 @@ class TableRoutingRuleTest {
 
         SqlParser sqlParser = new JSqlParser();
 
+        RoutingConfiguration routingConfiguration = new RoutingConfiguration();
+
+        RoutingRuleConfiguration routingRuleConfiguration = new RoutingRuleConfiguration();
         Map<String, Map<String, SqlTypeConfiguration>> tableRule = new HashMap<>();
         Map<String, SqlTypeConfiguration> sqlTypeMap = new HashMap<>();
         SqlTypeConfiguration sqlTypeConfiguration = new SqlTypeConfiguration();
@@ -63,8 +71,10 @@ class TableRoutingRuleTest {
         sqlTypeMap.put("read1" , sqlTypeConfiguration);
         sqlTypeMap.put("read2" , sqlTypeConfiguration);
         tableRule.put("employee" , sqlTypeMap);
+        routingRuleConfiguration.setTables(tableRule);
+        routingConfiguration.setRules(routingRuleConfiguration);
 
-        TableRoutingRule routingRule = new TableRoutingRule(tableRule);
+        TableRoutingRule routingRule = new TableRoutingRule(routingConfiguration);
 
         String sql = "SELECT e.* , u.* \n" +
                 "FROM dept e , users u\n" +
