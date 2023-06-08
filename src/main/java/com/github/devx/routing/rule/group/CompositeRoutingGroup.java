@@ -1,5 +1,6 @@
 package com.github.devx.routing.rule.group;
 
+import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.datasource.RoutingContext;
 import com.github.devx.routing.exception.InternalRuntimeException;
 import com.github.devx.routing.rule.RoutingKey;
@@ -19,6 +20,11 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
 
     private final LinkedList<RoutingGroup> routingGroups = new LinkedList<RoutingGroup>();
 
+    private final RoutingConfiguration routingConfiguration;
+
+    public CompositeRoutingGroup(RoutingConfiguration routingConfiguration) {
+        this.routingConfiguration = routingConfiguration;
+    }
 
     @Override
     public String routing(RoutingKey key) {
@@ -51,7 +57,7 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
     }
 
     public synchronized void installFirst(RoutingGroup rule) {
-        if (rule != null) {
+        if (rule != null && isEnableGroup(rule)) {
             routingGroups.addFirst(rule);
         }
     }
@@ -59,18 +65,23 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
     public synchronized void installFirst(List<RoutingGroup> rules) {
         if (rules != null && !rules.isEmpty()) {
             routingGroups.addAll(0 , rules);
+            for (RoutingGroup group : rules) {
+                installFirst(group);
+            }
         }
     }
 
     public synchronized void installLast(RoutingGroup rule) {
-        if (rule != null) {
+        if (rule != null && isEnableGroup(rule)) {
             routingGroups.addLast(rule);
         }
     }
 
     public synchronized void installLast(List<RoutingGroup> rules) {
         if (rules != null && !rules.isEmpty()) {
-            routingGroups.addAll(routingGroups.size() - 1 , rules);
+            for (RoutingGroup group : rules) {
+                installLast(group);
+            }
         }
     }
 
@@ -87,5 +98,14 @@ public class CompositeRoutingGroup implements RoutingGroup<RoutingGroup> {
     @Override
     public boolean uninstall(Class<RoutingGroup> type) {
         return routingGroups.removeIf(rule -> Objects.equals(type , rule.getClass()));
+    }
+
+    private boolean isEnableGroup(RoutingGroup group) {
+        if (group instanceof EmbeddedRoutingGroup) {
+            return true;
+        }
+        return routingConfiguration.getGroups()
+                .stream()
+                .anyMatch(configuration -> (Objects.equals(configuration.getGroupName(), group.getClass().getName()) || Objects.equals(configuration.getGroupName(), group.getClass().getSimpleName())) && Boolean.TRUE.equals(configuration.getEnable()));
     }
 }

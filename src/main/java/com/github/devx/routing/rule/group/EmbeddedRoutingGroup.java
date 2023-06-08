@@ -37,7 +37,7 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
 
     public EmbeddedRoutingGroup(RoutingConfiguration routingConf, SqlParser sqlParser) {
 
-        super(Comparator.comparingInt(PriorityRoutingRule::priority));
+        super(routingConf , Comparator.comparingInt(PriorityRoutingRule::priority));
         if (!(sqlParser instanceof AnnotationSqlParser)) {
             this.sqlParser = new AnnotationSqlParser(sqlParser, new DefaultAnnotationSqlHintParser());
         } else {
@@ -55,8 +55,8 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         install(new ForceTargetRoutingRule(routingConf, sqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingTypeSqlHintRoutingRule(annotationSqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingNameSqlHintRoutingRule(annotationSqlParser));
-        install(new TableRoutingRule(sqlParser , routingConf));
-        install(new DatabaseRoutingRule(sqlParser , routingConf));
+        install(new TableRoutingRule(sqlParser, routingConf));
+        install(new DatabaseRoutingRule(sqlParser, routingConf));
     }
 
     @Override

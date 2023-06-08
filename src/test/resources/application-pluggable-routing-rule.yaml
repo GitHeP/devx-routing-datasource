@@ -29,7 +29,7 @@ devx:
         weight: 99
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
         properties:
-          jdbcUrl: jdbc:h2:mem:test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS test1
+          jdbcUrl: jdbc:h2:mem:~/test1;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:
           minIdle: 5
@@ -43,7 +43,7 @@ devx:
         weight: 6
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
         properties:
-          jdbcUrl: jdbc:h2:mem:test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
+          jdbcUrl: jdbc:h2:mem:~/test2;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:
           minIdle: 10
@@ -57,7 +57,7 @@ devx:
         weight: 10
         dataSourceClass: com.zaxxer.hikari.HikariDataSource
         properties:
-          jdbcUrl: jdbc:h2:mem:test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
+          jdbcUrl: jdbc:h2:mem:~/test3;FILE_LOCK=SOCKET;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;AUTO_RECONNECT=TRUE;IGNORECASE=TRUE;
           username: sa
           password:
           minIdle: 15
@@ -71,6 +71,12 @@ devx:
     replicas:
       - read_0
       - read_1
+
+    groups:
+      - groupName: EmbeddedRoutingGroup
+        rules:
+          TableRoutingRule: false
+          ForceTargetRoutingRule: false
 
     rules:
       databases:

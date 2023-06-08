@@ -13,7 +13,6 @@ import java.util.Map;
 @Data
 public class RoutingRuleConfiguration {
 
-
     private List<DatabaseRoutingConfiguration> databases;
 
     /**

@@ -5,8 +5,8 @@ import com.github.devx.routing.config.DataSourceConfiguration;
 import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.loadbalance.ReadLoadBalanceType;
 import com.github.devx.routing.loadbalance.WriteLoadBalanceType;
-import com.github.devx.routing.rule.group.EmbeddedRoutingGroup;
 import com.github.devx.routing.rule.group.CompositeRoutingGroup;
+import com.github.devx.routing.rule.group.EmbeddedRoutingGroup;
 import com.github.devx.routing.sql.parser.JSqlParser;
 import com.github.devx.routing.sql.parser.SqlParser;
 import com.github.devx.routing.util.RoutingUtils;
@@ -137,7 +137,6 @@ public class DefaultRoutingDataSourceTest {
 
         SqlParser sqlParser = new JSqlParser();
 
-        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
         RoutingConfiguration conf = new RoutingConfiguration();
 
         DataSourceConfiguration writeDSConf = new DataSourceConfiguration();
@@ -177,6 +176,8 @@ public class DefaultRoutingDataSourceTest {
         conf.setWriteLoadBalanceType(WriteLoadBalanceType.RANDOM_BALANCE_READ_WRITE);
         conf.setRules(null);
         EmbeddedRoutingGroup embeddedRoutingGroup = new EmbeddedRoutingGroup(conf , sqlParser);
+
+        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup(conf);
         compositeRoutingGroup.installLast(embeddedRoutingGroup);
 
         RoutingKeyProvider routingKeyProvider = new RoutingContextRoutingKeyProvider();

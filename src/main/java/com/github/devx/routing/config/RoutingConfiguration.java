@@ -37,6 +37,8 @@ public class RoutingConfiguration {
 
     private WriteLoadBalanceType writeLoadBalanceType;
 
+    private List<RoutingGroupPluggableConfiguration> groups;
+
     private RoutingRuleConfiguration rules;
 
     public List<String> getDataSourceNames() {

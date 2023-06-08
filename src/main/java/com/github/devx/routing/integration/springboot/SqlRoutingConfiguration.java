@@ -77,7 +77,7 @@ public class SqlRoutingConfiguration {
     @Bean
     @SuppressWarnings({"all"})
     public RoutingGroup<? extends RoutingRule> compositeRoutingGroup(@Autowired(required = false) List<RoutingGroup> routingGroups , SqlRoutingProperties sqlRoutingProperties, SqlParser sqlParser) {
-        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup();
+        CompositeRoutingGroup compositeRoutingGroup = new CompositeRoutingGroup(sqlRoutingProperties.getRouting());
         compositeRoutingGroup.installFirst(routingGroups);
         compositeRoutingGroup.installLast(new EmbeddedRoutingGroup(sqlRoutingProperties.getRouting() , sqlParser));
         return compositeRoutingGroup;
