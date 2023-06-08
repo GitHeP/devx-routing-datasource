@@ -44,6 +44,11 @@ public class WeightRoundRobinLoadBalance implements LoadBalance<RoutingTargetAtt
 
     @Override
     public RoutingTargetAttribute choose() {
+
+        if (options.size() == 1) {
+            return options.get(0);
+        }
+
         RoutingTargetAttribute chosen;
 
         for (RoutingTargetAttribute target : options) {

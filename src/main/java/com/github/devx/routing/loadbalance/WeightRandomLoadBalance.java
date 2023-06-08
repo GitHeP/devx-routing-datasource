@@ -38,6 +38,10 @@ public class WeightRandomLoadBalance implements LoadBalance<RoutingTargetAttribu
     @Override
     public RoutingTargetAttribute choose() {
 
+        if (options.size() == 1) {
+            return options.get(0);
+        }
+
         int totalWeight = 0;
         for (RoutingTargetAttribute target : options) {
             totalWeight += target.getWeight();
