@@ -13,8 +13,14 @@ import java.util.Map;
 public class RoutingRuleConfiguration {
 
     /**
+     * key is database name
+     * value Map key is data source name
+     */
+    private Map<String , Map<String , SqlTypeConfiguration>> databases;
+
+    /**
      * key is table name
-     * value Map key is datasource name
+     * value Map key is data source name
      */
     private Map<String , Map<String , SqlTypeConfiguration>> tables;
 }

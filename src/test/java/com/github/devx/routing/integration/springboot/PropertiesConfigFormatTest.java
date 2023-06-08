@@ -91,6 +91,33 @@ class PropertiesConfigFormatTest extends SpringBootIntegrationTest {
         log.info("write_0 DataSourceConfiguration testing pass {} " , write0Configuration);
     }
 
+    @Test
+    void testDatabaseRoutingRuleConfig() {
+        log.info("testing Database Routing Rule using spring boot properties config file");
+        assertThat(properties.getRouting().getRules()).isNotNull();
+        Map<String, Map<String, SqlTypeConfiguration>> databases = properties.getRouting().getRules().getDatabases();
+        assertThat(databases).isNotEmpty().containsOnlyKeys("test1" , "test2" , "test3");
+
+        Map<String, SqlTypeConfiguration> test1Map = databases.get("test1");
+        assertThat(test1Map).containsOnlyKeys("write_0");
+        SqlTypeConfiguration write0SqlTypeConf = test1Map.get("write_0");
+        assertThat(write0SqlTypeConf).isNotNull()
+                .extracting(SqlTypeConfiguration::getAllowAllSqlTypes).isEqualTo(true);
+
+        Map<String, SqlTypeConfiguration> test2Map = databases.get("test2");
+        assertThat(test2Map).containsOnlyKeys("read_0");
+        SqlTypeConfiguration read0SqlTypeConf = test2Map.get("read_0");
+        assertThat(read0SqlTypeConf).isNotNull()
+                .extracting(SqlTypeConfiguration::getAllowAllSqlTypes).isEqualTo(true);
+
+        Map<String, SqlTypeConfiguration> test3Map = databases.get("test3");
+        assertThat(test3Map).containsOnlyKeys("read_1");
+        SqlTypeConfiguration read1SqlTypeConf = test3Map.get("read_1");
+        assertThat(read1SqlTypeConf).isNotNull()
+                .extracting(SqlTypeConfiguration::getAllowAllSqlTypes).isNull();
+        assertThat(read1SqlTypeConf.getSqlTypes()).containsOnly(SqlType.SELECT);
+    }
+
     private void assertRead0() {
         DataSourceConfiguration read0Configuration = properties.getRouting().getDataSourceConfByName("read_0");
         assertThat(read0Configuration).isNotNull();
