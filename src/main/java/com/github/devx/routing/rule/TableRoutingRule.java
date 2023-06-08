@@ -17,7 +17,6 @@
 package com.github.devx.routing.rule;
 
 import com.github.devx.routing.config.SqlTypeConfiguration;
-import com.github.devx.routing.config.TableRuleConfiguration;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
 import com.github.devx.routing.util.CollectionUtils;
@@ -36,7 +35,6 @@ import java.util.Set;
  * @author Peng He
  * @since 1.0
  *
- * @see TableRuleConfiguration
  */
 public class TableRoutingRule implements SqlAttributeRoutingRule {
 
@@ -87,7 +85,7 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MAX_VALUE - 100;
+        return Integer.MAX_VALUE - 500;
     }
 
     @Override

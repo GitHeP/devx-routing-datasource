@@ -1,15 +1,18 @@
 package com.github.devx.routing.integration.springboot;
 
-import com.github.devx.routing.config.DataSourceConfiguration;
-import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.RoutingTargetType;
+import com.github.devx.routing.config.DataSourceConfiguration;
+import com.github.devx.routing.config.DatabaseRoutingConfiguration;
+import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.sql.SqlType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -74,22 +77,30 @@ class YamlConfigFormatTest extends SpringBootIntegrationTest {
     void testDatabaseRoutingRuleConfig() {
         log.info("testing Database Routing Rule using spring boot yaml config file");
         assertThat(properties.getRouting().getRules()).isNotNull();
-        Map<String, Map<String, SqlTypeConfiguration>> databases = properties.getRouting().getRules().getDatabases();
-        assertThat(databases).isNotEmpty().containsOnlyKeys("test1" , "test2" , "test3");
+        List<DatabaseRoutingConfiguration> databases = properties.getRouting().getRules().getDatabases();
+        assertThat(databases).isNotEmpty();
+        Stream<String> databaseNames = databases.stream().map(DatabaseRoutingConfiguration::getName);
+        assertThat(databaseNames).containsOnly("test1" , "test2" , "test3");
 
-        Map<String, SqlTypeConfiguration> test1Map = databases.get("test1");
+        DatabaseRoutingConfiguration test1Rule = databases.get(0);
+        assertThat(test1Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test1");
+        Map<String, SqlTypeConfiguration> test1Map = test1Rule.getTargets();
         assertThat(test1Map).containsOnlyKeys("write_0");
         SqlTypeConfiguration write0SqlTypeConf = test1Map.get("write_0");
         assertThat(write0SqlTypeConf).isNotNull()
                 .extracting(SqlTypeConfiguration::getAllowAllSqlTypes).isEqualTo(true);
 
-        Map<String, SqlTypeConfiguration> test2Map = databases.get("test2");
+        DatabaseRoutingConfiguration test2Rule = databases.get(1);
+        assertThat(test2Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test2");
+        Map<String, SqlTypeConfiguration> test2Map = test2Rule.getTargets();
         assertThat(test2Map).containsOnlyKeys("read_0");
         SqlTypeConfiguration read0SqlTypeConf = test2Map.get("read_0");
         assertThat(read0SqlTypeConf).isNotNull()
                 .extracting(SqlTypeConfiguration::getAllowAllSqlTypes).isEqualTo(true);
 
-        Map<String, SqlTypeConfiguration> test3Map = databases.get("test3");
+        DatabaseRoutingConfiguration test3Rule = databases.get(2);
+        assertThat(test3Rule).isNotNull().extracting(DatabaseRoutingConfiguration::getName).isEqualTo("test3");
+        Map<String, SqlTypeConfiguration> test3Map = test3Rule.getTargets();
         assertThat(test3Map).containsOnlyKeys("read_1");
         SqlTypeConfiguration read1SqlTypeConf = test3Map.get("read_1");
         assertThat(read1SqlTypeConf).isNotNull()

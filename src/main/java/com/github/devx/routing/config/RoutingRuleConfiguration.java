@@ -2,6 +2,7 @@ package com.github.devx.routing.config;
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,11 +13,8 @@ import java.util.Map;
 @Data
 public class RoutingRuleConfiguration {
 
-    /**
-     * key is database name
-     * value Map key is data source name
-     */
-    private Map<String , Map<String , SqlTypeConfiguration>> databases;
+
+    private List<DatabaseRoutingConfiguration> databases;
 
     /**
      * key is table name

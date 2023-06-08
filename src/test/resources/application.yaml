@@ -74,16 +74,21 @@ devx:
 
     rules:
       databases:
-        test1:
-          write_0:
-            allowAllSqlTypes: true
-        test2:
-          read_0:
-            allowAllSqlTypes: true
-        test3:
-          read_1:
-            sqlTypes:
-              - SELECT
+        - name: test1
+          targets:
+            write_0:
+              allowAllSqlTypes: true
+
+        - name: test2
+          targets:
+            read_0:
+              allowAllSqlTypes: true
+
+        - name: test3
+          targets:
+            read_1:
+              sqlTypes:
+                - SELECT
       tables:
         employee:
           write_0:
