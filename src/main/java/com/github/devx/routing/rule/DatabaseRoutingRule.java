@@ -44,7 +44,7 @@ public class DatabaseRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MAX_VALUE - 500;
+        return Integer.MAX_VALUE - 100;
     }
 
     @Override
