@@ -63,14 +63,14 @@ public class DatabaseRoutingRule implements SqlAttributeRoutingRule {
 
         List<RoutingTargetAttribute> routingTargetAttributes = matchRoutingTarget(sqlAttribute);
         if (!routingTargetAttributes.isEmpty()) {
-            String targetName;
+            String nodeName;
             if (routingTargetAttributes.size() == 1) {
-                targetName = routingTargetAttributes.get(0).getName();
+                nodeName = routingTargetAttributes.get(0).getName();
             } else {
                 WeightRandomLoadBalance loadBalance = new WeightRandomLoadBalance(routingTargetAttributes);
-                targetName = loadBalance.choose().getName();
+                nodeName = loadBalance.choose().getName();
             }
-            return targetName;
+            return nodeName;
         }
 
         return null;
