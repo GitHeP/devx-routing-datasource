@@ -22,6 +22,7 @@ import com.github.devx.routing.config.SqlTypeConfiguration;
 import com.github.devx.routing.loadbalance.WeightRandomLoadBalance;
 import com.github.devx.routing.sql.SqlAttribute;
 import com.github.devx.routing.sql.SqlType;
+import com.github.devx.routing.sql.parser.SqlParser;
 import com.github.devx.routing.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -40,13 +41,16 @@ import java.util.Set;
  */
 public class TableRoutingRule implements SqlAttributeRoutingRule {
 
+    private final SqlParser sqlParser;
+
     private final RoutingConfiguration routingConfiguration;
 
     private final Map<String, Map<String, SqlTypeConfiguration>> tableRule;
 
     private final Set<String> ruleTables;
 
-    public TableRoutingRule(RoutingConfiguration routingConfiguration) {
+    public TableRoutingRule(SqlParser sqlParser , RoutingConfiguration routingConfiguration) {
+        this.sqlParser = sqlParser;
         this.routingConfiguration = routingConfiguration;
         this.tableRule = routingConfiguration.getRules().getTables();
         this.ruleTables = tableRule.keySet();
@@ -105,11 +109,11 @@ public class TableRoutingRule implements SqlAttributeRoutingRule {
 
     @Override
     public int priority() {
-        return Integer.MAX_VALUE - 500;
+        return Integer.MAX_VALUE - 200;
     }
 
     @Override
     public String routing(RoutingKey key) {
-        return null;
+        return routing(sqlParser.parse(key.getSql()));
     }
 }

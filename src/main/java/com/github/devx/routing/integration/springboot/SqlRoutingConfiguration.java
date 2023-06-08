@@ -83,7 +83,7 @@ public class SqlRoutingConfiguration {
         return compositeRoutingGroup;
     }
 
-    @Bean
+    @Bean("routingDataSource")
     public DataSource routingDataSource(RoutingKeyProvider routingKeyProvider, SqlRoutingProperties properties , DataSourceInitializer dataSourceInitializer , @Autowired @Qualifier("compositeRoutingGroup") RoutingRule routingRule) {
 
         if (Objects.isNull(properties.getRouting().getMasters()) || properties.getRouting().getMasters().isEmpty()) {

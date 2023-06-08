@@ -6,6 +6,8 @@ import org.h2.tools.RunScript;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.datasource.DelegatingDataSource;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
@@ -24,34 +26,47 @@ import java.util.Objects;
 public class BeforeAfterEachHandleDataTest extends SpringBootIntegrationTest {
 
     @Autowired
-    RoutingDataSource dataSource;
+    @Qualifier("routingDataSource")
+    DataSource dataSource;
 
     @BeforeEach
     protected void initData() throws Exception {
 
+        RoutingDataSource dataSource;
+        if (this.dataSource.isWrapperFor(DelegatingDataSource.class)) {
+            dataSource = (RoutingDataSource) ((DelegatingDataSource) this.dataSource).getTargetDataSource();
+        } else {
+            dataSource = (RoutingDataSource) this.dataSource;
+        }
         String initSqlPath = "src/test/resources/init.sql";
 
         DataSource write0 = dataSource.getDataSourceWithName("write_0");
 
         Connection write0Conn = write0.getConnection();
-        ResultSet write0Rs = RunScript.execute(write0Conn , new FileReader(initSqlPath));
-        close(write0Rs , null , write0Conn);
+        ResultSet write0Rs = RunScript.execute(write0Conn, new FileReader(initSqlPath));
+        close(write0Rs, null, write0Conn);
 
         DataSource read0 = dataSource.getDataSourceWithName("read_0");
 
         Connection read0Conn = read0.getConnection();
-        ResultSet read0Rs = RunScript.execute(read0Conn , new FileReader(initSqlPath));
-        close(read0Rs , null , read0Conn);
+        ResultSet read0Rs = RunScript.execute(read0Conn, new FileReader(initSqlPath));
+        close(read0Rs, null, read0Conn);
 
         DataSource read1 = dataSource.getDataSourceWithName("read_1");
         Connection read1Conn = read1.getConnection();
-        ResultSet read1Rs = RunScript.execute(read1Conn , new FileReader(initSqlPath));
-        close(read1Rs , null , read1Conn);
+        ResultSet read1Rs = RunScript.execute(read1Conn, new FileReader(initSqlPath));
+        close(read1Rs, null, read1Conn);
     }
 
     @AfterEach
     protected void clearData() throws Exception {
 
+        RoutingDataSource dataSource;
+        if (this.dataSource.isWrapperFor(DelegatingDataSource.class)) {
+            dataSource = (RoutingDataSource) ((DelegatingDataSource) this.dataSource).getTargetDataSource();
+        } else {
+            dataSource = (RoutingDataSource) this.dataSource;
+        }
         RoutingContext.clear();
         DataSource write0 = dataSource.getDataSourceWithName("write_0");
         Connection write0Conn = write0.getConnection();
@@ -70,7 +85,7 @@ public class BeforeAfterEachHandleDataTest extends SpringBootIntegrationTest {
         read1Stmt.execute("SHUTDOWN");
     }
 
-    private static void close(ResultSet rs , Statement stmt , Connection conn) throws Exception {
+    private static void close(ResultSet rs, Statement stmt, Connection conn) throws Exception {
         if (Objects.nonNull(rs)) {
             rs.close();
         }

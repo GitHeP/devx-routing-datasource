@@ -3,6 +3,7 @@ package com.github.devx.routing.rule.group;
 import com.github.devx.routing.RoutingTargetAttribute;
 import com.github.devx.routing.config.RoutingConfiguration;
 import com.github.devx.routing.loadbalance.LoadBalance;
+import com.github.devx.routing.rule.DatabaseRoutingRule;
 import com.github.devx.routing.rule.ForceTargetRoutingRule;
 import com.github.devx.routing.rule.NullSqlAttributeRoutingRule;
 import com.github.devx.routing.rule.PriorityRoutingRule;
@@ -54,7 +55,8 @@ public class EmbeddedRoutingGroup extends AbstractComparableRoutingGroup<SqlAttr
         install(new ForceTargetRoutingRule(routingConf, sqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingTypeSqlHintRoutingRule(annotationSqlParser, readLoadBalance, writeLoadBalance));
         install(new RoutingNameSqlHintRoutingRule(annotationSqlParser));
-        install(new TableRoutingRule(routingConf));
+        install(new TableRoutingRule(sqlParser , routingConf));
+        install(new DatabaseRoutingRule(sqlParser , routingConf));
     }
 
     @Override

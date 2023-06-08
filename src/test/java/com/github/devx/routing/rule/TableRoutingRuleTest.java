@@ -42,7 +42,7 @@ class TableRoutingRuleTest {
         tableRule.put("employee" , sqlTypeMap);
         routingRuleConfiguration.setTables(tableRule);
         routingConfiguration.setRules(routingRuleConfiguration);
-        TableRoutingRule routingRule = new TableRoutingRule(routingConfiguration);
+        TableRoutingRule routingRule = new TableRoutingRule(sqlParser , routingConfiguration);
         String sql = "select * from employee where name = 'DevX'";
         String result = routingRule.routing(sqlParser.parse(sql));
 
@@ -74,7 +74,7 @@ class TableRoutingRuleTest {
         routingRuleConfiguration.setTables(tableRule);
         routingConfiguration.setRules(routingRuleConfiguration);
 
-        TableRoutingRule routingRule = new TableRoutingRule(routingConfiguration);
+        TableRoutingRule routingRule = new TableRoutingRule(sqlParser , routingConfiguration);
 
         String sql = "SELECT e.* , u.* \n" +
                 "FROM dept e , users u\n" +
